@@ -54,4 +54,3 @@ void XYZ::draw()
    glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
    glDrawArrays(GL_LINES, 0, mVertices.size());
 }
-
