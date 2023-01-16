@@ -14,6 +14,7 @@
 #include "mainwindow.h"
 #include "logger.h"
 #include "xyz.h"
+#include "tetrahedron.h"
 
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
@@ -40,7 +41,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //Make the gameloop timer:
     mRenderTimer = new QTimer(this);
 
-    mObjects.push_back(new XYZ());
+    mObjects.push_back(new Tetrahedron());
+    //mObjects.push_back(new XYZ());
 }
 
 RenderWindow::~RenderWindow()
@@ -122,6 +124,7 @@ void RenderWindow::init()
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
     {
         (*it)->init(mMatrixUniform);
+    }
 
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 }
@@ -161,8 +164,8 @@ void RenderWindow::render()
 
     //just to make the triangle rotate - tweak this:
     //                   degree, x,   y,   z -axis
-    //if(mRotate)
-    //    mMVPmatrix->rotate(2.f, 0.f, 1.0, 0.f);
+    if(mRotate)
+        mMVPmatrix->rotate(2.f, 0.f, 1.0, 0.f);
 }
 
 //This function is called from Qt when window is exposed (shown)
