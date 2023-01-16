@@ -43,7 +43,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mRenderTimer = new QTimer(this);
 
     //mObjects.push_back(new XYZ());
-    //mObjects.push_back(new Tetrahedron());
+    mObjects.push_back(new Tetrahedron());
     mObjects.push_back(new Cube());
 }
 
@@ -110,7 +110,7 @@ void RenderWindow::init()
     //general OpenGL stuff:
     glEnable(GL_DEPTH_TEST);            //enables depth sorting - must then use GL_DEPTH_BUFFER_BIT in glClear
     //    glEnable(GL_CULL_FACE);       //draws only front side of models - usually what you want - test it out!
-    glClearColor(0.4f, 0.4f, 0.4f, 1.0f);    //gray color used in glClear GL_COLOR_BUFFER_BIT
+    glClearColor(0.2f, 0.0f, 0.4f, 1.0f);    //gray color used in glClear GL_COLOR_BUFFER_BIT
 
     //Compile shaders:
     //NB: hardcoded path to files! You have to change this if you change directories for the project.

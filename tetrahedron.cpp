@@ -2,21 +2,21 @@
 
 Tetrahedron::Tetrahedron()
 {
-   mVertices.push_back(Vertex{-0.4, -0.4,   0,          1,1,0});
-   mVertices.push_back(Vertex{0.4,  -0.4,   0.4,        1,1,0});
-   mVertices.push_back(Vertex{0,    0.4,    0,          1,1,0});
+   mVertices.push_back(Vertex{-0.3, -0.3,   0,          1,1,0});
+   mVertices.push_back(Vertex{0.3,  -0.3,   0.3,        1,1,0});
+   mVertices.push_back(Vertex{0,    0.3,    0,          1,1,0});
 
-   mVertices.push_back(Vertex{-0.4, -0.4,   0,          0,1,0});
-   mVertices.push_back(Vertex{0.4,  -0.4,   -0.4,       0,1,0});
-   mVertices.push_back(Vertex{0,    0.4,    0,          0,1,0});
+   mVertices.push_back(Vertex{-0.3, -0.3,   0,          0,1,0});
+   mVertices.push_back(Vertex{0.3,  -0.3,   -0.3,       0,1,0});
+   mVertices.push_back(Vertex{0,    0.3,    0,          0,1,0});
 
-   mVertices.push_back(Vertex{0.4,  -0.4,   0.4,        0,0,1});
-   mVertices.push_back(Vertex{0.4,  -0.4,   -0.4,       0,0,1});
-   mVertices.push_back(Vertex{0,    0.4,    0,          0,0,1});
+   mVertices.push_back(Vertex{0.3,  -0.3,   0.3,        0,0,1});
+   mVertices.push_back(Vertex{0.3,  -0.3,   -0.3,       0,0,1});
+   mVertices.push_back(Vertex{0,    0.3,    0,          0,0,1});
 
-   mVertices.push_back(Vertex{0.4, -0.4,    0.4,         1,0,0});
-   mVertices.push_back(Vertex{-0.4,  -0.4,   0.0,       1,0,0});
-   mVertices.push_back(Vertex{0.4,    -0.4,  -0.4,    1,0,0});
+   mVertices.push_back(Vertex{0.3,  -0.3,   0.3,        1,0,0});
+   mVertices.push_back(Vertex{-0.3, -0.3,   0.0,        1,0,0});
+   mVertices.push_back(Vertex{0.3,  -0.3,   -0.3,       1,0,0});
 
    mMatrix.setToIdentity();
 }
@@ -52,6 +52,7 @@ void Tetrahedron::init(GLint matrixUniform)
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,  sizeof(Vertex),  reinterpret_cast<GLvoid*>(3 * sizeof(GLfloat)) );
     glEnableVertexAttribArray(1);
     glBindVertexArray(0);
+    mMatrix.translate(-0.5f, 0.0f, 0.2f);
 }
 
 void Tetrahedron::draw()
@@ -59,5 +60,5 @@ void Tetrahedron::draw()
     glBindVertexArray( mVAO );
     glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
     glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
-    mMatrix.rotate(1.0f, 1.0f, 0.0f, 0.5f);
+    mMatrix.rotate(1.0f, -1.0f, 2.0f, 0.5f);
 }
