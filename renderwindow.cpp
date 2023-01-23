@@ -13,6 +13,7 @@
 #include "shader.h"
 #include "mainwindow.h"
 #include "logger.h"
+#include "xyz.h"
 #include "tetrahedron.h"
 #include "cube.h"
 
@@ -44,6 +45,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //mObjects.push_back(new XYZ());
     //mObjects.push_back(new Tetrahedron());
     //mObjects.push_back(new Cube());
+
     mObjects.push_back(new TriangleSurface());
 }
 
@@ -122,6 +124,8 @@ void RenderWindow::init()
     // This has to match the "matrix" variable name in the vertex shader
     // The uniform is used in the render() function to send the model matrix to the shader
     mMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "matrix" );
+    mPmatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "pmatrix" );
+    mVmatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "vmatrix" );
 
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
     {
