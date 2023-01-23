@@ -12,6 +12,7 @@ SOURCES += main.cpp \
     renderwindow.cpp \
     shader.cpp \
     tetrahedron.cpp \
+    trianglesurface.cpp \
     vertex.cpp \
     visualobject.cpp \
     xyz.cpp
@@ -23,6 +24,7 @@ HEADERS += \
     renderwindow.h \
     shader.h \
     tetrahedron.h \
+    trianglesurface.h \
     vertex.h \
     visualobject.h \
     xyz.h

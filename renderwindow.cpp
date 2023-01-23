@@ -13,7 +13,6 @@
 #include "shader.h"
 #include "mainwindow.h"
 #include "logger.h"
-#include "xyz.h"
 #include "tetrahedron.h"
 #include "cube.h"
 
@@ -43,8 +42,9 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mRenderTimer = new QTimer(this);
 
     //mObjects.push_back(new XYZ());
-    mObjects.push_back(new Tetrahedron());
-    mObjects.push_back(new Cube());
+    //mObjects.push_back(new Tetrahedron());
+    //mObjects.push_back(new Cube());
+    mObjects.push_back(new TriangleSurface());
 }
 
 RenderWindow::~RenderWindow()

@@ -8,6 +8,7 @@
 #include <vector>
 #include "vertex.h"
 #include "visualobject.h"
+#include "trianglesurface.h"
 
 class QOpenGLContext;
 class Shader;
