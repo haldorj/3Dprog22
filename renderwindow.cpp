@@ -37,21 +37,20 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //This is the matrix used to transform (rotate) the triangle
     //You could do without, but then you have to simplify the shader and shader setup
     mPmatrix = new QMatrix4x4{};
-    mVmatrix = new QMatrix4x4{};
-
     mPmatrix->setToIdentity();    //1, 1, 1, 1 in the diagonal of the matrix
+
+    mVmatrix = new QMatrix4x4{};
     mVmatrix->setToIdentity();    //1, 1, 1, 1 in the diagonal of the matrix
 
     //Make the gameloop timer:
     mRenderTimer = new QTimer(this);
 
-    //mObjects.push_back(new XYZ());
-    //mObjects.push_back(new Tetrahedron());
-    //mObjects.push_back(new Cube());
-
     mia = new InteractiveObject;
     mObjects.push_back(mia);
     mObjects.push_back(new TriangleSurface());
+    //mObjects.push_back(new XYZ());
+    //mObjects.push_back(new Tetrahedron());
+    //mObjects.push_back(new Cube());
 }
 
 RenderWindow::~RenderWindow()
@@ -128,14 +127,12 @@ void RenderWindow::init()
     // Get the matrixUniform location from the shader
     // This has to match the "matrix" variable name in the vertex shader
     // The uniform is used in the render() function to send the model matrix to the shader
-    mMatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "matrix" );
+    mMmatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "matrix" );
     mPmatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "pmatrix" );
     mVmatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "vmatrix" );
 
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
-    {
         (*it)->init(mMmatrixUniform);
-    }
 
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 }
@@ -160,15 +157,13 @@ void RenderWindow::render()
     glUseProgram(mShaderProgram->getProgram());
 
     // Flytter kamera
-   mVmatrix->translate(0, 0, -5);
-   // Flere matriser her! Skal legges i kameraklasse
-   glUniformMatrix4fv( mPmatrixUniform, 1, GL_FALSE, mPmatrix->constData());
-   glUniformMatrix4fv( mVmatrixUniform, 1, GL_FALSE, mVmatrix->constData());
+    mVmatrix->translate(0, 0, -5);
+    // Flere matriser her! Skal legges i kameraklasse
+    glUniformMatrix4fv( mPmatrixUniform, 1, GL_FALSE, mPmatrix->constData());
+    glUniformMatrix4fv( mVmatrixUniform, 1, GL_FALSE, mVmatrix->constData());
 
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
-    {
         (*it)->draw();
-    }
 
     //Calculate framerate before
     // checkForGLerrors() because that call takes a long time
