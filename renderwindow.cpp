@@ -36,9 +36,11 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
 
     //This is the matrix used to transform (rotate) the triangle
     //You could do without, but then you have to simplify the shader and shader setup
+    mMVPmatrix = new QMatrix4x4{};
+    mMVPmatrix->setToIdentity();
+
     mPmatrix = new QMatrix4x4{};
     mPmatrix->setToIdentity();    //1, 1, 1, 1 in the diagonal of the matrix
-
     mVmatrix = new QMatrix4x4{};
     mVmatrix->setToIdentity();    //1, 1, 1, 1 in the diagonal of the matrix
 
@@ -47,7 +49,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
 
     mia = new InteractiveObject;
     mObjects.push_back(mia);
-    mObjects.push_back(new TriangleSurface());
+    //mObjects.push_back(new TriangleSurface());
     //mObjects.push_back(new XYZ());
     //mObjects.push_back(new Tetrahedron());
     //mObjects.push_back(new Cube());
@@ -122,14 +124,14 @@ void RenderWindow::init()
     //NB: hardcoded path to files! You have to change this if you change directories for the project.
     //Qt makes a build-folder besides the project folder. That is why we go down one directory
     // (out of the build-folder) and then up into the project folder.
-    mShaderProgram = new Shader("../3Dprog22/plainshader.vert", "../3Dprog22/plainshader.frag");
+    mShaderProgram = new Shader("C:/4 semester/3D Prog/3Dprog22/3Dprog22/plainshader.vert",
+                                "C:/4 semester/3D Prog/3Dprog22/3Dprog22/plainshader.frag");
 
-    // Get the matrixUniform location from the shader
-    // This has to match the "matrix" variable name in the vertex shader
-    // The uniform is used in the render() function to send the model matrix to the shader
-    mMmatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "matrix" );
     mPmatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "pmatrix" );
     mVmatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "vmatrix" );
+    mMmatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "matrix" );
+
+   // mCamera.init(mPmatrixUniform, mVmatrixUniform);
 
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
         (*it)->init(mMmatrixUniform);
@@ -140,10 +142,8 @@ void RenderWindow::init()
 // Called each frame - doing the rendering!!!
 void RenderWindow::render()
 {
-    mPmatrix->setToIdentity();
-    mVmatrix->setToIdentity();
-
-    mPmatrix->perspective(60, 4.0/3.0, 0.1, 10.0);
+    mCamera.init(mPmatrixUniform, mVmatrixUniform);
+    mCamera.perspective(60.0f, 16.0f/9.0f, 0.1f, 10.0f);
 
     mTimeStart.restart(); //restart FPS clock
     mContext->makeCurrent(this); //must be called every frame (every time mContext->swapBuffers is called)
@@ -152,16 +152,11 @@ void RenderWindow::render()
 
     //clear the screen for each redraw
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     //what shader to use
     glUseProgram(mShaderProgram->getProgram());
 
-    // Flytter kamera
-    mVmatrix->translate(0, 0, -5);
-    // Flere matriser her! Skal legges i kameraklasse
-    glUniformMatrix4fv( mPmatrixUniform, 1, GL_FALSE, mPmatrix->constData());
-    glUniformMatrix4fv( mVmatrixUniform, 1, GL_FALSE, mVmatrix->constData());
-
+    mCamera.lookAt( QVector3D{0,0,-5}, QVector3D{0,0,0}, QVector3D{0,1,0} );
+    mCamera.update();
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
         (*it)->draw();
 
@@ -309,15 +304,15 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     //You get the keyboard input like this
     if(event->key() == Qt::Key_A)
     {
-        mia->move(-0.1f, 0.0f, 0.0f);
+        mia->move(0.1f, 0.0f, 0.0f);
     }
     if(event->key() == Qt::Key_D)
     {
-        mia->move(0.1f, 0.0f, 0.0f);
+        mia->move(-0.1f, 0.0f, 0.0f);
     }
     if(event->key() == Qt::Key_W)
     {
-        mia->move(-0.0f, 0.1f, 0.0f);
+        mia->move(0.0f, 0.1f, 0.0f);
     }
     if(event->key() == Qt::Key_S)
     {

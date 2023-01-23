@@ -9,6 +9,8 @@
 #include "visualobject.h"
 #include "trianglesurface.h"
 #include "interactiveobject.h"
+#include "camera.h"
+#include "cube.h"
 
 class QOpenGLContext;
 class Shader;
@@ -38,6 +40,7 @@ private:
     void init();            //initialize things we need before rendering
     std::vector<VisualObject*> mObjects;
     VisualObject* mia;
+    Camera mCamera{};
 
     QOpenGLContext *mContext{nullptr};  //Our OpenGL context
     bool mInitialized{false};

@@ -12,7 +12,6 @@ public:
     void readFile(std::string filnavn);
     void init(GLint shader) override;
     void draw() override;
-
 };
 
 #endif // TRIANGLESURFACE_H
