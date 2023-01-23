@@ -6,9 +6,9 @@
 #include <QTimer>
 #include <QElapsedTimer>
 #include <vector>
-#include "vertex.h"
 #include "visualobject.h"
 #include "trianglesurface.h"
+#include "interactiveobject.h"
 
 class QOpenGLContext;
 class Shader;
@@ -37,6 +37,7 @@ private slots:
 private:
     void init();            //initialize things we need before rendering
     std::vector<VisualObject*> mObjects;
+    VisualObject* mia;
 
     QOpenGLContext *mContext{nullptr};  //Our OpenGL context
     bool mInitialized{false};
@@ -47,12 +48,11 @@ private:
     GLint  mMatrixUniform;              //OpenGL reference to the Uniform in the shader program
     GLint  mPmatrixUniform;
     GLint  mVmatrixUniform;
-    GLint  mMmatrixUniform;
 
     GLuint mVAO;                        //OpenGL reference to our VAO
     GLuint mVBO;                        //OpenGL reference to our VBO
 
-    QMatrix4x4 *mMVPmatrix{nullptr};       //The matrix with the transform for the object we draw
+    //QMatrix4x4 *mMVPmatrix{nullptr};       //The matrix with the transform for the object we draw
     QMatrix4x4 *mPmatrix{nullptr};         //
     QMatrix4x4 *mVmatrix{nullptr};         //
 

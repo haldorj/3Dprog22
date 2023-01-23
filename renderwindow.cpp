@@ -36,8 +36,11 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
 
     //This is the matrix used to transform (rotate) the triangle
     //You could do without, but then you have to simplify the shader and shader setup
-    mMVPmatrix = new QMatrix4x4{};
-    mMVPmatrix->setToIdentity();    //1, 1, 1, 1 in the diagonal of the matrix
+    mPmatrix = new QMatrix4x4{};
+    mVmatrix = new QMatrix4x4{};
+
+    mPmatrix->setToIdentity();    //1, 1, 1, 1 in the diagonal of the matrix
+    mVmatrix->setToIdentity();    //1, 1, 1, 1 in the diagonal of the matrix
 
     //Make the gameloop timer:
     mRenderTimer = new QTimer(this);
@@ -46,6 +49,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //mObjects.push_back(new Tetrahedron());
     //mObjects.push_back(new Cube());
 
+    mia = new InteractiveObject;
+    mObjects.push_back(mia);
     mObjects.push_back(new TriangleSurface());
 }
 
@@ -129,7 +134,7 @@ void RenderWindow::init()
 
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
     {
-        (*it)->init(mMatrixUniform);
+        (*it)->init(mMmatrixUniform);
     }
 
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
@@ -138,7 +143,11 @@ void RenderWindow::init()
 // Called each frame - doing the rendering!!!
 void RenderWindow::render()
 {
-    mMVPmatrix->setToIdentity();
+    mPmatrix->setToIdentity();
+    mVmatrix->setToIdentity();
+
+    mPmatrix->perspective(60, 4.0/3.0, 0.1, 10.0);
+
     mTimeStart.restart(); //restart FPS clock
     mContext->makeCurrent(this); //must be called every frame (every time mContext->swapBuffers is called)
 
@@ -148,7 +157,13 @@ void RenderWindow::render()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //what shader to use
-    glUseProgram(mShaderProgram->getProgram() );
+    glUseProgram(mShaderProgram->getProgram());
+
+    // Flytter kamera
+   mVmatrix->translate(0, 0, -5);
+   // Flere matriser her! Skal legges i kameraklasse
+   glUniformMatrix4fv( mPmatrixUniform, 1, GL_FALSE, mPmatrix->constData());
+   glUniformMatrix4fv( mVmatrixUniform, 1, GL_FALSE, mVmatrix->constData());
 
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
     {
@@ -170,8 +185,8 @@ void RenderWindow::render()
 
     //just to make the triangle rotate - tweak this:
     //                   degree, x,   y,   z -axis
-    if(mRotate)
-        mMVPmatrix->rotate(2.f, 0.f, 1.0, 0.f);
+    //if(mRotate)
+    //    mMVPmatrix->rotate(2.f, 0.f, 1.0, 0.f);
 }
 
 //This function is called from Qt when window is exposed (shown)
@@ -297,12 +312,20 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     }
 
     //You get the keyboard input like this
-//    if(event->key() == Qt::Key_A)
-//    {
-//        mMainWindow->statusBar()->showMessage(" AAAA");
-//    }
-//    if(event->key() == Qt::Key_S)
-//    {
-//        mMainWindow->statusBar()->showMessage(" SSSS");
-//    }
+    if(event->key() == Qt::Key_A)
+    {
+        mia->move(-0.1f, 0.0f, 0.0f);
+    }
+    if(event->key() == Qt::Key_D)
+    {
+        mia->move(0.1f, 0.0f, 0.0f);
+    }
+    if(event->key() == Qt::Key_W)
+    {
+        mia->move(-0.0f, 0.1f, 0.0f);
+    }
+    if(event->key() == Qt::Key_S)
+    {
+        mia->move(0.0f, -0.1f, 0.0f);
+    }
 }
