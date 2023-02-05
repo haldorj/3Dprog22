@@ -49,10 +49,11 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
 
     mia = new InteractiveObject;
     mObjects.push_back(mia);
+
     //mObjects.push_back(new TriangleSurface());
     //mObjects.push_back(new XYZ());
-    //mObjects.push_back(new Tetrahedron());
-    //mObjects.push_back(new Cube());
+    mObjects.push_back(new Tetrahedron());
+    mObjects.push_back(new Cube());
 }
 
 RenderWindow::~RenderWindow()
@@ -143,7 +144,7 @@ void RenderWindow::init()
 void RenderWindow::render()
 {
     mCamera.init(mPmatrixUniform, mVmatrixUniform);
-    mCamera.perspective(60.0f, 16.0f/9.0f, 0.1f, 10.0f);
+    mCamera.perspective(90.0f, 16.0f/9.0f, 0.1f, 10.0f);
 
     mTimeStart.restart(); //restart FPS clock
     mContext->makeCurrent(this); //must be called every frame (every time mContext->swapBuffers is called)
@@ -155,7 +156,7 @@ void RenderWindow::render()
     //what shader to use
     glUseProgram(mShaderProgram->getProgram());
 
-    mCamera.lookAt( QVector3D{0,0,-5}, QVector3D{0,0,0}, QVector3D{0,1,0} );
+    mCamera.lookAt( QVector3D{0,0,3}, QVector3D{0,0,0}, QVector3D{0,1,0} );
     mCamera.update();
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
         (*it)->draw();
@@ -175,8 +176,8 @@ void RenderWindow::render()
 
     //just to make the triangle rotate - tweak this:
     //                   degree, x,   y,   z -axis
-    //if(mRotate)
-    //    mMVPmatrix->rotate(2.f, 0.f, 1.0, 0.f);
+    if(mRotate)
+        mPmatrix->rotate(2.f, 0.f, 1.0, 0.f);
 }
 
 //This function is called from Qt when window is exposed (shown)
@@ -304,11 +305,11 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     //You get the keyboard input like this
     if(event->key() == Qt::Key_A)
     {
-        mia->move(0.1f, 0.0f, 0.0f);
+        mia->move(-0.1f, 0.0f, 0.0f);
     }
     if(event->key() == Qt::Key_D)
     {
-        mia->move(-0.1f, 0.0f, 0.0f);
+        mia->move(0.1f, 0.0f, 0.0f);
     }
     if(event->key() == Qt::Key_W)
     {

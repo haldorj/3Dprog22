@@ -78,7 +78,7 @@ void InteractiveObject::draw()
     glBindVertexArray( mVAO );
     glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
     glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
-    mMatrix.rotate(1.0f, 1.0f, 2.0f, 0.0f);
+    //mMatrix.rotate(1.0f, 1.0f, 2.0f, 0.0f);
 }
 
 void InteractiveObject::move(float x, float y, float z)
@@ -87,6 +87,7 @@ void InteractiveObject::move(float x, float y, float z)
     my += y;
     mz += z;
     mMatrix.translate(mx, my, mz);
+
     mx =0;
     my =0;
     mz =0;

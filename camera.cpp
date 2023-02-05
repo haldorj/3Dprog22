@@ -16,15 +16,18 @@ void Camera::init(GLint pMatrixUniform, GLint vMatrixUniform)
     mVmatrixUniform = vMatrixUniform;
 }
 
-void Camera::perspective(int degrees, double aspect, double nearplane, double farplane)
+// Perspective Matrix
+void Camera::perspective(int fovy, double aspect, double nearplane, double farplane)
 {
-    mPmatrix.perspective(degrees, aspect, nearplane, farplane);
+    mPmatrix.perspective(fovy, aspect, nearplane, farplane);
 }
 
+// View Matrix
 void Camera::lookAt(const QVector3D &eye, const QVector3D &at, const QVector3D &up)
 {
-    mPmatrix.lookAt(eye, at, up);
+    mVmatrix.lookAt(eye, at, up);
 }
+
 
 void Camera::update()
 {
