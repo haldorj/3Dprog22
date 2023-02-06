@@ -54,6 +54,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //mObjects.push_back(new XYZ());
     mObjects.push_back(new Tetrahedron());
     mObjects.push_back(new Cube());
+    mObjects.push_back(new OctahedronBall(5));
 }
 
 RenderWindow::~RenderWindow()

@@ -11,6 +11,7 @@ SOURCES += main.cpp \
     interactiveobject.cpp \
     logger.cpp \
     mainwindow.cpp \
+    octahedronball.cpp \
     renderwindow.cpp \
     shader.cpp \
     tetrahedron.cpp \
@@ -25,6 +26,7 @@ HEADERS += \
     interactiveobject.h \
     logger.h \
     mainwindow.h \
+    octahedronball.h \
     renderwindow.h \
     shader.h \
     tetrahedron.h \

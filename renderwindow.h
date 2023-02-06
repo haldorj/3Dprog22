@@ -11,6 +11,7 @@
 #include "interactiveobject.h"
 #include "camera.h"
 #include "cube.h"
+#include "octahedronball.h"
 
 class QOpenGLContext;
 class Shader;
