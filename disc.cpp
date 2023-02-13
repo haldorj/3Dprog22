@@ -59,7 +59,7 @@ void Disc::draw()
    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
    glDrawElements(GL_TRIANGLE_FAN, mVertices.size(), GL_UNSIGNED_INT, reinterpret_cast<const void*>(0));//mVertices.size());
 
-   move(1);
+   //move(1);
 }
 
 

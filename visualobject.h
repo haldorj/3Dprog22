@@ -29,6 +29,6 @@ protected:
    QMatrix4x4 mRotation;
    QMatrix4x4 mScale;
    // Legger til rette for simulering
-   QVector3D mVelocity{-0.01,0,0};
+   QVector3D mVelocity{-0.01, 0, 0};
 };
 #endif // VISUALOBJECT_H

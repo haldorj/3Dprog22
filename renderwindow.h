@@ -13,6 +13,7 @@
 #include "cube.h"
 #include "octahedronball.h"
 #include "disc.h"
+#include <unordered_map>
 
 class QOpenGLContext;
 class Shader;
@@ -43,6 +44,8 @@ private:
     std::vector<VisualObject*> mObjects;
     VisualObject* mia;
     Camera mCamera{};
+
+    std::unordered_map<std::string, VisualObject*> mMap;    // alternativ container
 
     QOpenGLContext *mContext{nullptr};  //Our OpenGL context
     bool mInitialized{false};

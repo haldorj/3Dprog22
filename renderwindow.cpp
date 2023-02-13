@@ -54,8 +54,14 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //mObjects.push_back(new XYZ());
     //mObjects.push_back(new Tetrahedron());
     //mObjects.push_back(new Cube());
-    mObjects.push_back(new OctahedronBall(5));
-    mObjects.push_back(new Disc());
+    //mObjects.push_back(new OctahedronBall(5));
+    //mObjects.push_back(new Disc());
+
+    mMap.insert(std::pair<std::string, VisualObject*>{"xyz",new XYZ{}});
+    mMap.insert(std::pair<std::string, VisualObject*>{"triangleSurface",new TriangleSurface("frankes.txt")});
+    mMap.insert(std::pair<std::string, VisualObject*> {"mia", mia});
+    std::pair<std::string, VisualObject*> par{"disc", new Disc()};
+    mMap.insert(par);
 }
 
 RenderWindow::~RenderWindow()
@@ -136,8 +142,12 @@ void RenderWindow::init()
 
    // mCamera.init(mPmatrixUniform, mVmatrixUniform);
 
-    for (auto it = mObjects.begin(); it != mObjects.end(); it++)
-        (*it)->init(mMmatrixUniform);
+    //for (auto it = mObjects.begin(); it != mObjects.end(); it++)
+      //  (*it)->init(mMmatrixUniform);
+
+    // Alternativ: Erstatter std::vector<VisualObject*> med unordered map
+    for (auto it=mMap.begin(); it!=mMap.end(); it++)
+        (*it).second->init(mMmatrixUniform);
 
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 }
@@ -160,8 +170,14 @@ void RenderWindow::render()
 
     mCamera.lookAt( QVector3D{0,0,3}, QVector3D{0,0,0}, QVector3D{0,1,0} );
     mCamera.update();
-    for (auto it = mObjects.begin(); it != mObjects.end(); it++)
-        (*it)->draw();
+    //for (auto it = mObjects.begin(); it != mObjects.end(); it++)
+    //    (*it)->draw();
+
+    // Alternativ: Erstatter std::vector<VisualObject*> med unordered map
+    for (auto it=mMap.begin(); it!=mMap.end(); it++)
+        (*it).second->draw();
+
+    mMap["disc"]->move(0.05f);
 
     //Calculate framerate before
     // checkForGLerrors() because that call takes a long time
@@ -307,18 +323,22 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     //You get the keyboard input like this
     if(event->key() == Qt::Key_A)
     {
-        mia->move(-0.1f, 0.0f, 0.0f);
+        //mia->move(-0.1f, 0.0f, 0.0f);
+        mMap["mia"]->move(-0.1f, 0.0f, 0.0f);
     }
     if(event->key() == Qt::Key_D)
     {
-        mia->move(0.1f, 0.0f, 0.0f);
+        //mia->move(0.1f, 0.0f, 0.0f);
+        mMap["mia"]->move(0.1f, 0.0f, 0.0f);
     }
     if(event->key() == Qt::Key_W)
     {
-        mia->move(0.0f, 0.1f, 0.0f);
+        //mia->move(0.0f, 0.1f, 0.0f);
+        mMap["mia"]->move(0.0f, 0.1f, 0.0f);
     }
     if(event->key() == Qt::Key_S)
     {
-        mia->move(0.0f, -0.1f, 0.0f);
+        //mia->move(0.0f, -0.1f, 0.0f);
+        mMap["mia"]->move(0.0f, -0.1f, 0.0f);
     }
 }

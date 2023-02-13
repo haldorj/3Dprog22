@@ -8,11 +8,13 @@ TARGET      = 3D-programmering
 SOURCES += main.cpp \
     camera.cpp \
     cube.cpp \
+    curves.cpp \
     disc.cpp \
     interactiveobject.cpp \
     logger.cpp \
     mainwindow.cpp \
     octahedronball.cpp \
+    quadtree.cpp \
     renderwindow.cpp \
     shader.cpp \
     tetrahedron.cpp \
@@ -24,11 +26,13 @@ SOURCES += main.cpp \
 HEADERS += \
     camera.h \
     cube.h \
+    curves.h \
     disc.h \
     interactiveobject.h \
     logger.h \
     mainwindow.h \
     octahedronball.h \
+    quadtree.h \
     renderwindow.h \
     shader.h \
     tetrahedron.h \
