@@ -2,28 +2,38 @@
 
 Tetrahedron::Tetrahedron()
 {
-   mVertices.push_back(Vertex{-0.3, -0.3,   0,          1,1,0});
-   mVertices.push_back(Vertex{0.3,  -0.3,   0.3,        1,1,0});
-   mVertices.push_back(Vertex{0,    0.3,    0,          1,1,0});
+    constructTetrahedron();
+    mMatrix.setToIdentity();
+}
 
-   mVertices.push_back(Vertex{-0.3, -0.3,   0,          0,1,0});
-   mVertices.push_back(Vertex{0.3,  -0.3,   -0.3,       0,1,0});
-   mVertices.push_back(Vertex{0,    0.3,    0,          0,1,0});
-
-   mVertices.push_back(Vertex{0.3,  -0.3,   0.3,        0,0,1});
-   mVertices.push_back(Vertex{0.3,  -0.3,   -0.3,       0,0,1});
-   mVertices.push_back(Vertex{0,    0.3,    0,          0,0,1});
-
-   mVertices.push_back(Vertex{0.3,  -0.3,   0.3,        1,0,0});
-   mVertices.push_back(Vertex{-0.3, -0.3,   0.0,        1,0,0});
-   mVertices.push_back(Vertex{0.3,  -0.3,   -0.3,       1,0,0});
-
-   mMatrix.setToIdentity();
+Tetrahedron::Tetrahedron(float x, float y)
+{
+    constructTetrahedron();
+    translatePoint(x,y);
 }
 
 Tetrahedron::~Tetrahedron()
 {
 
+}
+
+void Tetrahedron::constructTetrahedron()
+{
+    mVertices.push_back(Vertex{-0.3, -0.3,   0,          1,1,0});
+    mVertices.push_back(Vertex{0.3,  -0.3,   0.3,        1,1,0});
+    mVertices.push_back(Vertex{0,    0.3,    0,          1,1,0});
+
+    mVertices.push_back(Vertex{-0.3, -0.3,   0,          0,1,0});
+    mVertices.push_back(Vertex{0.3,  -0.3,   -0.3,       0,1,0});
+    mVertices.push_back(Vertex{0,    0.3,    0,          0,1,0});
+
+    mVertices.push_back(Vertex{0.3,  -0.3,   0.3,        0,0,1});
+    mVertices.push_back(Vertex{0.3,  -0.3,   -0.3,       0,0,1});
+    mVertices.push_back(Vertex{0,    0.3,    0,          0,0,1});
+
+    mVertices.push_back(Vertex{0.3,  -0.3,   0.3,        1,0,0});
+    mVertices.push_back(Vertex{-0.3, -0.3,   0.0,        1,0,0});
+    mVertices.push_back(Vertex{0.3,  -0.3,   -0.3,       1,0,0});
 }
 
 void Tetrahedron::init(GLint matrixUniform)
@@ -61,4 +71,10 @@ void Tetrahedron::draw()
     glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
     glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
     mMatrix.rotate(1.0f, -1.0f, 2.0f, 0.5f);
+}
+
+void Tetrahedron::translatePoint(float x, float y)
+{
+    mMatrix.translate(x,y,0);
+    mMatrix.scale(0.2);
 }

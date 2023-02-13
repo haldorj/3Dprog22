@@ -46,6 +46,8 @@ void XYZ::init(GLint matrixUniform)
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,  sizeof(Vertex),  reinterpret_cast<GLvoid*>(3 * sizeof(GLfloat)) );
     glEnableVertexAttribArray(1);
     glBindVertexArray(0);
+
+    mMatrix.scale(3);
 }
 
 void XYZ::draw()

@@ -2,28 +2,39 @@
 
 Curves::Curves()
 {
-    DoCurve();
+    constructCurve();
     mMatrix.setToIdentity();
 }
 
 
+Curves::Curves(std::string filnavn)
+{
+    constructCurve();
+    readFile(filnavn);
+    mMatrix.setToIdentity();
+}
+
 Curves::~Curves(){}
 
-void Curves::DoCurve()
+void Curves::constructCurve()
 {
-    // f(x) = cosx
+    calculateCurve();
     float y = 0;
-
-    float xmin = 0.0f, xmax = 6.0f, h = 0.25f;
+    float xmin = -4.0f, xmax = 4.0f, h = 0.25f;
     for (auto x = xmin; x < xmax; x += h)
     {
-        float z = cos(x);                // x , y
+        float z = (0.54651*x) + 0.15912;                // x , y
         mVertices.push_back(Vertex{ x,y,z,1,1,0 });
 
-        z = cos(x + h);                //x+h, y
+        z = (0.54651*(x+h)) + 0.15912;                //x+h, y
         mVertices.push_back(Vertex{ x + h,y,z,1,1,0 });
     }
-    writeFile("oblig1oppg1.txt");
+    writeFile("curve.txt");
+}
+
+void Curves::calculateCurve()
+{
+
 }
 
 void Curves::readFile(std::string filename)
@@ -46,9 +57,6 @@ void Curves::readFile(std::string filename)
             mVertices.push_back(vertex);
         }
         inn.close();
-
-        //for (int i = 0;  i < mVertices.size(); i++)
-            //std::cout << mVertices[i] << std::endl;
     }
     else
     {
@@ -108,9 +116,7 @@ void Curves::init(GLint matrixUniform)
 
     glBindVertexArray(0);
 
-    mMatrix.translate(2.5, -1, 0);
-    mMatrix.rotate(-90, 1, 0);
-    mMatrix.scale(0.5, 0.5, 0.5);
+    mMatrix.rotate(-90, 1, 0, 0);
 }
 
 void Curves::draw()

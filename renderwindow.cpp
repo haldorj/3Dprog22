@@ -16,6 +16,7 @@
 #include "xyz.h"
 #include "tetrahedron.h"
 #include "cube.h"
+#include "curves.h"
 
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
@@ -58,10 +59,20 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //mObjects.push_back(new Disc());
 
     mMap.insert(std::pair<std::string, VisualObject*>{"xyz",new XYZ{}});
-    mMap.insert(std::pair<std::string, VisualObject*>{"triangleSurface",new TriangleSurface("frankes.txt")});
-    mMap.insert(std::pair<std::string, VisualObject*> {"mia", mia});
-    std::pair<std::string, VisualObject*> par{"disc", new Disc()};
-    mMap.insert(par);
+//    mMap.insert(std::pair<std::string, VisualObject*>{"triangleSurface",new TriangleSurface("frankes.txt")});
+//    mMap.insert(std::pair<std::string, VisualObject*> {"mia", mia});
+//    std::pair<std::string, VisualObject*> par{"disc", new Disc{}};
+//    mMap.insert(par);
+    mMap.insert(std::pair<std::string, VisualObject*>{"curve", new Curves("curve.txt")});
+
+    mMap.insert(std::pair<std::string, VisualObject*>{"P1", new Tetrahedron(-3,-1)});
+    mMap.insert(std::pair<std::string, VisualObject*>{"P2", new Tetrahedron(-2,-1)});
+    mMap.insert(std::pair<std::string, VisualObject*>{"P3", new Tetrahedron(-1.5,-2)});
+    mMap.insert(std::pair<std::string, VisualObject*>{"P4", new Tetrahedron(-1,1)});
+    mMap.insert(std::pair<std::string, VisualObject*>{"P5", new Tetrahedron(1,1)});
+    mMap.insert(std::pair<std::string, VisualObject*>{"P6", new Tetrahedron(1,-1)});
+    mMap.insert(std::pair<std::string, VisualObject*>{"P7", new Tetrahedron(2,2)});
+    mMap.insert(std::pair<std::string, VisualObject*>{"P8", new Tetrahedron(3,2)});
 }
 
 RenderWindow::~RenderWindow()
@@ -177,7 +188,7 @@ void RenderWindow::render()
     for (auto it=mMap.begin(); it!=mMap.end(); it++)
         (*it).second->draw();
 
-    mMap["disc"]->move(0.05f);
+    //mMap["disc"]->move(0.05f);
 
     //Calculate framerate before
     // checkForGLerrors() because that call takes a long time

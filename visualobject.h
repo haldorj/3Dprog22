@@ -3,6 +3,7 @@
 
 #include <QOpenGLFunctions_4_1_Core>
 #include <QMatrix4x4>
+#include <QMatrix2x2>
 #include <vector>
 #include "vertex.h"
 

@@ -4,14 +4,18 @@
 #include <fstream>
 #include <iostream>
 #include "visualobject.h"
+#include "tetrahedron.h"
+#include <QGenericMatrix>
 
 class Curves : public VisualObject
 {
 public:
     Curves();
+    Curves(std::string filnavn);
     ~Curves();
 
-    void DoCurve();
+    void constructCurve();
+    void calculateCurve();
     void writeFile(std::string filename);
     void readFile(std::string filename);
 
