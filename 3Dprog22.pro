@@ -7,9 +7,11 @@ TARGET      = 3D-programmering
 
 SOURCES += main.cpp \
     camera.cpp \
+    collisionvolume.cpp \
     cube.cpp \
     curves.cpp \
     disc.cpp \
+    interactivecollisionvolume.cpp \
     interactiveobject.cpp \
     logger.cpp \
     mainwindow.cpp \
@@ -25,9 +27,11 @@ SOURCES += main.cpp \
 
 HEADERS += \
     camera.h \
+    collisionvolume.h \
     cube.h \
     curves.h \
     disc.h \
+    interactivecollisionvolume.h \
     interactiveobject.h \
     logger.h \
     mainwindow.h \

@@ -7,6 +7,7 @@
 #include <QKeyEvent>
 #include <QStatusBar>
 #include <QDebug>
+#include <QVector3D>
 
 #include <string>
 
@@ -17,6 +18,8 @@
 #include "tetrahedron.h"
 #include "cube.h"
 #include "curves.h"
+#include "collisionvolume.h"
+#include "interactivecollisionvolume.h"
 
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
@@ -48,9 +51,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //Make the gameloop timer:
     mRenderTimer = new QTimer(this);
 
-    mia = new InteractiveObject;
-    mObjects.push_back(mia);
-
+    //mia = new InteractiveObject;
+    //mObjects.push_back(mia);
     //mObjects.push_back(new TriangleSurface());
     //mObjects.push_back(new XYZ());
     //mObjects.push_back(new Tetrahedron());
@@ -58,21 +60,46 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //mObjects.push_back(new OctahedronBall(5));
     //mObjects.push_back(new Disc());
 
+    //    mMap.insert(std::pair<std::string, VisualObject*>{"triangleSurface",new TriangleSurface("frankes.txt")});
+    //    std::pair<std::string, VisualObject*> par{"disc", new Disc{}};
+    //    mMap.insert(par);
+
     mMap.insert(std::pair<std::string, VisualObject*>{"xyz",new XYZ{}});
-//    mMap.insert(std::pair<std::string, VisualObject*>{"triangleSurface",new TriangleSurface("frankes.txt")});
-//    mMap.insert(std::pair<std::string, VisualObject*> {"mia", mia});
-//    std::pair<std::string, VisualObject*> par{"disc", new Disc{}};
-//    mMap.insert(par);
     mMap.insert(std::pair<std::string, VisualObject*>{"curve", new Curves("curve.txt")});
 
-    mMap.insert(std::pair<std::string, VisualObject*>{"P1", new Tetrahedron(-3,-1)});
-    mMap.insert(std::pair<std::string, VisualObject*>{"P2", new Tetrahedron(-2,-1)});
-    mMap.insert(std::pair<std::string, VisualObject*>{"P3", new Tetrahedron(-1.5,-2)});
-    mMap.insert(std::pair<std::string, VisualObject*>{"P4", new Tetrahedron(-1,1)});
-    mMap.insert(std::pair<std::string, VisualObject*>{"P5", new Tetrahedron(1,1)});
-    mMap.insert(std::pair<std::string, VisualObject*>{"P6", new Tetrahedron(1,-1)});
-    mMap.insert(std::pair<std::string, VisualObject*>{"P7", new Tetrahedron(2,2)});
-    mMap.insert(std::pair<std::string, VisualObject*>{"P8", new Tetrahedron(3,2)});
+    mia = new InteractiveObject;
+    miaCollision = new InteractiveCollisionVolume(1);
+    mMap.insert(std::pair<std::string, VisualObject*> {"mia", mia});
+    mMap.insert(std::pair<std::string, VisualObject*> {"miaCollision", miaCollision});
+
+    //Oppgave 1 OBLIG 2
+    mObjects.push_back(new OctahedronBall(-3,-1, 3));
+    mObjects.push_back(new OctahedronBall(-2,-1, 3));
+    mObjects.push_back(new OctahedronBall(-1.5,-2, 3));
+    mObjects.push_back(new OctahedronBall(-1,1, 3));
+    mObjects.push_back(new OctahedronBall(1,1, 3));
+    mObjects.push_back(new OctahedronBall(1,-1, 3));
+    mObjects.push_back(new OctahedronBall(2,2, 3));
+    mObjects.push_back(new OctahedronBall(3,2, 3));
+
+    // Kollisjonsvolum
+    mItems.push_back(new CollisionVolume(-3, -1, 1));
+    mItems.push_back(new CollisionVolume(-2, -1, 1));
+    mItems.push_back(new CollisionVolume(-1.5, -2, 1));
+    mItems.push_back(new CollisionVolume(-1, 1, 1));
+    mItems.push_back(new CollisionVolume(1, 1, 1));
+    mItems.push_back(new CollisionVolume(1, -1, 1));
+    mItems.push_back(new CollisionVolume(2, 2, 1));
+    mItems.push_back(new CollisionVolume(3, 2, 1));
+
+    //miaCollision = new InteractiveCollisionVolume;
+    //mItems.push_back(miaCollision);
+
+    // Oppgave 2 OBLIG 2
+    //mMap.insert(std::pair<std::string, VisualObject*>{"P5", new Tetrahedron(-3,-3)});
+    //mMap.insert(std::pair<std::string, VisualObject*>{"P6", new Tetrahedron(-2, 2)});
+    //mMap.insert(std::pair<std::string, VisualObject*>{"P7", new Tetrahedron( 2,-2)});
+    //mMap.insert(std::pair<std::string, VisualObject*>{"P8", new Tetrahedron( 3, 3)});
 }
 
 RenderWindow::~RenderWindow()
@@ -160,7 +187,15 @@ void RenderWindow::init()
     for (auto it=mMap.begin(); it!=mMap.end(); it++)
         (*it).second->init(mMmatrixUniform);
 
+    for (auto it=mItems.begin(); it!=mItems.end(); it++)
+        (*it)->init(mMmatrixUniform);
+
+    for (auto it=mObjects.begin(); it!=mObjects.end(); it++)
+        (*it)->init(mMmatrixUniform);
+
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
+
+    miaCollision->move(0,0,0);
 }
 
 // Called each frame - doing the rendering!!!
@@ -179,7 +214,7 @@ void RenderWindow::render()
     //what shader to use
     glUseProgram(mShaderProgram->getProgram());
 
-    mCamera.lookAt( QVector3D{0,0,3}, QVector3D{0,0,0}, QVector3D{0,1,0} );
+    mCamera.lookAt( QVector3D{0,0,4}, QVector3D{0,0,0}, QVector3D{0,1,0} );
     mCamera.update();
     //for (auto it = mObjects.begin(); it != mObjects.end(); it++)
     //    (*it)->draw();
@@ -187,6 +222,13 @@ void RenderWindow::render()
     // Alternativ: Erstatter std::vector<VisualObject*> med unordered map
     for (auto it=mMap.begin(); it!=mMap.end(); it++)
         (*it).second->draw();
+
+    for (auto it=mItems.begin(); it!=mItems.end(); it++)
+        (*it)->draw();
+
+    for (auto it = mObjects.begin(); it != mObjects.end(); it++)
+        (*it)->draw();
+
 
     //mMap["disc"]->move(0.05f);
 
@@ -207,6 +249,8 @@ void RenderWindow::render()
     //                   degree, x,   y,   z -axis
     if(mRotate)
         mPmatrix->rotate(2.f, 0.f, 1.0, 0.f);
+
+    // Kollisjon
 }
 
 //This function is called from Qt when window is exposed (shown)
@@ -330,26 +374,50 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     {
         mMainWindow->close();       //Shuts down the whole program
     }
-
     //You get the keyboard input like this
     if(event->key() == Qt::Key_A)
     {
-        //mia->move(-0.1f, 0.0f, 0.0f);
+        miaCollision->move(-0.2f, 0.0f, 0.0f);
+        miaCollision->mWorldPosition += QVector3D{-0.1f, 0.0f, 0.0f};
         mMap["mia"]->move(-0.1f, 0.0f, 0.0f);
     }
     if(event->key() == Qt::Key_D)
     {
-        //mia->move(0.1f, 0.0f, 0.0f);
+        miaCollision->move(0.2f, 0.0f, 0.0f);
+        miaCollision->mWorldPosition += QVector3D{0.1f, 0.0f, 0.0f};
         mMap["mia"]->move(0.1f, 0.0f, 0.0f);
     }
     if(event->key() == Qt::Key_W)
     {
-        //mia->move(0.0f, 0.1f, 0.0f);
+        miaCollision->move(0.0f, 0.2f, 0.0f);
+        miaCollision->mWorldPosition += QVector3D{0.0f, 0.1f, 0.0f};
         mMap["mia"]->move(0.0f, 0.1f, 0.0f);
     }
     if(event->key() == Qt::Key_S)
     {
-        //mia->move(0.0f, -0.1f, 0.0f);
+        miaCollision->move(0.0f, -0.2f, 0.0f);
+        miaCollision->mWorldPosition += QVector3D{0.0f, -0.1f, 0.0f};
         mMap["mia"]->move(0.0f, -0.1f, 0.0f);
     }
+
+    for (auto i = 0; i < mObjects.size(); i++)
+    {
+        // Finne avstand mellom posisjoner
+        QVector3D dist = miaCollision->getPosition() - mItems[i]->getPosition();
+        // [x1 – x2, y1 – y2, z1 – z2]
+        float d = dist.length();
+        //sqrt((x1 – x2)^2, (y1 – y2)^2, (z1 – z2)^2)
+        float r1 = miaCollision->getRadius(); // Må legges til
+        float r2 = mItems[i]->getRadius();
+        if (d < r1 + r2 && mItems[i]->bIsActive == true)
+        {
+            // slå av rendering
+            mObjects[i]->move(100,100,-100);
+            mItems[i]->move(100,100,-100);
+            mItems[i]->bIsActive = false;
+        }
+    }
+
+    //std::cout << "WorldPos: \n";
+    //std::cout << "x: " << miaCollision->getPosition().x() << " y: " << miaCollision->getPosition().y() << " z: " << miaCollision->getPosition().z() << "\n";
 }

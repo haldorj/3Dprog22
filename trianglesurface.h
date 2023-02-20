@@ -16,7 +16,6 @@ public:
    void readFile(std::string filename);
    void writeFile(std::string filename);
    void init(GLint matrixUniform) override;
-   void constructOblig1Oppg3Math();
    void draw() override;
 };
 

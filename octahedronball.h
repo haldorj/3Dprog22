@@ -12,9 +12,12 @@ private:
    void oktaederUnitBall();
 public:
    OctahedronBall(int n=0);
+   OctahedronBall(float x, float y, int n=0);
    ~OctahedronBall();
    void init(GLint matrixUniform);
    void draw();
+
+   void move(float x, float y, float z) override;
 };
 
 #endif // OCTAHEDRONBALL_H

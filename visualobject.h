@@ -5,6 +5,7 @@
 #include <QMatrix4x4>
 #include <QMatrix2x2>
 #include <vector>
+#include <QVector3D>
 #include "vertex.h"
 
 class VisualObject : public QOpenGLFunctions_4_1_Core {
@@ -17,7 +18,13 @@ public:
    virtual void move(float x, float y, float z) { }
    // move for simulering (for eksempel NPC)
    virtual void move(float dt) { }
+
+   QVector3D mWorldPosition{};
+   virtual QVector3D getPosition() { return mWorldPosition; }
+   virtual float getRadius() { return radius; }
+   bool bIsActive = true;
 protected:
+   float radius;
    std::vector<Vertex> mVertices;
    GLuint mVAO{0};
    GLuint mVBO{0};

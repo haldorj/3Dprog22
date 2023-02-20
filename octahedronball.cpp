@@ -29,6 +29,16 @@ OctahedronBall::OctahedronBall(int n) : m_rekursjoner(n), m_indeks(0), VisualObj
    oktaederUnitBall();
 }
 
+OctahedronBall::OctahedronBall(float x, float y, int n) : m_rekursjoner(n), m_indeks(0), VisualObject()
+{
+   mVertices.reserve(3 * 8 * pow(4, m_rekursjoner));
+   oktaederUnitBall();
+   mMatrix.translate(x, y, 0.0f);
+   mMatrix.scale(0.25);
+
+   radius = 0.25;
+}
+
 
 //!//! \brief OctahedronBall::~OctahedronBall() virtual destructor
 //!
@@ -154,8 +164,8 @@ const QVector3D& v3)
 
      glBindVertexArray(0);
 
-     mMatrix.translate(-2,0,0);
-     mMatrix.scale(0.5,0.5,0.5);
+     mMatrix.translate(0,0,0);
+     //mMatrix.scale(0.8,0.8,0.8);
   }
 
 
@@ -176,7 +186,14 @@ const QVector3D& v3)
   {
      glBindVertexArray( mVAO );
      glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
-     glDrawArrays(GL_TRIANGLES, 0, mVertices.size());//mVertices.size());
 
-     mMatrix.rotate(1, 1,1,0);
+    glDrawArrays(GL_TRIANGLES, 0, mVertices.size());//mVertices.size());
+
+     mMatrix.rotate(1, 1, 1, 0);
   }
+
+  void OctahedronBall::move(float x, float y, float z)
+  {
+      mMatrix.translate(x, y, z);
+  }
+

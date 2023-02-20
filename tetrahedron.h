@@ -7,6 +7,7 @@
 #include "vertex.h"
 #include "visualobject.h"
 
+
 class Tetrahedron : public VisualObject
 {
 public:

@@ -42,7 +42,9 @@ private slots:
 private:
     void init();            //initialize things we need before rendering
     std::vector<VisualObject*> mObjects;
+    std::vector<VisualObject*> mItems; // kollisjonsvolum
     VisualObject* mia;
+    VisualObject* miaCollision;
     Camera mCamera{};
 
     std::unordered_map<std::string, VisualObject*> mMap;    // alternativ container

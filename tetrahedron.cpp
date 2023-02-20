@@ -70,11 +70,12 @@ void Tetrahedron::draw()
     glBindVertexArray( mVAO );
     glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
     glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
-    mMatrix.rotate(1.0f, -1.0f, 2.0f, 0.5f);
+
+    mMatrix.rotate(2.0f, -1.0f, 2.0f, 0.5f);
 }
 
 void Tetrahedron::translatePoint(float x, float y)
 {
     mMatrix.translate(x,y,0);
-    mMatrix.scale(0.2);
+    mMatrix.scale(0.25);
 }
