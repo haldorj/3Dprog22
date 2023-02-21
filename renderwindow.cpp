@@ -20,6 +20,7 @@
 #include "curves.h"
 #include "collisionvolume.h"
 #include "interactivecollisionvolume.h"
+#include "npc.h""
 
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
@@ -91,9 +92,6 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mItems.push_back(new CollisionVolume(1, -1, 1));
     mItems.push_back(new CollisionVolume(2, 2, 1));
     mItems.push_back(new CollisionVolume(3, 2, 1));
-
-    //miaCollision = new InteractiveCollisionVolume;
-    //mItems.push_back(miaCollision);
 
     // Oppgave 2 OBLIG 2
     //mMap.insert(std::pair<std::string, VisualObject*>{"P5", new Tetrahedron(-3,-3)});
@@ -250,7 +248,24 @@ void RenderWindow::render()
     if(mRotate)
         mPmatrix->rotate(2.f, 0.f, 1.0, 0.f);
 
-    // Kollisjon
+    // "Kollisjon"
+    for (auto i = 0; i < mObjects.size(); i++)
+    {
+        // Finne avstand mellom posisjoner
+        QVector3D dist = miaCollision->getPosition() - mItems[i]->getPosition();
+        // [x1 – x2, y1 – y2, z1 – z2]
+        float d = dist.length();
+        //sqrt((x1 – x2)^2, (y1 – y2)^2, (z1 – z2)^2)
+        float r1 = miaCollision->getRadius(); // Må legges til
+        float r2 = mItems[i]->getRadius();
+        if (d < r1 + r2 && mItems[i]->bIsActive == true)
+        {
+            // slå av rendering / flytt objekter
+            mObjects[i]->move(100,100,-100);
+            mItems[i]->move(100,100,-100);
+            mItems[i]->bIsActive = false;
+        }
+    }
 }
 
 //This function is called from Qt when window is exposed (shown)
@@ -377,47 +392,35 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     //You get the keyboard input like this
     if(event->key() == Qt::Key_A)
     {
-        miaCollision->move(-0.2f, 0.0f, 0.0f);
-        miaCollision->mWorldPosition += QVector3D{-0.1f, 0.0f, 0.0f};
-        mMap["mia"]->move(-0.1f, 0.0f, 0.0f);
+        moveMiaX(-0.2f);
     }
     if(event->key() == Qt::Key_D)
     {
-        miaCollision->move(0.2f, 0.0f, 0.0f);
-        miaCollision->mWorldPosition += QVector3D{0.1f, 0.0f, 0.0f};
-        mMap["mia"]->move(0.1f, 0.0f, 0.0f);
+        moveMiaX(0.2f);
     }
     if(event->key() == Qt::Key_W)
     {
-        miaCollision->move(0.0f, 0.2f, 0.0f);
-        miaCollision->mWorldPosition += QVector3D{0.0f, 0.1f, 0.0f};
-        mMap["mia"]->move(0.0f, 0.1f, 0.0f);
+        moveMiaY(0.2f);
     }
     if(event->key() == Qt::Key_S)
     {
-        miaCollision->move(0.0f, -0.2f, 0.0f);
-        miaCollision->mWorldPosition += QVector3D{0.0f, -0.1f, 0.0f};
-        mMap["mia"]->move(0.0f, -0.1f, 0.0f);
-    }
-
-    for (auto i = 0; i < mObjects.size(); i++)
-    {
-        // Finne avstand mellom posisjoner
-        QVector3D dist = miaCollision->getPosition() - mItems[i]->getPosition();
-        // [x1 – x2, y1 – y2, z1 – z2]
-        float d = dist.length();
-        //sqrt((x1 – x2)^2, (y1 – y2)^2, (z1 – z2)^2)
-        float r1 = miaCollision->getRadius(); // Må legges til
-        float r2 = mItems[i]->getRadius();
-        if (d < r1 + r2 && mItems[i]->bIsActive == true)
-        {
-            // slå av rendering
-            mObjects[i]->move(100,100,-100);
-            mItems[i]->move(100,100,-100);
-            mItems[i]->bIsActive = false;
-        }
+        moveMiaY(-0.2f);
     }
 
     //std::cout << "WorldPos: \n";
     //std::cout << "x: " << miaCollision->getPosition().x() << " y: " << miaCollision->getPosition().y() << " z: " << miaCollision->getPosition().z() << "\n";
+}
+
+void RenderWindow::moveMiaX(float movespeed)
+{
+    miaCollision->move(movespeed, 0.0f, 0.0f);
+    miaCollision->mWorldPosition += QVector3D{movespeed * miaCollision->getRadius(), 0.0f, 0.0f};
+    mMap["mia"]->move(movespeed * miaCollision->getRadius(), 0.0f, 0.0f);
+}
+
+void RenderWindow::moveMiaY(float movespeed)
+{
+    miaCollision->move(0.0f, movespeed, 0.0f);
+    miaCollision->mWorldPosition += QVector3D{0.0f, movespeed * miaCollision->getRadius(), 0.0f};
+    mMap["mia"]->move(0.0f, movespeed * miaCollision->getRadius(), 0.0f);
 }

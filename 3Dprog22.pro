@@ -15,6 +15,7 @@ SOURCES += main.cpp \
     interactiveobject.cpp \
     logger.cpp \
     mainwindow.cpp \
+    npc.cpp \
     octahedronball.cpp \
     quadtree.cpp \
     renderwindow.cpp \
@@ -35,6 +36,7 @@ HEADERS += \
     interactiveobject.h \
     logger.h \
     mainwindow.h \
+    npc.h \
     octahedronball.h \
     quadtree.h \
     renderwindow.h \

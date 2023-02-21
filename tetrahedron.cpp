@@ -12,6 +12,13 @@ Tetrahedron::Tetrahedron(float x, float y)
     translatePoint(x,y);
 }
 
+void Tetrahedron::translatePoint(float x, float y)
+{
+    mMatrix.translate(x,y,0);
+    mMatrix.scale(0.25);
+}
+
+
 Tetrahedron::~Tetrahedron()
 {
 
@@ -74,8 +81,3 @@ void Tetrahedron::draw()
     mMatrix.rotate(2.0f, -1.0f, 2.0f, 0.5f);
 }
 
-void Tetrahedron::translatePoint(float x, float y)
-{
-    mMatrix.translate(x,y,0);
-    mMatrix.scale(0.25);
-}

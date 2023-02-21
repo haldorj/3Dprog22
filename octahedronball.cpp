@@ -34,9 +34,7 @@ OctahedronBall::OctahedronBall(float x, float y, int n) : m_rekursjoner(n), m_in
    mVertices.reserve(3 * 8 * pow(4, m_rekursjoner));
    oktaederUnitBall();
    mMatrix.translate(x, y, 0.0f);
-   mMatrix.scale(0.25);
-
-   radius = 0.25;
+   mMatrix.scale(0.15);
 }
 
 
@@ -68,6 +66,13 @@ const QVector3D& v3)
      mVertices.push_back(v);
      v = Vertex{v3.x(), v3.y(), v3.z(), v3.x(), v3.y(), v3.z()};
      mVertices.push_back(v);
+
+//    Vertex v{v1.x(), v1.y(), v1.z(), v1.x(), v1.y(), v1.z()};
+//     mVertices.push_back(v);
+//     v = Vertex{v2.x(), v2.y(), v2.z(), v2.x(), v2.y(), v2.z()};
+//     mVertices.push_back(v);
+//     v = Vertex{v3.x(), v3.y(), v3.z(), v3.x(), v3.y(), v3.z()};
+//     mVertices.push_back(v);
 }
 
 

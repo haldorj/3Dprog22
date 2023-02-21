@@ -28,13 +28,11 @@ void Curves::constructCurve()
         //float z = (mX*x) + mY;                // x , y
 
         float z = (mA * pow(x,3)) + (mB * pow(x,2)) + (mC * x) + mD;
-
         mVertices.push_back(Vertex{ x,y,z,1,1,0 });
 
         //z = (mX*(x+h)) + mY;                  //x+h, y
 
         z = (mA * pow((x+h),3)) + (mB * pow((x+h),2)) + (mC * (x+h)) + mD;
-
         mVertices.push_back(Vertex{ x + h,y,z,1,1,0 });
     }
     writeFile("curve.txt");
@@ -101,6 +99,9 @@ void Curves::calculateCurveTask1Parabel()
     MatrixXd c = A.transpose()*y;
     MatrixXd x = B.inverse()*c;
 
+    std::cout << "Min matrise \n";
+    std::cout << x << std::endl;
+
     if (x(0,0))
         mB = x(0,0);
     if (x(1,0))
@@ -109,7 +110,7 @@ void Curves::calculateCurveTask1Parabel()
         mD = x(2,0);
 
     std::cout << "Function for the curve: " << std::endl;
-    std::cout << "y = " << mX << "x + " << mY << std::endl;
+    std::cout << "y = " << mB << "x^2 + " << mC << "x " << mD << std::endl;
 }
 
 void Curves::calculateCurve2()
@@ -229,9 +230,4 @@ void Curves::draw()
     glBindVertexArray( mVAO );
     glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
     glDrawArrays(GL_LINES, 0, mVertices.size());
-}
-
-void Curves::move(float dx, float dy, float dz)
-{
-
 }

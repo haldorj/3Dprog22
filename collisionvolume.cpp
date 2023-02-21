@@ -35,7 +35,9 @@ CollisionVolume::CollisionVolume(float x, float y, int n) : m_rekursjoner(n), m_
     oktaederUnitBall();
     mMatrix.translate(x, y, 0.0f);
     mWorldPosition = {x, y, 0.0f};
-    mMatrix.scale(0.275f);
+    radius = 0.2f;
+    mMatrix.scale(radius);
+
 
     std::cout << "x: " << getPosition().x() << " y: " << getPosition().y() << " z: " << getPosition().z() << "\n";
 }

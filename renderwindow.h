@@ -45,14 +45,16 @@ private:
     std::vector<VisualObject*> mItems; // kollisjonsvolum
     VisualObject* mia;
     VisualObject* miaCollision;
+    VisualObject* BOT;
     Camera mCamera{};
 
     std::unordered_map<std::string, VisualObject*> mMap;    // alternativ container
 
+    void moveMiaX(float movespeed);
+    void moveMiaY(float movespeed);
+
     QOpenGLContext *mContext{nullptr};  //Our OpenGL context
     bool mInitialized{false};
-
-
 
     Shader *mShaderProgram{nullptr};    //holds pointer the GLSL shader program
     GLint  mPmatrixUniform;

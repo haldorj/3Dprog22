@@ -17,8 +17,6 @@ public:
    void init(GLint matrixUniform);
    void draw();
    float mx, my, mz; // posisjon
-
-   float radius{};
 };
 
 #endif // COLLISIONVOLUME_H

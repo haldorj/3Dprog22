@@ -6,8 +6,6 @@
 #include <eigen-3.4.0/Eigen/Dense>
 
 #include "visualobject.h"
-#include "tetrahedron.h"
-
 
 class Curves : public VisualObject
 {
@@ -25,7 +23,7 @@ public:
 
     void draw() override;
     void init(GLint matrixUniform) override;
-    void move(float dx, float dy, float dz) override;
+
 private:
     float mX{};
     float mY{};

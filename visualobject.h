@@ -5,6 +5,7 @@
 #include <QMatrix4x4>
 #include <QMatrix2x2>
 #include <vector>
+#include <list>
 #include <QVector3D>
 #include "vertex.h"
 
@@ -23,8 +24,10 @@ public:
    virtual QVector3D getPosition() { return mWorldPosition; }
    virtual float getRadius() { return radius; }
    bool bIsActive = true;
+
+   std::list<Vertex> pathNPC;
 protected:
-   float radius;
+   float radius = 0;
    std::vector<Vertex> mVertices;
    GLuint mVAO{0};
    GLuint mVBO{0};
