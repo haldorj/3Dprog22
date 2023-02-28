@@ -9,6 +9,9 @@
 #include <QDebug>
 #include <QVector3D>
 
+
+#include "qthread.h"
+
 #include <string>
 
 #include "shader.h"
@@ -20,7 +23,6 @@
 #include "curves.h"
 #include "collisionvolume.h"
 #include "interactivecollisionvolume.h"
-#include "npc.h""
 
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
@@ -72,6 +74,9 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     miaCollision = new InteractiveCollisionVolume(1);
     mMap.insert(std::pair<std::string, VisualObject*> {"mia", mia});
     mMap.insert(std::pair<std::string, VisualObject*> {"miaCollision", miaCollision});
+
+    BOT = new NPC;
+    mMap.insert(std::pair<std::string, VisualObject*> {"NPC", BOT});
 
     //Oppgave 1 OBLIG 2
     mObjects.push_back(new OctahedronBall(-3,-1, 3));
@@ -178,21 +183,21 @@ void RenderWindow::init()
 
    // mCamera.init(mPmatrixUniform, mVmatrixUniform);
 
-    //for (auto it = mObjects.begin(); it != mObjects.end(); it++)
-      //  (*it)->init(mMmatrixUniform);
+    // Pickups
+    for (auto it=mObjects.begin(); it!=mObjects.end(); it++)
+        (*it)->init(mMmatrixUniform);
+
+    // Kollisjonsvolum
+    for (auto it=mItems.begin(); it!=mItems.end(); it++)
+        (*it)->init(mMmatrixUniform);
 
     // Alternativ: Erstatter std::vector<VisualObject*> med unordered map
     for (auto it=mMap.begin(); it!=mMap.end(); it++)
         (*it).second->init(mMmatrixUniform);
 
-    for (auto it=mItems.begin(); it!=mItems.end(); it++)
-        (*it)->init(mMmatrixUniform);
-
-    for (auto it=mObjects.begin(); it!=mObjects.end(); it++)
-        (*it)->init(mMmatrixUniform);
+    readFile("curve.txt");
 
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
-
     miaCollision->move(0,0,0);
 }
 
@@ -212,7 +217,7 @@ void RenderWindow::render()
     //what shader to use
     glUseProgram(mShaderProgram->getProgram());
 
-    mCamera.lookAt( QVector3D{0,0,4}, QVector3D{0,0,0}, QVector3D{0,1,0} );
+    mCamera.lookAt( QVector3D{0,0,5}, QVector3D{0,0,0}, QVector3D{0,1,0} );
     mCamera.update();
     //for (auto it = mObjects.begin(); it != mObjects.end(); it++)
     //    (*it)->draw();
@@ -423,4 +428,59 @@ void RenderWindow::moveMiaY(float movespeed)
     miaCollision->move(0.0f, movespeed, 0.0f);
     miaCollision->mWorldPosition += QVector3D{0.0f, movespeed * miaCollision->getRadius(), 0.0f};
     mMap["mia"]->move(0.0f, movespeed * miaCollision->getRadius(), 0.0f);
+}
+
+void RenderWindow::readFile(std::string filename)
+{
+
+    std::ifstream inn;
+    inn.open(filename.c_str());
+
+    if (inn.is_open())
+    {
+        mPath.clear();
+        std::cout << "READFILE: File " << filename << " was opened!" << std::endl;
+        int n;
+        Vertex vertex;
+        inn >> n;
+        for (int i = 0; i < n; i++)
+        {
+            inn >> vertex;
+            mPath.push_back(vertex);
+        }
+        inn.close();
+
+        mPath.pop_front();
+        mPath.pop_back();
+        moveNPC();
+    }
+    else
+    {
+        std::cout << "READFILE: File " << filename << " was not opened." << std::endl;
+    }
+}
+
+void RenderWindow::moveNPC()
+{
+    //BOT->move(mPath.begin()->getX(), mPath.begin()->getZ(), mPath.begin()->getY());
+    //std::cout << "x: " << path.begin()->getX() << " y: " << path.begin()->getY() << "\n";
+
+    for (std::list<Vertex>::iterator it=mPath.begin(); it != mPath.end(); ++it)
+    {
+        BOT->move(it->getX(), it->getZ(), 0.0f);
+
+        //std::cout << "Forward: x: " << it->getX() << " y: " << it->getZ() << "\n";
+    }
+    BOT->move(mPath.begin()->getX(), mPath.begin()->getZ(), mPath.begin()->getY());
+//    for (std::list<Vertex>::iterator it=path.end(); it != path.begin(); ++it)
+//    {
+//        BOT->move(it->getX(), it->getZ(), it->getY());
+//        std::cout << "Backward: x: " << it->getX() << " y: " << it->getZ() << "\n";
+//    }
+//    moveNPC(path);
+
+
+//    std::cout << "mylist contains: \n";
+//    for (std::list<Vertex>::iterator it=mPath.begin(); it != mPath.end(); ++it)
+//    std::cout << *it << std::endl;
 }

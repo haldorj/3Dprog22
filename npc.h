@@ -11,6 +11,7 @@ public:
     void init(GLint matrixUniform) override;
     void draw() override;
     void move(float x, float y, float z) override;
+    void move(float dt) override { }
 private:
    float mx, my, mz; // posisjon
 };

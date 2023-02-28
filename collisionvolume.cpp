@@ -39,7 +39,7 @@ CollisionVolume::CollisionVolume(float x, float y, int n) : m_rekursjoner(n), m_
     mMatrix.scale(radius);
 
 
-    std::cout << "x: " << getPosition().x() << " y: " << getPosition().y() << " z: " << getPosition().z() << "\n";
+    //std::cout << "x: " << getPosition().x() << " y: " << getPosition().y() << " z: " << getPosition().z() << "\n";
 }
 
 

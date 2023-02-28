@@ -73,14 +73,17 @@ void NPC::draw()
     glBindVertexArray( mVAO );
     glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
     glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
-
-    mMatrix.rotate(2.0f, -1.0f, 2.0f, 0.5f);
 }
 
 void NPC::move(float x, float y, float z)
 {
-    for (auto it = pathNPC.begin(); it != pathNPC.end(); ++it)
-    {
-        mMatrix.translate(it->getX(), it->getY(), it->getZ());
-    }
+    mx += x;
+    my += y;
+    mz += z;
+    std::cout << "WorldPos: X: " << mx <<" Y:"<< my << "\n";
+    mWorldPosition = {mx,my,mz};
+    mMatrix.translate(mx, my, mz);
+    mx =0;
+    my =0;
+    mz =0;
 }

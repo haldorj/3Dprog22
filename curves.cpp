@@ -25,13 +25,11 @@ void Curves::constructCurve()
     float xmin = -4.0f, xmax = 4.0f, h = 0.25f;
     for (auto x = xmin; x < xmax; x += h)
     {
-        //float z = (mX*x) + mY;                // x , y
-
+        // x , y
         float z = (mA * pow(x,3)) + (mB * pow(x,2)) + (mC * x) + mD;
         mVertices.push_back(Vertex{ x,y,z,1,1,0 });
 
-        //z = (mX*(x+h)) + mY;                  //x+h, y
-
+        //x+h, y
         z = (mA * pow((x+h),3)) + (mB * pow((x+h),2)) + (mC * (x+h)) + mD;
         mVertices.push_back(Vertex{ x + h,y,z,1,1,0 });
     }
@@ -74,6 +72,7 @@ void Curves::calculateCurveTask1()
 
 void Curves::calculateCurveTask1Parabel()
 {
+    // Y verdier til punktene
     MatrixXd y(8,1);
     y(0,0) = -1;
     y(1,0) = -1;
@@ -86,6 +85,8 @@ void Curves::calculateCurveTask1Parabel()
 
     MatrixXd A(8,3);
 
+    // X verdier til punktene
+    //             x^2              x^1            x^0
     A(0,0) = pow(-3,2);    A(0,1) = -3;    A(0,2) = 1;
     A(1,0) = pow(-2,2);    A(1,1) = -2;    A(1,2) = 1;
     A(2,0) = pow(-1.5,2);  A(2,1) = -1.5;  A(2,2) = 1;
@@ -168,8 +169,6 @@ void Curves::readFile(std::string filename)
     {
         std::cout << "READFILE: File " << filename << " was not opened." << std::endl;
     }
-
-
 }
 
 void Curves::writeFile(std::string filename)

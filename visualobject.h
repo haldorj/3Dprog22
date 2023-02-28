@@ -24,8 +24,6 @@ public:
    virtual QVector3D getPosition() { return mWorldPosition; }
    virtual float getRadius() { return radius; }
    bool bIsActive = true;
-
-   std::list<Vertex> pathNPC;
 protected:
    float radius = 0;
    std::vector<Vertex> mVertices;
