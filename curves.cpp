@@ -22,7 +22,7 @@ void Curves::constructCurve()
 {
     calculateCurveTask1Parabel();
     float y = 0;
-    float xmin = -4.0f, xmax = 4.0f, h = 0.25f;
+    float xmin = -4.0f, xmax = 4.0f, h = 0.125f;
     for (auto x = xmin; x < xmax; x += h)
     {
         // x , y

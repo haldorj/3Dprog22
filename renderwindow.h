@@ -50,14 +50,10 @@ private:
     VisualObject* BOT;
     Camera mCamera{};
 
-    std::list<Vertex> mPath;
-
     std::unordered_map<std::string, VisualObject*> mMap;    // alternativ container
 
     void moveMiaX(float movespeed);
     void moveMiaY(float movespeed);
-    void readFile(std::string filename);
-    void moveNPC();
 
     QOpenGLContext *mContext{nullptr};  //Our OpenGL context
     bool mInitialized{false};

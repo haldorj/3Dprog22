@@ -1,4 +1,5 @@
 #include "npc.h"
+#include <Windows.h>
 
 NPC::NPC()
 {
@@ -66,6 +67,11 @@ void NPC::init(GLint matrixUniform)
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,  sizeof(Vertex),  reinterpret_cast<GLvoid*>(3 * sizeof(GLfloat)) );
     glEnableVertexAttribArray(1);
     glBindVertexArray(0);
+    readFile("curve.txt");
+
+
+
+    mMatrix.translate(mPath.begin()->getX(), mPath.begin()->getZ(), mPath.begin()->getY());
 }
 
 void NPC::draw()
@@ -73,6 +79,8 @@ void NPC::draw()
     glBindVertexArray( mVAO );
     glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
     glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
+
+    moveNPC();
 }
 
 void NPC::move(float x, float y, float z)
@@ -80,10 +88,111 @@ void NPC::move(float x, float y, float z)
     mx += x;
     my += y;
     mz += z;
-    std::cout << "WorldPos: X: " << mx <<" Y:"<< my << "\n";
+    //std::cout << "WorldPos: X: " << mx <<" Y:"<< my << "\n";
     mWorldPosition = {mx,my,mz};
     mMatrix.translate(mx, my, mz);
     mx =0;
     my =0;
     mz =0;
 }
+
+void NPC::move(float dt, QVector3D velocity)
+{
+  QVector3D ds=velocity*dt;
+
+  // mPosition = mPosition + ds;		// hvis mPosisjon er Vector3d
+  mPosition.translate(ds.x(), ds.y(), ds.z());	// hvis mPosisjon er Matrix4x4
+
+  // normalen kan generelt være en parameter inn
+  QVector3D normal = QVector3D{0.0f, 1.0f, 0.0f};
+
+
+  // bruker kryssprodukt for å finne rotasjonsvektor
+  QVector3D rotation = QVector3D::crossProduct(normal, mVelocity);
+  rotation.normalize();
+
+
+  // bruk formelen ds = r dt ==> dt = ds/r
+  // for å finne ut hvor mye hjulet har rotert
+  // og oppdater rotasjonsmatrisen
+  // husk å starte med mRotation som identitetsmatrise
+
+
+  mMatrix = mPosition*mRotation;		// hvis mPosition og mRotation er Matrix4x4
+}
+
+void NPC::readFile(std::string filename)
+{
+    std::ifstream inn;
+    inn.open(filename.c_str());
+
+    if (inn.is_open())
+    {
+        mPath.clear();
+        std::cout << "READFILE: File " << filename << " was opened!" << std::endl;
+        int n;
+        Vertex vertex;
+        inn >> n;
+        mPath.reserve(n);
+        for (int i = 0; i < n; i++)
+        {
+            inn >> vertex;
+            mPath.push_back(vertex);
+        }
+        inn.close();
+
+        //for (int i = 0;  i < mVertices.size(); i++)
+            //std::cout << mVertices[i] << std::endl;
+    }
+    else
+    {
+        std::cout << "READFILE: File " << filename << " was not opened." << std::endl;
+    }
+
+}
+
+void NPC::moveNPC()
+{
+    QVector3D Next;
+
+    // MOVE FORWARD
+    if (AtStart)
+    {
+        if (i < mPath.size() - 1)
+        {
+            Next = {mPath[i+1].getX() - mPath[i].getX(),
+                              mPath[i+1].getZ() - mPath[i].getZ(),
+                              mPath[i+1].getY() - mPath[i].getY()};
+
+            move(Next.x(), Next.y(), Next.z());
+            i++;
+        }
+        if (i == mPath.size() - 1)
+        {
+            AtStart = false;
+        }
+    }
+    // MOVE BACKWARD
+    if (!AtStart)
+    {
+        if (i > 1)
+        {
+            Next = {mPath[i-1].getX() - mPath[i].getX(),
+                              mPath[i-1].getZ() - mPath[i].getZ(),
+                              mPath[i-1].getY() - mPath[i].getY()};
+
+            move(Next.x(), Next.y(), Next.z());
+            i--;
+        }
+        if (i == 1)
+            AtStart = true;
+    }
+}
+
+void NPC::MoveToEnd()
+{
+    std::cout << "SPACE \n";
+    mMatrix.translate(0.6,0.3,0);
+}
+
+

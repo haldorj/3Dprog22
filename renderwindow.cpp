@@ -195,8 +195,6 @@ void RenderWindow::init()
     for (auto it=mMap.begin(); it!=mMap.end(); it++)
         (*it).second->init(mMmatrixUniform);
 
-    readFile("curve.txt");
-
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
     miaCollision->move(0,0,0);
 }
@@ -263,6 +261,7 @@ void RenderWindow::render()
         //sqrt((x1 – x2)^2, (y1 – y2)^2, (z1 – z2)^2)
         float r1 = miaCollision->getRadius(); // Må legges til
         float r2 = mItems[i]->getRadius();
+
         if (d < r1 + r2 && mItems[i]->bIsActive == true)
         {
             // slå av rendering / flytt objekter
@@ -390,6 +389,12 @@ void RenderWindow::startOpenGLDebugger()
 // NB - see renderwindow.h for signatures on keyRelease and mouse input
 void RenderWindow::keyPressEvent(QKeyEvent *event)
 {
+
+    if (event->key() == Qt::Key_Space)
+    {
+        BOT->MoveToEnd();
+    }
+
     if (event->key() == Qt::Key_Escape)
     {
         mMainWindow->close();       //Shuts down the whole program
@@ -428,59 +433,4 @@ void RenderWindow::moveMiaY(float movespeed)
     miaCollision->move(0.0f, movespeed, 0.0f);
     miaCollision->mWorldPosition += QVector3D{0.0f, movespeed * miaCollision->getRadius(), 0.0f};
     mMap["mia"]->move(0.0f, movespeed * miaCollision->getRadius(), 0.0f);
-}
-
-void RenderWindow::readFile(std::string filename)
-{
-
-    std::ifstream inn;
-    inn.open(filename.c_str());
-
-    if (inn.is_open())
-    {
-        mPath.clear();
-        std::cout << "READFILE: File " << filename << " was opened!" << std::endl;
-        int n;
-        Vertex vertex;
-        inn >> n;
-        for (int i = 0; i < n; i++)
-        {
-            inn >> vertex;
-            mPath.push_back(vertex);
-        }
-        inn.close();
-
-        mPath.pop_front();
-        mPath.pop_back();
-        moveNPC();
-    }
-    else
-    {
-        std::cout << "READFILE: File " << filename << " was not opened." << std::endl;
-    }
-}
-
-void RenderWindow::moveNPC()
-{
-    //BOT->move(mPath.begin()->getX(), mPath.begin()->getZ(), mPath.begin()->getY());
-    //std::cout << "x: " << path.begin()->getX() << " y: " << path.begin()->getY() << "\n";
-
-    for (std::list<Vertex>::iterator it=mPath.begin(); it != mPath.end(); ++it)
-    {
-        BOT->move(it->getX(), it->getZ(), 0.0f);
-
-        //std::cout << "Forward: x: " << it->getX() << " y: " << it->getZ() << "\n";
-    }
-    BOT->move(mPath.begin()->getX(), mPath.begin()->getZ(), mPath.begin()->getY());
-//    for (std::list<Vertex>::iterator it=path.end(); it != path.begin(); ++it)
-//    {
-//        BOT->move(it->getX(), it->getZ(), it->getY());
-//        std::cout << "Backward: x: " << it->getX() << " y: " << it->getZ() << "\n";
-//    }
-//    moveNPC(path);
-
-
-//    std::cout << "mylist contains: \n";
-//    for (std::list<Vertex>::iterator it=mPath.begin(); it != mPath.end(); ++it)
-//    std::cout << *it << std::endl;
 }

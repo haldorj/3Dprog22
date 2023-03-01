@@ -19,11 +19,14 @@ public:
    virtual void move(float x, float y, float z) { }
    // move for simulering (for eksempel NPC)
    virtual void move(float dt) { }
+   virtual void move(float dt, QVector3D velocity) { }
 
    QVector3D mWorldPosition{};
    virtual QVector3D getPosition() { return mWorldPosition; }
+   virtual QVector3D setPosition(float x, float y, float z) { mWorldPosition = QVector3D{x,y,z}; }
    virtual float getRadius() { return radius; }
    bool bIsActive = true;
+   virtual void MoveToEnd() {};
 protected:
    float radius = 0;
    std::vector<Vertex> mVertices;
@@ -38,6 +41,6 @@ protected:
    QMatrix4x4 mRotation;
    QMatrix4x4 mScale;
    // Legger til rette for simulering
-   QVector3D mVelocity{-0.01, 0, 0};
+   QVector3D mVelocity{  };
 };
 #endif // VISUALOBJECT_H
