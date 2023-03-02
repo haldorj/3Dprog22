@@ -21,6 +21,18 @@ public:
    virtual void move(float dt) { }
    virtual void move(float dt, QVector3D velocity) { }
 
+   void SetRotation(float angle, float x, float y, float z)
+   {
+       mMatrix.rotate(angle, x, y, z);
+   }
+
+
+   void SetLocation(float x, float y, float z)
+   {
+       mMatrix.translate(x,y,z);
+   }
+
+
    QVector3D mWorldPosition{};
    virtual QVector3D getPosition() { return mWorldPosition; }
    virtual QVector3D setPosition(float x, float y, float z) { mWorldPosition = QVector3D{x,y,z}; }

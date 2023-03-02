@@ -17,6 +17,7 @@ SOURCES += main.cpp \
     mainwindow.cpp \
     npc.cpp \
     octahedronball.cpp \
+    plane.cpp \
     quadtree.cpp \
     renderwindow.cpp \
     shader.cpp \
@@ -38,6 +39,7 @@ HEADERS += \
     mainwindow.h \
     npc.h \
     octahedronball.h \
+    plane.h \
     quadtree.h \
     renderwindow.h \
     shader.h \

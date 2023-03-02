@@ -56,3 +56,20 @@ void Plane::draw()
     glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
     //mMatrix.rotate(1.0f, -1.0f, 2.0f, 0.5f);
 }
+
+
+
+void Plane::SetRotation(float angle, float x, float y, float z)
+{
+    mMatrix.rotate(angle, x, y, z);
+}
+
+
+void Plane::SetLocation(float x, float y, float z)
+{
+    mMatrix.translate(x,y,z);
+
+}
+
+
+

@@ -23,6 +23,7 @@
 #include "curves.h"
 #include "collisionvolume.h"
 #include "interactivecollisionvolume.h"
+#include "plane.h"
 
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
@@ -77,7 +78,9 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
 
     BOT = new NPC;
     mMap.insert(std::pair<std::string, VisualObject*> {"NPC", BOT});
-
+    mMap.insert(std::pair<std::string, VisualObject*>{"Plane", new Plane{}});
+    mMap.at("Plane")->SetLocation(1,1,1);
+    mMap.at("Plane")->SetRotation(90,2,3,4);
     //Oppgave 1 OBLIG 2
     mObjects.push_back(new OctahedronBall(-3,-1, 3));
     mObjects.push_back(new OctahedronBall(-2,-1, 3));
@@ -174,8 +177,8 @@ void RenderWindow::init()
     //NB: hardcoded path to files! You have to change this if you change directories for the project.
     //Qt makes a build-folder besides the project folder. That is why we go down one directory
     // (out of the build-folder) and then up into the project folder.
-    mShaderProgram = new Shader("C:/4 semester/3D Prog/3Dprog22/3Dprog22/plainshader.vert",
-                                "C:/4 semester/3D Prog/3Dprog22/3Dprog22/plainshader.frag");
+    mShaderProgram = new Shader("../3Dprog22/plainshader.vert",
+                                "../3Dprog22/plainshader.frag");
 
     mPmatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "pmatrix" );
     mVmatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "vmatrix" );

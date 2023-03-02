@@ -12,6 +12,9 @@ public:
    void draw() override;
    void init(GLint matrixUniform);
 
+   void SetRotation(float angle, float x, float y, float z);
+   void SetLocation(float x, float y, float z);
+
 
 };
 
