@@ -106,7 +106,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mItems.push_back(new CollisionVolume(0.2, 2, 2, 1));
     mItems.push_back(new CollisionVolume(0.2, 3, 2, 1));
     // Door
-    mItems.push_back(new CollisionVolume(1, -4.5, -0.7, 1));
+    mItems.push_back(new CollisionVolume(1.3, -4.5, -0.5, 1));
 
 
 
@@ -233,8 +233,7 @@ void RenderWindow::render()
         mCamera.lookAt( QVector3D{0,0,5}, QVector3D{0,0,0}, QVector3D{0,1,0} );
     else
         // Scene 2
-        mCamera.lookAt( QVector3D{0,0,5}, QVector3D{-50,-50,0}, QVector3D{0,1,0} );
-
+        mCamera.lookAt( QVector3D{-10,-10,5}, QVector3D{-10,-10,0}, QVector3D{0,1,0} );
 
     mCamera.update();
     //for (auto it = mObjects.begin(); it != mObjects.end(); it++)
@@ -256,19 +255,18 @@ void RenderWindow::render()
         mia->getPosition();
         miaCollision->getPosition();
 
-        if (miaCollision->getPosition().x() < - 5)
+        if (miaCollision->getPosition().x() < -4.5
+            && miaCollision->getPosition().y() <= 1
+            && miaCollision->getPosition().y() >= -1)
         {
             bSceneOne = false;
-
-            mia->move(-0.1,-0.1,0);
-            miaCollision->move(-0.1,-0.1,0);
-
-            if (miaCollision->getPosition().x() <= -10 || miaCollision->getPosition().y() <= -10)
+            if (bShouldMove)
             {
-                mia->move(0.1,0.1,0);
-                miaCollision->move(0.1,0.1,0);
-            }
+                moveMiaX(-15);
+                moveMiaY(-25);
 
+                bShouldMove = false;
+            }
         }
     }
 
@@ -457,8 +455,8 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
         moveMiaY(-0.2f);
     }
 
-    //std::cout << "WorldPos: \n";
-    //std::cout << "x: " << miaCollision->getPosition().x() << " y: " << miaCollision->getPosition().y() << " z: " << miaCollision->getPosition().z() << "\n";
+    std::cout << "WorldPos: \n";
+    std::cout << "x: " << miaCollision->getPosition().x() << " y: " << miaCollision->getPosition().y() << " z: " << miaCollision->getPosition().z() << "\n";
 }
 
 void RenderWindow::moveMiaX(float movespeed)
