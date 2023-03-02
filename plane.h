@@ -12,7 +12,11 @@ public:
    void draw() override;
    void init(GLint matrixUniform);
 
+   void OpenDoor();
 
+private:
+   int i = 0;
+   bool bShouldOpen = false;
 };
 
 #endif // PLANE_H

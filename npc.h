@@ -16,8 +16,6 @@ public:
     // Getting path / movement of NPC
     void readFile(std::string filename);
     void moveNPC();
-
-    void MoveToEnd() override;
 private:
     int i = 1;
 

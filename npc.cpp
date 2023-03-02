@@ -189,10 +189,4 @@ void NPC::moveNPC()
     }
 }
 
-void NPC::MoveToEnd()
-{
-    std::cout << "SPACE \n";
-    mMatrix.translate(0.6,0.3,0);
-}
-
 

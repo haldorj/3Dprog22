@@ -23,6 +23,7 @@
 #include "curves.h"
 #include "collisionvolume.h"
 #include "interactivecollisionvolume.h"
+#include "plane.h"
 
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
@@ -78,6 +79,11 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     BOT = new NPC;
     mMap.insert(std::pair<std::string, VisualObject*> {"NPC", BOT});
 
+    mMap.insert(std::pair<std::string, VisualObject*>{"house",new Cube(2,   -6, -1.5, 0,    1, 1, 1)});
+    //mMap.insert(std::pair<std::string, VisualObject*>{"door",new Plane{}});
+
+    //mMap.at("house")->SetRotation();
+
     //Oppgave 1 OBLIG 2
     mObjects.push_back(new OctahedronBall(-3,-1, 3));
     mObjects.push_back(new OctahedronBall(-2,-1, 3));
@@ -87,16 +93,22 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mObjects.push_back(new OctahedronBall(1,-1, 3));
     mObjects.push_back(new OctahedronBall(2,2, 3));
     mObjects.push_back(new OctahedronBall(3,2, 3));
+    mObjects.push_back(new Plane());
+    //amObjects.push_back(new OctahedronBall(-4.5, -0.7, 1));
 
-    // Kollisjonsvolum
-    mItems.push_back(new CollisionVolume(-3, -1, 1));
-    mItems.push_back(new CollisionVolume(-2, -1, 1));
-    mItems.push_back(new CollisionVolume(-1.5, -2, 1));
-    mItems.push_back(new CollisionVolume(-1, 1, 1));
-    mItems.push_back(new CollisionVolume(1, 1, 1));
-    mItems.push_back(new CollisionVolume(1, -1, 1));
-    mItems.push_back(new CollisionVolume(2, 2, 1));
-    mItems.push_back(new CollisionVolume(3, 2, 1));
+    // Kollisjonsvolum               //(radius, x, y, recursions)
+    mItems.push_back(new CollisionVolume(0.2, -3, -1, 1));
+    mItems.push_back(new CollisionVolume(0.2, -2, -1, 1));
+    mItems.push_back(new CollisionVolume(0.2, -1.5, -2, 1));
+    mItems.push_back(new CollisionVolume(0.2, -1, 1, 1));
+    mItems.push_back(new CollisionVolume(0.2, 1, 1, 1));
+    mItems.push_back(new CollisionVolume(0.2, 1, -1, 1));
+    mItems.push_back(new CollisionVolume(0.2, 2, 2, 1));
+    mItems.push_back(new CollisionVolume(0.2, 3, 2, 1));
+    // Door
+    mItems.push_back(new CollisionVolume(1, -4.5, -0.7, 1));
+
+
 
     // Oppgave 2 OBLIG 2
     //mMap.insert(std::pair<std::string, VisualObject*>{"P5", new Tetrahedron(-3,-3)});
@@ -203,7 +215,7 @@ void RenderWindow::init()
 void RenderWindow::render()
 {
     mCamera.init(mPmatrixUniform, mVmatrixUniform);
-    mCamera.perspective(90.0f, 16.0f/9.0f, 0.1f, 10.0f);
+    mCamera.perspective(70.0f, 16.0f/9.0f, 0.1f, 10.f);
 
     mTimeStart.restart(); //restart FPS clock
     mContext->makeCurrent(this); //must be called every frame (every time mContext->swapBuffers is called)
@@ -215,7 +227,15 @@ void RenderWindow::render()
     //what shader to use
     glUseProgram(mShaderProgram->getProgram());
 
-    mCamera.lookAt( QVector3D{0,0,5}, QVector3D{0,0,0}, QVector3D{0,1,0} );
+
+    if (bSceneOne)
+        // Scene 1
+        mCamera.lookAt( QVector3D{0,0,5}, QVector3D{0,0,0}, QVector3D{0,1,0} );
+    else
+        // Scene 2
+        mCamera.lookAt( QVector3D{0,0,5}, QVector3D{-50,-50,0}, QVector3D{0,1,0} );
+
+
     mCamera.update();
     //for (auto it = mObjects.begin(); it != mObjects.end(); it++)
     //    (*it)->draw();
@@ -229,6 +249,28 @@ void RenderWindow::render()
 
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
         (*it)->draw();
+
+
+    if (mia && miaCollision)
+    {
+        mia->getPosition();
+        miaCollision->getPosition();
+
+        if (miaCollision->getPosition().x() < - 5)
+        {
+            bSceneOne = false;
+
+            mia->move(-0.1,-0.1,0);
+            miaCollision->move(-0.1,-0.1,0);
+
+            if (miaCollision->getPosition().x() <= -10 || miaCollision->getPosition().y() <= -10)
+            {
+                mia->move(0.1,0.1,0);
+                miaCollision->move(0.1,0.1,0);
+            }
+
+        }
+    }
 
 
     //mMap["disc"]->move(0.05f);
@@ -252,7 +294,7 @@ void RenderWindow::render()
         mPmatrix->rotate(2.f, 0.f, 1.0, 0.f);
 
     // "Kollisjon"
-    for (auto i = 0; i < mObjects.size(); i++)
+    for (auto i = 0; i < mItems.size(); i++)
     {
         // Finne avstand mellom posisjoner
         QVector3D dist = miaCollision->getPosition() - mItems[i]->getPosition();
@@ -264,10 +306,14 @@ void RenderWindow::render()
 
         if (d < r1 + r2 && mItems[i]->bIsActive == true)
         {
-            // slå av rendering / flytt objekter
-            mObjects[i]->move(100,100,-100);
+            // slå av rendering / flytt ob
             mItems[i]->move(100,100,-100);
             mItems[i]->bIsActive = false;
+            if (mObjects[i])
+            {
+                mObjects[i]->move(100,100,-100);
+                mObjects[i]->OpenDoor();
+            }
         }
     }
 }
@@ -389,12 +435,6 @@ void RenderWindow::startOpenGLDebugger()
 // NB - see renderwindow.h for signatures on keyRelease and mouse input
 void RenderWindow::keyPressEvent(QKeyEvent *event)
 {
-
-    if (event->key() == Qt::Key_Space)
-    {
-        BOT->MoveToEnd();
-    }
-
     if (event->key() == Qt::Key_Escape)
     {
         mMainWindow->close();       //Shuts down the whole program

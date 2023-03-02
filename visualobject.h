@@ -26,7 +26,21 @@ public:
    virtual QVector3D setPosition(float x, float y, float z) { mWorldPosition = QVector3D{x,y,z}; }
    virtual float getRadius() { return radius; }
    bool bIsActive = true;
-   virtual void MoveToEnd() {};
+
+   // Function meant for opening a door.
+   virtual void OpenDoor() { }
+
+   void SetRotation(float angle, float x, float y, float z)
+      {
+          mMatrix.rotate(angle, x, y, z);
+      }
+
+
+      void SetLocation(float x, float y, float z)
+      {
+          mMatrix.translate(x,y,z);
+      }
+
 protected:
    float radius = 0;
    std::vector<Vertex> mVertices;

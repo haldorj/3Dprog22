@@ -55,6 +55,8 @@ private:
     void moveMiaX(float movespeed);
     void moveMiaY(float movespeed);
 
+    bool bSceneOne = true;
+
     QOpenGLContext *mContext{nullptr};  //Our OpenGL context
     bool mInitialized{false};
 

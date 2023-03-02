@@ -29,13 +29,13 @@ CollisionVolume::CollisionVolume(int n) : m_rekursjoner(n), m_indeks(0), VisualO
    oktaederUnitBall();
 }
 
-CollisionVolume::CollisionVolume(float x, float y, int n) : m_rekursjoner(n), m_indeks(0), VisualObject()
+CollisionVolume::CollisionVolume(float rad, float x, float y, int n) : m_rekursjoner(n), m_indeks(0), VisualObject()
 {
     mVertices.reserve(3 * 8 * pow(4, m_rekursjoner));
     oktaederUnitBall();
     mMatrix.translate(x, y, 0.0f);
     mWorldPosition = {x, y, 0.0f};
-    radius = 0.2f;
+    radius = rad;
     mMatrix.scale(radius);
 
 

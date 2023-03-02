@@ -42,6 +42,67 @@ Cube::Cube()
     mMatrix.setToIdentity();
 }
 
+Cube::Cube(float size,float x, float y, float z, float r, float g, float b)
+{
+
+    /*bottom from drawing*/
+    Vertex v0{ x,y,z,   r,g,b };    mVertices.push_back(v0);
+    Vertex v1{ x,y+size,z, r,g,b };    mVertices.push_back(v1);
+    Vertex v2{ x+size,z+size,z, r,g,b };    mVertices.push_back(v2);
+
+    Vertex v3{ x,y,z,       r,g,b };    mVertices.push_back(v3);
+    Vertex v4{ x+size,y,z,     r,g,b };    mVertices.push_back(v4);
+    Vertex v5{ x+ size,y+ size,z,   r,g,b };    mVertices.push_back(v5);
+
+
+    /* left of drawing */
+    Vertex v6{ x,y,z,     r,g,b };    mVertices.push_back(v6);
+    Vertex v7{ x+ size,y,z,   r,g,b };    mVertices.push_back(v7);
+    Vertex v8{ x+ size,y,z+ size, r,g,b };    mVertices.push_back(v8);
+
+    Vertex v9{ x,y,z, r,g,b };    mVertices.push_back(v9);
+    Vertex v10{ x,y,z+ size, r,g,b }; mVertices.push_back(v10);
+    Vertex v11{ x+ size,y,z+ size, r,g,b };   mVertices.push_back(v11);
+
+    /*right of drawing */
+    Vertex v12{ x,y+ size,z, r,g,b };    mVertices.push_back(v12);
+    Vertex v13{ x+ size,y+ size,z, r,g,b };    mVertices.push_back(v13);
+    Vertex v14{ x+ size,y+ size,z+ size, r,g,b };    mVertices.push_back(v14);
+
+    Vertex v15{x+ size,y+ size,z+ size, r,g,b };    mVertices.push_back(v15);
+    Vertex v16{ x,y+ size,z, r,g,b };    mVertices.push_back(v16);
+    Vertex v17{ x,y+ size,z, r,g,b };    mVertices.push_back(v17);
+
+    /* front of drawing */
+    Vertex v18{ x+ size,y,z, r,g,b };    mVertices.push_back(v18);
+    Vertex v19{ x+ size,y+ size,z, r,g,b };    mVertices.push_back(v19);
+    Vertex v20{ x+ size,y+ size,z+ size, r,g,b };    mVertices.push_back(v20);
+
+    Vertex v21{ x+ size,y,z, r,g,b };    mVertices.push_back(v21);
+    Vertex v22{ x+ size,y,z+ size, r,g,b };    mVertices.push_back(v22);
+    Vertex v23{ x+ size,y+ size,z+ size, r,g,b };    mVertices.push_back(v23);
+
+    /* behind of drawing*/
+    Vertex v24{ x,y,z, r,g,b };    mVertices.push_back(v24);
+    Vertex v25{ x,y+ size,z, r,g,b };    mVertices.push_back(v25);
+    Vertex v26{ x,y+ size,z+ size, r,g,b };    mVertices.push_back(v26);
+
+    Vertex v27{ x,y,z, r,g,b };    mVertices.push_back(v27);
+    Vertex v28{ x,y,z+ size, r,g,b };    mVertices.push_back(v28);
+    Vertex v29{ x,y+ size,z+ size, r,g,b };    mVertices.push_back(v29);
+
+    /* above of drawing */
+    Vertex v30{ x,y,z+ size, r,g,b };    mVertices.push_back(v30);
+    Vertex v31{ x+ size,y,z+ size, r,g,b };    mVertices.push_back(v31);
+    Vertex v32{ x+ size,y+ size,z+ size, r,g,b };    mVertices.push_back(v32);
+
+    Vertex v33{ x+ size,y+ size,z+ size, r,g,b };    mVertices.push_back(v33);
+    Vertex v34{ x,y+ size,z+ size, r,g,b };    mVertices.push_back(v34);
+    Vertex v35{ x,y,z+ size, r,g,b };    mVertices.push_back(v35);
+
+    mMatrix.setToIdentity();
+}
+
 Cube::~Cube()
 {
 
@@ -73,7 +134,6 @@ void Cube::init(GLint matrixUniform)
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,  sizeof(Vertex),  reinterpret_cast<GLvoid*>(3 * sizeof(GLfloat)) );
     glEnableVertexAttribArray(1);
     glBindVertexArray(0);
-    mMatrix.translate(0.5f, 0.0f, 0.5f);
 }
 
 void Cube::draw()
@@ -81,5 +141,4 @@ void Cube::draw()
     glBindVertexArray( mVAO );
     glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
     glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
-    mMatrix.rotate(1.0f, 1.0f, 2.0f, 0.5f);
 }

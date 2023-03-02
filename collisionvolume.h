@@ -12,7 +12,7 @@ private:
    void oktaederUnitBall();
 public:
    CollisionVolume(int n=0);
-   CollisionVolume(float x, float y, int n=0);
+   CollisionVolume(float rad, float x, float y, int n=0);
    ~CollisionVolume();
    void init(GLint matrixUniform);
    void draw();
