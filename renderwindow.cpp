@@ -71,6 +71,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mMap.insert(std::pair<std::string, VisualObject*>{"xyz",new XYZ{}});
     mMap.insert(std::pair<std::string, VisualObject*>{"curve", new Curves("curve.txt")});
 
+    mMap.insert(std::pair<std::string, VisualObject*>{"character", new TriangleSurface("Objects/Character.fbx")});
+
     mia = new InteractiveObject;
     miaCollision = new InteractiveCollisionVolume(1);
     mMap.insert(std::pair<std::string, VisualObject*> {"mia", mia});
