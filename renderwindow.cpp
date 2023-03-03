@@ -57,22 +57,12 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //Make the gameloop timer:
     mRenderTimer = new QTimer(this);
 
-    //mia = new InteractiveObject;
-    //mObjects.push_back(mia);
-    //mObjects.push_back(new TriangleSurface());
-    //mObjects.push_back(new XYZ());
-    //mObjects.push_back(new Tetrahedron());
-    //mObjects.push_back(new Cube());
-    //mObjects.push_back(new OctahedronBall(5));
-    //mObjects.push_back(new Disc());
-
-    //    mMap.insert(std::pair<std::string, VisualObject*>{"triangleSurface",new TriangleSurface("frankes.txt")});
-    //    std::pair<std::string, VisualObject*> par{"disc", new Disc{}};
-    //    mMap.insert(par);
-
     mMap.insert(MapPair{"xyz",new XYZ{}});
-    mMap.insert(MapPair{"curve", new Curves("curve.txt")});
-    mMap.insert(MapPair{"curve2", new Curves("curve2.txt")});
+
+    Path = new Curves("curve.txt");
+    Path2 = new Curves("curve2.txt");
+    mMap.insert(MapPair{"Path", Path});
+    mMap.insert(MapPair{"Path2", Path2});
 
     mMap.insert(MapPair{"character", new TriangleSurface("Objects/Character.fbx")});
 
@@ -81,18 +71,10 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mMap.insert(MapPair{"mia", mia});
     mMap.insert(MapPair{"miaCollision", miaCollision});
 
-    BOT = new NPC("curve.txt");
-    mMap.insert(MapPair{"NPC", BOT});
-    BOT2 = new NPC("curve2.txt");
-    mMap.insert(MapPair{"NPC2", BOT2});
-
     mMap.insert(MapPair{"house",new Cube(2,   -6, -1.5, 0,    1, 1, 1)});
     mMap.insert(MapPair{"Object", new Tetrahedron(-10,-10, 1.2)});
-    mMap.insert(MapPair{"house2",new Cube(4,   -12, -12, 0,    1, 1, 1)});
+    mMap.insert(MapPair{"house2",new Cube(4,   -12, -12, -0.1,    1, 1, 1)});
     mMap.insert(MapPair{"Floor", new Plane(-12.5,-7.5,5)});
-    //mMap.insert(std::pair<std::string, VisualObject*>{"door",new Plane{}});
-
-    //mMap.at("house")->SetRotation();
 
     //Oppgave 1 OBLIG 2
     mObjects.push_back(new OctahedronBall(-3,-1, 3));
@@ -118,13 +100,17 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     // Door
     mItems.push_back(new CollisionVolume(1.3, -4.5, -0.5, 1));
 
-
+    BOT = new NPC("curve.txt");
+    mMap.insert(MapPair{"NPC", BOT});
+    BOT2 = new NPC("curve2.txt");
+    mMap.insert(MapPair{"NPC2", BOT2});
 
     // Oppgave 2 OBLIG 2
     //mMap.insert(std::pair<std::string, VisualObject*>{"P5", new Tetrahedron(-3,-3)});
     //mMap.insert(std::pair<std::string, VisualObject*>{"P6", new Tetrahedron(-2, 2)});
     //mMap.insert(std::pair<std::string, VisualObject*>{"P7", new Tetrahedron( 2,-2)});
     //mMap.insert(std::pair<std::string, VisualObject*>{"P8", new Tetrahedron( 3, 3)});
+
 }
 
 RenderWindow::~RenderWindow()
@@ -218,7 +204,12 @@ void RenderWindow::init()
         (*it).second->init(mMmatrixUniform);
 
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
+
+
     miaCollision->move(0,0,0);
+
+    BOT2->bShouldRender = false;
+    Path2->bShouldRender = false;
 }
 
 // Called each frame - doing the rendering!!!
@@ -280,7 +271,6 @@ void RenderWindow::render()
         }
     }
 
-
     //mMap["disc"]->move(0.05f);
 
     //Calculate framerate before
@@ -315,11 +305,11 @@ void RenderWindow::render()
         if (d < r1 + r2 && mItems[i]->bIsActive == true)
         {
             // slå av rendering / flytt ob
-            mItems[i]->move(100,100,-100);
+            mItems[i]->bShouldRender = false;
             mItems[i]->bIsActive = false;
             if (mObjects[i])
             {
-                mObjects[i]->move(100,100,-100);
+                mObjects[i]->bShouldRender = false;
                 mObjects[i]->OpenDoor();
             }
         }
@@ -446,6 +436,24 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_Escape)
     {
         mMainWindow->close();       //Shuts down the whole program
+    }
+
+    if(event->key() == Qt::Key_Q)
+    {
+        if (BOT->bShouldRender)
+        {
+            BOT->bShouldRender = false;
+            BOT2->bShouldRender = true;
+            Path->bShouldRender = false;
+            Path2->bShouldRender = true;
+        }
+        else
+        {
+            BOT->bShouldRender = true;
+            BOT2->bShouldRender = false;
+            Path2->bShouldRender = false;
+            Path->bShouldRender = true;
+        }
     }
     //You get the keyboard input like this
     if(event->key() == Qt::Key_A)

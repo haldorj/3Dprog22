@@ -47,9 +47,13 @@ private:
     std::vector<VisualObject*> mItems; // kollisjonsvolum
     VisualObject* mia;
     VisualObject* miaCollision;
+    Camera mCamera{};
+
+    // NPCs
     VisualObject* BOT;
     VisualObject* BOT2;
-    Camera mCamera{};
+    VisualObject* Path;
+    VisualObject* Path2;
 
     std::unordered_map<std::string, VisualObject*> mMap;    // alternativ container
 
