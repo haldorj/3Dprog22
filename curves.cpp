@@ -2,27 +2,26 @@
 
 using namespace Eigen;
 
-Curves::Curves()
-{
-    constructCurve();
-    mMatrix.setToIdentity();
-}
-
-
 Curves::Curves(std::string filnavn)
 {
-    constructCurve();
+    constructCurve(filnavn);
     readFile(filnavn);
     mMatrix.setToIdentity();
 }
 
 Curves::~Curves(){}
 
-void Curves::constructCurve()
+void Curves::constructCurve(std::string filnavn)
 {
-    calculateCurveTask1Parabel();
+    if (filnavn == "curve.txt")
+        calculateCurveTask1Parabel();
+    else if (filnavn == "curve2.txt")
+        calculateCurve2();
+    else
+        return;
+
     float y = 0;
-    float xmin = -4.0f, xmax = 4.0f, h = 0.125f;
+    float xmin = -3.0f, xmax = 3.0f, h = 0.125f;
     for (auto x = xmin; x < xmax; x += h)
     {
         // x , y
@@ -31,9 +30,9 @@ void Curves::constructCurve()
 
         //x+h, y
         z = (mA * pow((x+h),3)) + (mB * pow((x+h),2)) + (mC * (x+h)) + mD;
-        mVertices.push_back(Vertex{ x + h,y,z,1,1,0 });
+        mVertices.push_back(Vertex{ x + h, y, z,1,1,0 });
     }
-    writeFile("curve.txt");
+    writeFile(filnavn);
 }
 
 void Curves::calculateCurveTask1()

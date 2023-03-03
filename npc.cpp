@@ -1,7 +1,7 @@
 #include "npc.h"
 #include <Windows.h>
 
-NPC::NPC()
+NPC::NPC(std::string path)
 {
     mVertices.push_back(Vertex{ -0.25f,-0.25f,-0.25f, 0.583f,  0.771f,  0.014f});
     mVertices.push_back(Vertex{-0.25f,-0.25f, 0.25f, 0.609f,  0.115f,  0.436f});
@@ -39,6 +39,8 @@ NPC::NPC()
     mVertices.push_back(Vertex{0.25f, 0.25f, 0.25f, 0.673f,  0.211f,  0.457f});
     mVertices.push_back(Vertex{-0.25f, 0.25f, 0.25f, 0.820f,  0.883f,  0.371f});
     mVertices.push_back(Vertex{0.25f,-0.25f, 0.25f, 0.820f,  0.883f,  0.371f});
+
+    readFile(path);
 }
 
 void NPC::init(GLint matrixUniform)
@@ -67,9 +69,6 @@ void NPC::init(GLint matrixUniform)
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,  sizeof(Vertex),  reinterpret_cast<GLvoid*>(3 * sizeof(GLfloat)) );
     glEnableVertexAttribArray(1);
     glBindVertexArray(0);
-    readFile("curve.txt");
-
-
 
     mMatrix.translate(mPath.begin()->getX(), mPath.begin()->getZ(), mPath.begin()->getY());
 }

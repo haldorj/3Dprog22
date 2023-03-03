@@ -10,11 +10,11 @@
 class Curves : public VisualObject
 {
 public:
-    Curves();
+    Curves() {};
     Curves(std::string filnavn);
     ~Curves();
 
-    void constructCurve();
+    void constructCurve(std::string filnavn);
     void calculateCurveTask1();
     void calculateCurveTask1Parabel();
     void calculateCurve2();

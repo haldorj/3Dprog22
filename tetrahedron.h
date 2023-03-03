@@ -12,13 +12,13 @@ class Tetrahedron : public VisualObject
 {
 public:
     Tetrahedron();
-    Tetrahedron(float x, float y);
+    Tetrahedron(float x, float y, float s);
     ~Tetrahedron() override;
     void constructTetrahedron();
     void init(GLint matrixUniform) override;
     void draw() override;
 
-    void translatePoint(float x, float y);
+    void translatePoint(float x, float y, float s);
 };
 
 #endif // TETRAHEDRON_H

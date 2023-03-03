@@ -6,7 +6,8 @@
 class NPC : public VisualObject
 {
 public:
-    NPC();
+    NPC() {};
+    NPC(std::string path);
     ~NPC() {};
     void init(GLint matrixUniform) override;
     void draw() override;

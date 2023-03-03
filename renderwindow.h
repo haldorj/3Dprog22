@@ -48,6 +48,7 @@ private:
     VisualObject* mia;
     VisualObject* miaCollision;
     VisualObject* BOT;
+    VisualObject* BOT2;
     Camera mCamera{};
 
     std::unordered_map<std::string, VisualObject*> mMap;    // alternativ container

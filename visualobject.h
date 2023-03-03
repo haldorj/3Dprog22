@@ -25,7 +25,9 @@ public:
    virtual QVector3D getPosition() { return mWorldPosition; }
    virtual QVector3D setPosition(float x, float y, float z) { mWorldPosition = QVector3D{x,y,z}; }
    virtual float getRadius() { return radius; }
+
    bool bIsActive = true;
+   bool bShouldRender = true;
 
    // Function meant for opening a door.
    virtual void OpenDoor() { }

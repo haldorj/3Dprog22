@@ -25,6 +25,8 @@
 #include "interactivecollisionvolume.h"
 #include "plane.h"
 
+typedef std::pair<std::string, VisualObject*> MapPair;
+
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     : mContext(nullptr), mInitialized(false), mMainWindow(mainWindow)
 
@@ -68,20 +70,26 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //    std::pair<std::string, VisualObject*> par{"disc", new Disc{}};
     //    mMap.insert(par);
 
-    mMap.insert(std::pair<std::string, VisualObject*>{"xyz",new XYZ{}});
-    mMap.insert(std::pair<std::string, VisualObject*>{"curve", new Curves("curve.txt")});
+    mMap.insert(MapPair{"xyz",new XYZ{}});
+    mMap.insert(MapPair{"curve", new Curves("curve.txt")});
+    mMap.insert(MapPair{"curve2", new Curves("curve2.txt")});
 
-    mMap.insert(std::pair<std::string, VisualObject*>{"character", new TriangleSurface("Objects/Character.fbx")});
+    mMap.insert(MapPair{"character", new TriangleSurface("Objects/Character.fbx")});
 
     mia = new InteractiveObject;
     miaCollision = new InteractiveCollisionVolume(1);
-    mMap.insert(std::pair<std::string, VisualObject*> {"mia", mia});
-    mMap.insert(std::pair<std::string, VisualObject*> {"miaCollision", miaCollision});
+    mMap.insert(MapPair{"mia", mia});
+    mMap.insert(MapPair{"miaCollision", miaCollision});
 
-    BOT = new NPC;
-    mMap.insert(std::pair<std::string, VisualObject*> {"NPC", BOT});
+    BOT = new NPC("curve.txt");
+    mMap.insert(MapPair{"NPC", BOT});
+    BOT2 = new NPC("curve2.txt");
+    mMap.insert(MapPair{"NPC2", BOT2});
 
-    mMap.insert(std::pair<std::string, VisualObject*>{"house",new Cube(2,   -6, -1.5, 0,    1, 1, 1)});
+    mMap.insert(MapPair{"house",new Cube(2,   -6, -1.5, 0,    1, 1, 1)});
+    mMap.insert(MapPair{"Object", new Tetrahedron(-10,-10, 1.2)});
+    mMap.insert(MapPair{"house2",new Cube(4,   -12, -12, 0,    1, 1, 1)});
+    mMap.insert(MapPair{"Floor", new Plane(-12.5,-7.5,5)});
     //mMap.insert(std::pair<std::string, VisualObject*>{"door",new Plane{}});
 
     //mMap.at("house")->SetRotation();
@@ -235,7 +243,7 @@ void RenderWindow::render()
         mCamera.lookAt( QVector3D{0,0,5}, QVector3D{0,0,0}, QVector3D{0,1,0} );
     else
         // Scene 2
-        mCamera.lookAt( QVector3D{-10,-10,5}, QVector3D{-10,-10,0}, QVector3D{0,1,0} );
+        mCamera.lookAt( QVector3D{-10,-10,3}, QVector3D{-10,-10,0}, QVector3D{0,1,0} );
 
     mCamera.update();
     //for (auto it = mObjects.begin(); it != mObjects.end(); it++)
@@ -264,8 +272,8 @@ void RenderWindow::render()
             bSceneOne = false;
             if (bShouldMove)
             {
-                moveMiaX(-15);
-                moveMiaY(-25);
+                moveMiaX(-10);
+                moveMiaY(-24);
 
                 bShouldMove = false;
             }

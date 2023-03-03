@@ -10,8 +10,27 @@ Plane::Plane()
    mVertices.push_back(Vertex{0, 0,   1,       0.5,0.5,0.5});
    mVertices.push_back(Vertex{0, 0,   0,          0,0,0});
 
-
    mMatrix.setToIdentity();
+
+   mMatrix.translate(-3.99f, -1.0f, 0.0f);
+   mMatrix.rotate(90,0,0,1);
+}
+
+Plane::Plane(float x, float y, float s)
+{
+    mVertices.push_back(Vertex{0, 0,   0,          1,0,0});
+    mVertices.push_back(Vertex{1, 0,   0,        0,1,0});
+    mVertices.push_back(Vertex{1, 0,   1,          0,0,1});
+
+    mVertices.push_back(Vertex{1, 0,   1,          1,1,1});
+    mVertices.push_back(Vertex{0, 0,   1,       0.5,0.5,0.5});
+    mVertices.push_back(Vertex{0, 0,   0,          0,0,0});
+
+    mMatrix.setToIdentity();
+
+    mMatrix.translate(x,y);
+    mMatrix.scale(s);
+    mMatrix.rotate(90,1,0,0);
 }
 
 Plane::~Plane()
@@ -46,8 +65,7 @@ void Plane::init(GLint matrixUniform)
     glEnableVertexAttribArray(1);
     glBindVertexArray(0);
 
-    mMatrix.translate(-3.99f, -1.0f, 0.0f);
-    mMatrix.rotate(90,0,0,1);
+
     //mMatrix.scale(1,1,1);
 }
 
