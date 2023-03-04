@@ -7,7 +7,8 @@ TriangleSurface::TriangleSurface() : VisualObject()
 
 TriangleSurface::TriangleSurface(std::string filnavn) : VisualObject()
 {
-    constructFrankes();
+    if(filnavn == "frankes.txt")
+        constructFrankes();
     readFile(filnavn);
     mMatrix.setToIdentity();
 }
@@ -45,9 +46,9 @@ void TriangleSurface::init(GLint matrixUniform)
 
     glBindVertexArray(0);
 
-    mMatrix.translate(-2.5, 0, 0);
-    mMatrix.rotate(-90, 1, 0, 0);
-    mMatrix.scale(1.25, 1.25, 1.25);
+    mMatrix.translate(10, 12, -2);
+    mMatrix.rotate(180, 0, 0, 1);
+    mMatrix.scale(20,20,2);
 }
 
 void TriangleSurface::draw()
@@ -55,9 +56,6 @@ void TriangleSurface::draw()
     glBindVertexArray( mVAO );
     glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
     glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
-    // TASK 1
-    mMatrix.rotate(-0.5, 0, 0, 1);
-
 }
 
 void TriangleSurface::readFile(std::string filename)

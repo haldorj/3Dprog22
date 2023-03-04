@@ -21,7 +21,7 @@ void Curves::constructCurve(std::string filnavn)
         return;
 
     float y = 0;
-    float xmin = -3.0f, xmax = 3.0f, h = 0.125f;
+    float xmin = -3.0f, xmax = 3.f, h = 0.05f;
     for (auto x = xmin; x < xmax; x += h)
     {
         // x , y

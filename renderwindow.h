@@ -36,7 +36,9 @@ public:
 
     void exposeEvent(QExposeEvent *) override;  //gets called when app is shown and resized
 
-    bool mRotate{true};     //Check if triangle should rotate
+    bool mRotate{true};
+    bool mPathOne{false};
+    bool mCollision{false};
 
 private slots:
     void render();          //the actual render - function
@@ -62,6 +64,9 @@ private:
 
     bool bSceneOne = true;
     bool bShouldMove = true;
+
+    void ToggleCollision();
+    void TogglePath();
 
     QOpenGLContext *mContext{nullptr};  //Our OpenGL context
     bool mInitialized{false};

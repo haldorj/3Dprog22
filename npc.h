@@ -12,7 +12,6 @@ public:
     void init(GLint matrixUniform) override;
     void draw() override;
     void move(float x, float y, float z) override;
-    void move(float dt, QVector3D velocity) override;
 
     // Getting path / movement of NPC
     void readFile(std::string filename);
@@ -23,7 +22,7 @@ private:
     std::vector<Vertex> mPath;
     float mx, my, mz; // posisjon
 
-    bool AtStart = true;
+    bool bForward = true;
 };
 
 #endif // NPC_H

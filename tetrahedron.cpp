@@ -6,15 +6,15 @@ Tetrahedron::Tetrahedron()
     mMatrix.setToIdentity();
 }
 
-Tetrahedron::Tetrahedron(float x, float y, float s)
+Tetrahedron::Tetrahedron(float x, float y, float z, float s)
 {
     constructTetrahedron();
-    translatePoint(x,y,s);
+    translatePoint(x,y,z,s);
 }
 
-void Tetrahedron::translatePoint(float x, float y, float s)
+void Tetrahedron::translatePoint(float x, float y, float z, float s)
 {
-    mMatrix.translate(x,y,0);
+    mMatrix.translate(x,y,z);
     mMatrix.scale(s);
 }
 

@@ -175,7 +175,11 @@ const QVector3D& v3)
   {
      glBindVertexArray( mVAO );
      glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
-     glDrawArrays(GL_LINES, 0, mVertices.size());//mVertices.size());
+
+     if (bShouldRender)
+         glDrawArrays(GL_LINES, 0, mVertices.size());
+     else
+         glDrawArrays(GL_NONE, 0, 0);
   }
 
 

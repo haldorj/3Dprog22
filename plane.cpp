@@ -2,13 +2,13 @@
 
 Plane::Plane()
 {
-   mVertices.push_back(Vertex{0, 0,   0,          1,0,0});
-   mVertices.push_back(Vertex{1, 0,   0,        0,1,0});
-   mVertices.push_back(Vertex{1, 0,   1,          0,0,1});
+   mVertices.push_back(Vertex{0, 0,   0,    0.65, 0.43, 0.3});
+   mVertices.push_back(Vertex{1, 0,   0,    0.65, 0.43, 0.3});
+   mVertices.push_back(Vertex{1, 0,   1,    0.65, 0.43, 0.3});
 
-   mVertices.push_back(Vertex{1, 0,   1,          1,1,1});
-   mVertices.push_back(Vertex{0, 0,   1,       0.5,0.5,0.5});
-   mVertices.push_back(Vertex{0, 0,   0,          0,0,0});
+   mVertices.push_back(Vertex{1, 0,   1,    0.45,0.3,0.21});
+   mVertices.push_back(Vertex{0, 0,   1,    0.45,0.3,0.21});
+   mVertices.push_back(Vertex{0, 0,   0,    0.45,0.3,0.21});
 
    mMatrix.setToIdentity();
 

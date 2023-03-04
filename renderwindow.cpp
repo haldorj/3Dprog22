@@ -57,24 +57,23 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //Make the gameloop timer:
     mRenderTimer = new QTimer(this);
 
-    mMap.insert(MapPair{"xyz",new XYZ{}});
+    mMap.insert(MapPair{"Surface",new TriangleSurface("frankes.txt")});
+    //mMap.insert(MapPair{"xyz",new XYZ{}});
 
     Path = new Curves("curve.txt");
     Path2 = new Curves("curve2.txt");
     mMap.insert(MapPair{"Path", Path});
     mMap.insert(MapPair{"Path2", Path2});
 
-    mMap.insert(MapPair{"character", new TriangleSurface("Objects/Character.fbx")});
-
     mia = new InteractiveObject;
     miaCollision = new InteractiveCollisionVolume(1);
     mMap.insert(MapPair{"mia", mia});
     mMap.insert(MapPair{"miaCollision", miaCollision});
 
-    mMap.insert(MapPair{"house",new Cube(2,   -6, -1.5, 0,    1, 1, 1)});
-    mMap.insert(MapPair{"Object", new Tetrahedron(-10,-10, 1.2)});
-    mMap.insert(MapPair{"house2",new Cube(4,   -12, -12, -0.1,    1, 1, 1)});
+    mMap.insert(MapPair{"house",new Cube(2,   -6, -1.5, 0,    0.8, 0.6, 0.3)});
+    mMap.insert(MapPair{"house2",new Cube(4,   -12, -12, -0.1,    0.8, 0.6, 0.3)});
     mMap.insert(MapPair{"Floor", new Plane(-12.5,-7.5,5)});
+    mMap.insert(MapPair{"Object", new Tetrahedron(-10,-10, 0.2, 1.2)});
 
     //Oppgave 1 OBLIG 2
     mObjects.push_back(new OctahedronBall(-3,-1, 3));
@@ -85,8 +84,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mObjects.push_back(new OctahedronBall(1,-1, 3));
     mObjects.push_back(new OctahedronBall(2,2, 3));
     mObjects.push_back(new OctahedronBall(3,2, 3));
+    //Door
     mObjects.push_back(new Plane());
-    //amObjects.push_back(new OctahedronBall(-4.5, -0.7, 1));
 
     // Kollisjonsvolum               //(radius, x, y, recursions)
     mItems.push_back(new CollisionVolume(0.2, -3, -1, 1));
@@ -98,19 +97,19 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mItems.push_back(new CollisionVolume(0.2, 2, 2, 1));
     mItems.push_back(new CollisionVolume(0.2, 3, 2, 1));
     // Door
-    mItems.push_back(new CollisionVolume(1.3, -4.5, -0.5, 1));
+    mItems.push_back(new CollisionVolume(1.25, -4.5, -0.5, 2));
 
     BOT = new NPC("curve.txt");
     mMap.insert(MapPair{"NPC", BOT});
+
     BOT2 = new NPC("curve2.txt");
     mMap.insert(MapPair{"NPC2", BOT2});
 
     // Oppgave 2 OBLIG 2
-    //mMap.insert(std::pair<std::string, VisualObject*>{"P5", new Tetrahedron(-3,-3)});
-    //mMap.insert(std::pair<std::string, VisualObject*>{"P6", new Tetrahedron(-2, 2)});
-    //mMap.insert(std::pair<std::string, VisualObject*>{"P7", new Tetrahedron( 2,-2)});
-    //mMap.insert(std::pair<std::string, VisualObject*>{"P8", new Tetrahedron( 3, 3)});
-
+    mMap.insert(std::pair<std::string, VisualObject*>{"P1", new Tetrahedron(-3,-3, 0, 0.5)});
+    mMap.insert(std::pair<std::string, VisualObject*>{"P2", new Tetrahedron(-2, 2, 0, 0.5)});
+    mMap.insert(std::pair<std::string, VisualObject*>{"P3", new Tetrahedron( 2,-2, 0, 0.5)});
+    mMap.insert(std::pair<std::string, VisualObject*>{"P4", new Tetrahedron( 3, 3, 0, 0.5)});
 }
 
 RenderWindow::~RenderWindow()
@@ -206,17 +205,18 @@ void RenderWindow::init()
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 
 
-    miaCollision->move(0,0,0);
+    moveMiaX(-1);
+    moveMiaY(-3);
 
     BOT2->bShouldRender = false;
-    Path2->bShouldRender = false;
+    Path2->bShouldRender = false;    
 }
 
 // Called each frame - doing the rendering!!!
 void RenderWindow::render()
 {
     mCamera.init(mPmatrixUniform, mVmatrixUniform);
-    mCamera.perspective(70.0f, 16.0f/9.0f, 0.1f, 10.f);
+    mCamera.perspective(60.0f, 16.0f/9.0f, 0.1f, 10.f);
 
     mTimeStart.restart(); //restart FPS clock
     mContext->makeCurrent(this); //must be called every frame (every time mContext->swapBuffers is called)
@@ -231,7 +231,7 @@ void RenderWindow::render()
 
     if (bSceneOne)
         // Scene 1
-        mCamera.lookAt( QVector3D{0,0,5}, QVector3D{0,0,0}, QVector3D{0,1,0} );
+        mCamera.lookAt( QVector3D{-0,-4,5}, QVector3D{0,-1,0}, QVector3D{0,1,0} );
     else
         // Scene 2
         mCamera.lookAt( QVector3D{-10,-10,3}, QVector3D{-10,-10,0}, QVector3D{0,1,0} );
@@ -263,8 +263,8 @@ void RenderWindow::render()
             bSceneOne = false;
             if (bShouldMove)
             {
-                moveMiaX(-10);
-                moveMiaY(-24);
+                moveMiaX(-4);
+                moveMiaY(-9.5);
 
                 bShouldMove = false;
             }
@@ -288,8 +288,8 @@ void RenderWindow::render()
 
     //just to make the triangle rotate - tweak this:
     //                   degree, x,   y,   z -axis
-    if(mRotate)
-        mPmatrix->rotate(2.f, 0.f, 1.0, 0.f);
+    //if(mRotate)
+        //mPmatrix->rotate(2.f, 0.f, 1.0, 0.f);
 
     // "Kollisjon"
     for (auto i = 0; i < mItems.size(); i++)
@@ -305,7 +305,7 @@ void RenderWindow::render()
         if (d < r1 + r2 && mItems[i]->bIsActive == true)
         {
             // slå av rendering / flytt ob
-            mItems[i]->bShouldRender = false;
+            mItems[i]->move(100,100,100);
             mItems[i]->bIsActive = false;
             if (mObjects[i])
             {
@@ -314,6 +314,9 @@ void RenderWindow::render()
             }
         }
     }
+
+    ToggleCollision();
+    TogglePath();
 }
 
 //This function is called from Qt when window is exposed (shown)
@@ -440,37 +443,30 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
 
     if(event->key() == Qt::Key_Q)
     {
-        if (BOT->bShouldRender)
-        {
-            BOT->bShouldRender = false;
-            BOT2->bShouldRender = true;
-            Path->bShouldRender = false;
-            Path2->bShouldRender = true;
-        }
-        else
-        {
-            BOT->bShouldRender = true;
-            BOT2->bShouldRender = false;
-            Path2->bShouldRender = false;
-            Path->bShouldRender = true;
-        }
+        mPathOne = !mPathOne;
     }
+
+    if(event->key() == Qt::Key_C)
+    {
+        mCollision = !mCollision;
+    }
+
     //You get the keyboard input like this
     if(event->key() == Qt::Key_A)
     {
-        moveMiaX(-0.2f);
+        moveMiaX(-0.1f);
     }
     if(event->key() == Qt::Key_D)
     {
-        moveMiaX(0.2f);
+        moveMiaX(0.1f);
     }
     if(event->key() == Qt::Key_W)
     {
-        moveMiaY(0.2f);
+        moveMiaY(0.1f);
     }
     if(event->key() == Qt::Key_S)
     {
-        moveMiaY(-0.2f);
+        moveMiaY(-0.1f);
     }
 
     std::cout << "WorldPos: \n";
@@ -479,6 +475,7 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
 
 void RenderWindow::moveMiaX(float movespeed)
 {
+    movespeed = (movespeed * (1/miaCollision->getRadius()));
     miaCollision->move(movespeed, 0.0f, 0.0f);
     miaCollision->mWorldPosition += QVector3D{movespeed * miaCollision->getRadius(), 0.0f, 0.0f};
     mMap["mia"]->move(movespeed * miaCollision->getRadius(), 0.0f, 0.0f);
@@ -486,7 +483,44 @@ void RenderWindow::moveMiaX(float movespeed)
 
 void RenderWindow::moveMiaY(float movespeed)
 {
+    movespeed = (movespeed * (1/miaCollision->getRadius()));
     miaCollision->move(0.0f, movespeed, 0.0f);
     miaCollision->mWorldPosition += QVector3D{0.0f, movespeed * miaCollision->getRadius(), 0.0f};
     mMap["mia"]->move(0.0f, movespeed * miaCollision->getRadius(), 0.0f);
+}
+
+void RenderWindow::ToggleCollision()
+{
+    if (mCollision == false)
+    {
+        for (int i = 0; i < mItems.size(); i++)
+            mItems[i]->bShouldRender = false;
+
+        miaCollision->bShouldRender = false;
+    }
+    else
+    {
+        for (int i = 0; i < mItems.size(); i++)
+            mItems[i]->bShouldRender = true;
+
+        miaCollision->bShouldRender = true;
+    }
+}
+
+void RenderWindow::TogglePath()
+{
+    if (mPathOne)
+    {
+        BOT->bShouldRender = false;
+        BOT2->bShouldRender = true;
+        Path->bShouldRender = false;
+        Path2->bShouldRender = true;
+    }
+    else
+    {
+        BOT->bShouldRender = true;
+        BOT2->bShouldRender = false;
+        Path2->bShouldRender = false;
+        Path->bShouldRender = true;
+    }
 }

@@ -19,7 +19,6 @@ public:
    virtual void move(float x, float y, float z) { }
    // move for simulering (for eksempel NPC)
    virtual void move(float dt) { }
-   virtual void move(float dt, QVector3D velocity) { }
 
    QVector3D mWorldPosition{};
    virtual QVector3D getPosition() { return mWorldPosition; }
@@ -32,16 +31,8 @@ public:
    // Function meant for opening a door.
    virtual void OpenDoor() { }
 
-   void SetRotation(float angle, float x, float y, float z)
-      {
-          mMatrix.rotate(angle, x, y, z);
-      }
-
-
-      void SetLocation(float x, float y, float z)
-      {
-          mMatrix.translate(x,y,z);
-      }
+   void SetRotation(float angle, float x, float y, float z) { mMatrix.rotate(angle, x, y, z); }
+   void SetLocation(float x, float y, float z) { mMatrix.translate(x,y,z); }
 
 protected:
    float radius = 0;

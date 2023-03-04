@@ -75,18 +75,33 @@ void MainWindow::init()
     Logger::getInstance()->setMainWindow(this);;
 }
 
+
 //Example of a slot called from the button on the top of the program.
-void MainWindow::on_rotationButton_toggled(bool checked)
+void MainWindow::on_collisionButton_toggled(bool checked)
 {
     if(checked)
     {
-        mRenderWindow->mRotate = true;
-        ui->rotationButton->setText("Stop rotation");
+        mRenderWindow->mCollision = true;
+        ui->collisionButton->setText("Hide Collision");
     }
     else
     {
-        mRenderWindow->mRotate = false;
-        ui->rotationButton->setText("Start rotation");
+        mRenderWindow->mCollision = false;
+        ui->collisionButton->setText("Show Collision");
+    }
+}
+
+void MainWindow::on_pathButton_toggled(bool checked)
+{
+    if(checked)
+    {
+        mRenderWindow->mPathOne = !mRenderWindow->mPathOne;
+        ui->pathButton->setText("Toggle NPC path");
+    }
+    else
+    {
+        mRenderWindow->mPathOne = !mRenderWindow->mPathOne;
+        ui->pathButton->setText("Toggle NPC path");
     }
 }
 

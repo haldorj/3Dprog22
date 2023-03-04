@@ -70,13 +70,14 @@ void NPC::init(GLint matrixUniform)
     glEnableVertexAttribArray(1);
     glBindVertexArray(0);
 
-    mMatrix.translate(mPath.begin()->getX(), mPath.begin()->getZ(), mPath.begin()->getY());
+    mMatrix.translate(mPath[2].getX(), mPath[2].getZ(), mPath[2].getY());
 }
 
 void NPC::draw()
 {
     glBindVertexArray( mVAO );
     glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
+
     if (bShouldRender)
         glDrawArrays(GL_TRIANGLES, 0, mVertices.size());
     else
@@ -96,31 +97,6 @@ void NPC::move(float x, float y, float z)
     mx =0;
     my =0;
     mz =0;
-}
-
-void NPC::move(float dt, QVector3D velocity)
-{
-  QVector3D ds=velocity*dt;
-
-  // mPosition = mPosition + ds;		// hvis mPosisjon er Vector3d
-  mPosition.translate(ds.x(), ds.y(), ds.z());	// hvis mPosisjon er Matrix4x4
-
-  // normalen kan generelt være en parameter inn
-  QVector3D normal = QVector3D{0.0f, 1.0f, 0.0f};
-
-
-  // bruker kryssprodukt for å finne rotasjonsvektor
-  QVector3D rotation = QVector3D::crossProduct(normal, mVelocity);
-  rotation.normalize();
-
-
-  // bruk formelen ds = r dt ==> dt = ds/r
-  // for å finne ut hvor mye hjulet har rotert
-  // og oppdater rotasjonsmatrisen
-  // husk å starte med mRotation som identitetsmatrise
-
-
-  mMatrix = mPosition*mRotation;		// hvis mPosition og mRotation er Matrix4x4
 }
 
 void NPC::readFile(std::string filename)
@@ -143,8 +119,8 @@ void NPC::readFile(std::string filename)
         }
         inn.close();
 
-        //for (int i = 0;  i < mVertices.size(); i++)
-            //std::cout << mVertices[i] << std::endl;
+        for (int i = 0;  i < mPath.size(); i++)
+            std::cout << mPath[i] << std::endl;
     }
     else
     {
@@ -158,9 +134,9 @@ void NPC::moveNPC()
     QVector3D Next;
 
     // MOVE FORWARD
-    if (AtStart)
+    if (bForward)
     {
-        if (i < mPath.size() - 1)
+        if (i < mPath.size() - 2)
         {
             Next = {mPath[i+1].getX() - mPath[i].getX(),
                               mPath[i+1].getZ() - mPath[i].getZ(),
@@ -169,15 +145,15 @@ void NPC::moveNPC()
             move(Next.x(), Next.y(), Next.z());
             i++;
         }
-        if (i == mPath.size() - 1)
+        if (i == mPath.size() - 2)
         {
-            AtStart = false;
+            bForward = false;
         }
     }
     // MOVE BACKWARD
-    if (!AtStart)
+    if (!bForward)
     {
-        if (i > 1)
+        if (i > 2)
         {
             Next = {mPath[i-1].getX() - mPath[i].getX(),
                               mPath[i-1].getZ() - mPath[i].getZ(),
@@ -186,8 +162,8 @@ void NPC::moveNPC()
             move(Next.x(), Next.y(), Next.z());
             i--;
         }
-        if (i == 1)
-            AtStart = true;
+        if (i == 2)
+            bForward = true;
     }
 }
 
