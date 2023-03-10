@@ -99,17 +99,16 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     // Door
     mItems.push_back(new CollisionVolume(1.25, -4.5, -0.5, 2));
 
-    BOT = new NPC("curve.txt");
-    mMap.insert(MapPair{"NPC", BOT});
-
-    BOT2 = new NPC("curve2.txt");
-    mMap.insert(MapPair{"NPC2", BOT2});
-
     // Oppgave 2 OBLIG 2
     mMap.insert(std::pair<std::string, VisualObject*>{"P1", new Tetrahedron(-3,-3, 0, 0.5)});
     mMap.insert(std::pair<std::string, VisualObject*>{"P2", new Tetrahedron(-2, 2, 0, 0.5)});
     mMap.insert(std::pair<std::string, VisualObject*>{"P3", new Tetrahedron( 2,-2, 0, 0.5)});
     mMap.insert(std::pair<std::string, VisualObject*>{"P4", new Tetrahedron( 3, 3, 0, 0.5)});
+
+    BOT = new NPC("curve.txt");
+    BOT2 = new NPC("curve2.txt");
+    mMap.insert(MapPair{"NPC", BOT});
+    mMap.insert(MapPair{"NPC2", BOT2});
 }
 
 RenderWindow::~RenderWindow()
@@ -204,7 +203,7 @@ void RenderWindow::init()
 
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 
-
+    // Additional setup
     moveMiaX(-1);
     moveMiaY(-3);
 
@@ -454,19 +453,19 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     //You get the keyboard input like this
     if(event->key() == Qt::Key_A)
     {
-        moveMiaX(-0.1f);
+        moveMiaX(-0.05f);
     }
     if(event->key() == Qt::Key_D)
     {
-        moveMiaX(0.1f);
+        moveMiaX(0.05f);
     }
     if(event->key() == Qt::Key_W)
     {
-        moveMiaY(0.1f);
+        moveMiaY(0.05f);
     }
     if(event->key() == Qt::Key_S)
     {
-        moveMiaY(-0.1f);
+        moveMiaY(-0.05f);
     }
 
     std::cout << "WorldPos: \n";

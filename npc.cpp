@@ -40,7 +40,24 @@ NPC::NPC(std::string path)
     mVertices.push_back(Vertex{-0.25f, 0.25f, 0.25f, 0.820f,  0.883f,  0.371f});
     mVertices.push_back(Vertex{0.25f,-0.25f, 0.25f, 0.820f,  0.883f,  0.371f});
 
+    // Get path from file.
     readFile(path);
+
+    // Get path from function.
+    if(path == "curve.txt")
+    {
+        // The function for the curve.
+        mA = 0; mB = 0.0728164; mC = 0.547531; mD = (-0.125218);
+        // Set initial position.
+        mMatrix.translate(-3.0,-1.112463,0.0);
+    }
+    if(path == "curve2.txt")
+    {
+        // The function for the curve.
+        mA = 0.4; mB = 0; mC = -2.6; mD = 0;
+        // Set initial position.
+        mMatrix.translate(-3.0,-3.0,0.0);
+    }
 }
 
 void NPC::init(GLint matrixUniform)
@@ -69,8 +86,6 @@ void NPC::init(GLint matrixUniform)
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,  sizeof(Vertex),  reinterpret_cast<GLvoid*>(3 * sizeof(GLfloat)) );
     glEnableVertexAttribArray(1);
     glBindVertexArray(0);
-
-    mMatrix.translate(mPath[2].getX(), mPath[2].getZ(), mPath[2].getY());
 }
 
 void NPC::draw()
@@ -83,6 +98,7 @@ void NPC::draw()
     else
         glDrawArrays(GL_NONE, 0, 0);
 
+    //moveNPCFromFile();
     moveNPC();
 }
 
@@ -92,7 +108,7 @@ void NPC::move(float x, float y, float z)
     my += y;
     mz += z;
     //std::cout << "WorldPos: X: " << mx <<" Y:"<< my << "\n";
-    mWorldPosition = {mx,my,mz};
+    mWorldPosition = {mx, my, mz};
     mMatrix.translate(mx, my, mz);
     mx =0;
     my =0;
@@ -119,8 +135,8 @@ void NPC::readFile(std::string filename)
         }
         inn.close();
 
-        for (int i = 0;  i < mPath.size(); i++)
-            std::cout << mPath[i] << std::endl;
+//        for (int i = 0;  i < mPath.size(); i++)
+//            std::cout << mPath[i] << std::endl;
     }
     else
     {
@@ -131,21 +147,78 @@ void NPC::readFile(std::string filename)
 
 void NPC::moveNPC()
 {
+    QVector3D Current;
     QVector3D Next;
+    QVector3D Trajectory;
+
+    float z = 0;
+    float h = 0.05f;
+    if (bForward)
+    {
+
+        if (xi < 3)
+        {
+            float y = (mA * pow(xi,3)) + (mB * pow(xi,2)) + (mC * xi) + mD;
+            Current = {xi,y,z};
+
+            xi += h;
+
+            y = (mA * pow(xi,3)) + (mB * pow(xi,2)) + (mC * xi) + mD;
+            Next = {xi,y,z};
+
+            Trajectory = Next - Current;
+            move(Trajectory.x(),Trajectory.y(),Trajectory.z());
+        }
+        if (xi >= 3)
+        {
+            xi = 3;
+            bForward = !bForward;
+        }
+    }
+
+    if (bForward == false)
+    {
+        if (xi > -3)
+        {
+            float y = (mA * pow(xi,3)) + (mB * pow(xi,2)) + (mC * xi) + mD;
+            Current = {xi,y,z};
+
+            xi -= h;
+
+            y = (mA * pow(xi,3)) + (mB * pow(xi,2)) + (mC * xi) + mD;
+            Next = {xi,y,z};
+
+            Trajectory = Next - Current;
+            move(Trajectory.x(),Trajectory.y(),Trajectory.z());
+        }
+        if (xi <= -3)
+        {
+            xi = -3;
+            bForward = !bForward;
+        }
+    }
+}
+
+void NPC::moveNPCFromFile()
+{
+    float var = 1;
+    QVector3D Next;
+
+    //std::cout << i << "\n";
 
     // MOVE FORWARD
     if (bForward)
     {
-        if (i < mPath.size() - 2)
+        if (i < mPath.size() - var)
         {
             Next = {mPath[i+1].getX() - mPath[i].getX(),
-                              mPath[i+1].getZ() - mPath[i].getZ(),
-                              mPath[i+1].getY() - mPath[i].getY()};
+                    mPath[i+1].getZ() - mPath[i].getZ(),
+                    mPath[i+1].getY() - mPath[i].getY()};
 
             move(Next.x(), Next.y(), Next.z());
             i++;
         }
-        if (i == mPath.size() - 2)
+        if (i == mPath.size() - var)
         {
             bForward = false;
         }
@@ -153,16 +226,16 @@ void NPC::moveNPC()
     // MOVE BACKWARD
     if (!bForward)
     {
-        if (i > 2)
+        if (i > var)
         {
             Next = {mPath[i-1].getX() - mPath[i].getX(),
-                              mPath[i-1].getZ() - mPath[i].getZ(),
-                              mPath[i-1].getY() - mPath[i].getY()};
+                    mPath[i-1].getZ() - mPath[i].getZ(),
+                    mPath[i-1].getY() - mPath[i].getY()};
 
             move(Next.x(), Next.y(), Next.z());
             i--;
         }
-        if (i == 2)
+        if (i == var)
             bForward = true;
     }
 }

@@ -110,7 +110,7 @@ void Curves::calculateCurveTask1Parabel()
         mD = x(2,0);
 
     std::cout << "Function for the curve: " << std::endl;
-    std::cout << "y = " << mB << "x^2 + " << mC << "x " << mD << std::endl;
+    std::cout << "y = " << mB << "x^2 + " << mC << "x + " << mD << std::endl;
 }
 
 void Curves::calculateCurve2()
@@ -140,7 +140,11 @@ void Curves::calculateCurve2()
     if (x(3,0))
         mD = x(3,0);
 
+    std::cout << "Min matrise \n";
     std::cout << x;
+
+    std::cout << "Function for the curve: " << std::endl;
+    std::cout << "y = " << mA << "x^3 + " << mB << "x^2 + " << mC << "x + " << mD << std::endl;
 }
 
 void Curves::readFile(std::string filename)

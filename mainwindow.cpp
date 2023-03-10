@@ -81,13 +81,13 @@ void MainWindow::on_collisionButton_toggled(bool checked)
 {
     if(checked)
     {
-        mRenderWindow->mCollision = true;
-        ui->collisionButton->setText("Hide Collision");
+        mRenderWindow->mCollision = !mRenderWindow->mCollision;
+        ui->collisionButton->setText("Show Collision");
     }
     else
     {
-        mRenderWindow->mCollision = false;
-        ui->collisionButton->setText("Show Collision");
+        mRenderWindow->mCollision = !mRenderWindow->mCollision;
+        ui->collisionButton->setText("Hide Collision");
     }
 }
 

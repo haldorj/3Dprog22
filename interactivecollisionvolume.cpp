@@ -31,7 +31,7 @@ InteractiveCollisionVolume::InteractiveCollisionVolume(int n) : m_rekursjoner(n)
    oktaederUnitBall();
 
    mWorldPosition = {0.0f,0.0f,0.0f};
-   mMatrix.translate(-0.1, 0.1, 0);
+   mMatrix.translate(-0.05f, 0.05f);
    mMatrix.scale(radius);
 }
 

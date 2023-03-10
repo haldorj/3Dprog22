@@ -15,6 +15,7 @@
 #include "octahedronball.h"
 #include "disc.h"
 #include "npc.h"
+#include "texture.h"
 #include <unordered_map>
 
 class QOpenGLContext;
@@ -67,6 +68,8 @@ private:
 
     void ToggleCollision();
     void TogglePath();
+
+    Texture* mTexture;
 
     QOpenGLContext *mContext{nullptr};  //Our OpenGL context
     bool mInitialized{false};

@@ -197,7 +197,7 @@ const QVector3D& v3)
      else
          glDrawArrays(GL_NONE, 0, 0);
 
-     mMatrix.rotate(1, 1, 1, 0);
+     mMatrix.rotate(1, 0, 0.5, 1);
   }
 
   void OctahedronBall::move(float x, float y, float z)
