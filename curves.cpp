@@ -65,8 +65,8 @@ void Curves::calculateCurveTask1()
     mX = x(0,0);
     mY = x(1,0);
 
-    std::cout << "Function for the curve: " << std::endl;
-    std::cout << "y = " << mX << "x + " << mY << std::endl;
+    //std::cout << "Function for the curve: " << std::endl;
+    //std::cout << "y = " << mX << "x + " << mY << std::endl;
 }
 
 void Curves::calculateCurveTask1Parabel()
@@ -99,8 +99,8 @@ void Curves::calculateCurveTask1Parabel()
     MatrixXd c = A.transpose()*y;
     MatrixXd x = B.inverse()*c;
 
-    std::cout << "Min matrise \n";
-    std::cout << x << std::endl;
+    //std::cout << "Min matrise \n";
+    //std::cout << x << std::endl;
 
     if (x(0,0))
         mB = x(0,0);
@@ -109,8 +109,8 @@ void Curves::calculateCurveTask1Parabel()
     if (x(2,0))
         mD = x(2,0);
 
-    std::cout << "Function for the curve: " << std::endl;
-    std::cout << "y = " << mB << "x^2 + " << mC << "x + " << mD << std::endl;
+    //std::cout << "Function for the curve: " << std::endl;
+    //std::cout << "y = " << mB << "x^2 + " << mC << "x + " << mD << std::endl;
 }
 
 void Curves::calculateCurve2()
@@ -140,11 +140,11 @@ void Curves::calculateCurve2()
     if (x(3,0))
         mD = x(3,0);
 
-    std::cout << "Min matrise \n";
-    std::cout << x;
+    //std::cout << "Min matrise \n";
+    //std::cout << x;
 
-    std::cout << "Function for the curve: " << std::endl;
-    std::cout << "y = " << mA << "x^3 + " << mB << "x^2 + " << mC << "x + " << mD << std::endl;
+    //std::cout << "Function for the curve: " << std::endl;
+    //std::cout << "y = " << mA << "x^3 + " << mB << "x^2 + " << mC << "x + " << mD << std::endl;
 }
 
 void Curves::readFile(std::string filename)
@@ -156,7 +156,7 @@ void Curves::readFile(std::string filename)
     if (inn.is_open())
     {
         mVertices.clear();
-        std::cout << "READFILE: File " << filename << " was opened!" << std::endl;
+        //std::cout << "READFILE: File " << filename << " was opened!" << std::endl;
         int n;
         Vertex vertex;
         inn >> n;
@@ -180,7 +180,7 @@ void Curves::writeFile(std::string filename)
     fil.open(filename.c_str());
     if (fil.is_open())
     {
-        std::cout << "WRITEFILE: File " << filename << " was opened!" << std::endl;
+        //std::cout << "WRITEFILE: File " << filename << " was opened!" << std::endl;
         fil.clear();
         fil << mVertices.size() << std::endl;
         for (int i = 0; i < mVertices.size(); i++)

@@ -24,6 +24,7 @@ SOURCES += main.cpp \
     tetrahedron.cpp \
     texture.cpp \
     trianglesurface.cpp \
+    triangulation.cpp \
     vertex.cpp \
     visualobject.cpp \
     xyz.cpp
@@ -47,6 +48,7 @@ HEADERS += \
     tetrahedron.h \
     texture.h \
     trianglesurface.h \
+    triangulation.h \
     vertex.h \
     visualobject.h \
     xyz.h
@@ -56,4 +58,6 @@ FORMS += \
 
 DISTFILES += \
     plainshader.frag \
-    plainshader.vert
+    plainshader.vert \
+    texshader.frag \
+    texshader.vert

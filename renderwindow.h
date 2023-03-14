@@ -7,6 +7,8 @@
 #include <QElapsedTimer>
 #include <vector>
 #include <list>
+#include <unordered_map>
+
 #include "visualobject.h"
 #include "trianglesurface.h"
 #include "interactiveobject.h"
@@ -16,7 +18,8 @@
 #include "disc.h"
 #include "npc.h"
 #include "texture.h"
-#include <unordered_map>
+#include "mesh.h"
+
 
 class QOpenGLContext;
 class Shader;
@@ -52,6 +55,8 @@ private:
     VisualObject* miaCollision;
     Camera mCamera{};
 
+    Texture* brickTexture;
+
     // NPCs
     VisualObject* BOT;
     VisualObject* BOT2;
@@ -60,24 +65,23 @@ private:
 
     std::unordered_map<std::string, VisualObject*> mMap;    // alternativ container
 
-    void moveMiaX(float movespeed);
-    void moveMiaY(float movespeed);
-
-    bool bSceneOne = true;
-    bool bShouldMove = true;
-
-    void ToggleCollision();
-    void TogglePath();
-
-    Texture* mTexture;
-
     QOpenGLContext *mContext{nullptr};  //Our OpenGL context
     bool mInitialized{false};
 
-    Shader *mShaderProgram{nullptr};    //holds pointer the GLSL shader program
-    GLint  mPmatrixUniform;
-    GLint  mVmatrixUniform;
-    GLint  mMmatrixUniform;
+    void setupPlainShader();
+    GLint  mPmatrixUniform0{};
+    GLint  mVmatrixUniform0{};
+    GLint  mMmatrixUniform0{};
+
+    void setupTextureShader();
+    GLint  mPmatrixUniform1{};
+    GLint  mVmatrixUniform1{};
+    GLint  mMmatrixUniform1{};
+    GLint  mTextureUniform{};
+
+    Texture *dirtTexture;
+    Shader *mPlainShaderProgram{nullptr};    //holds pointer the GLSL shader program
+    Shader *mTexShaderProgram{nullptr};
 
     GLuint mVAO;                        //OpenGL reference to our VAO
     GLuint mVBO;                        //OpenGL reference to our VBO
@@ -113,6 +117,16 @@ protected:
     void keyPressEvent(QKeyEvent *event) override;              //the only one we use now
     //    void keyReleaseEvent(QKeyEvent *event) override{}
     //    void wheelEvent(QWheelEvent *event) override{}
+
+private:
+    void moveMiaX(float movespeed);
+    void moveMiaY(float movespeed);
+
+    bool bSceneOne = true;
+    bool bShouldMove = true;
+
+    void ToggleCollision();
+    void TogglePath();
 };
 
 #endif // RENDERWINDOW_H

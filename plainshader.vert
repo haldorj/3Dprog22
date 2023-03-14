@@ -9,7 +9,6 @@ uniform mat4 matrix;                        //the matrix for the model
 
 void main()
 {
-    color = colorIn;                            //passing on the vertex color
-    //gl_Position = matrix * positionIn;        //calculate the position of the model
-    gl_Position = pmatrix * vmatrix * matrix * positionIn;
+    color = colorIn;                            //passing on the vertex color  
+    gl_Position = pmatrix * vmatrix * matrix * positionIn; //calculate the position of the model
 }

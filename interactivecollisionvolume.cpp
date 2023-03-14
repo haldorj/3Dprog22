@@ -173,8 +173,8 @@ const QVector3D& v3)
   //!
   void InteractiveCollisionVolume::draw()
   {
-     glBindVertexArray( mVAO );
-     glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
+      glBindVertexArray( mVAO );
+      glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
 
      if (bShouldRender)
          glDrawArrays(GL_LINES, 0, mVertices.size());

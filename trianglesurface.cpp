@@ -67,7 +67,7 @@ void TriangleSurface::readFile(std::string filename)
     if (inn.is_open())
     {
         mVertices.clear();
-        std::cout << "READFILE: File " << filename << " was opened!" << std::endl;
+        //std::cout << "READFILE: File " << filename << " was opened!" << std::endl;
         int n;
         Vertex vertex;
         inn >> n;
@@ -96,7 +96,7 @@ void TriangleSurface::writeFile(std::string filename)
     fil.open(filename.c_str());
     if (fil.is_open())
     {
-        std::cout << "WRITEFILE: File " << filename << " was opened!" << std::endl;
+        //std::cout << "WRITEFILE: File " << filename << " was opened!" << std::endl;
         fil.clear();
         fil << mVertices.size() << std::endl;
         for (int i = 0; i < mVertices.size(); i++)

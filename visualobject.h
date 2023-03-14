@@ -34,13 +34,15 @@ public:
    void SetRotation(float angle, float x, float y, float z) { mMatrix.rotate(angle, x, y, z); }
    void SetLocation(float x, float y, float z) { mMatrix.translate(x,y,z); }
 
+   QMatrix4x4 mMatrix;
 protected:
    float radius = 0;
    std::vector<Vertex> mVertices;
+   std::vector<Vertex> mIndeces;
    GLuint mVAO{0};
    GLuint mVBO{0};
+   GLuint mIBO{0};
    GLint mMatrixUniform{0};
-   QMatrix4x4 mMatrix;
 
    // Velger å lagre posisjon, rotasjon og translasjon
    // i hver sin 4x4 matrise

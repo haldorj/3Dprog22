@@ -12,8 +12,6 @@ private:
    GLint  mPmatrixUniform;
    GLint  mVmatrixUniform;
    QVector3D mEye;
-   QMatrix4x4 mPmatrix{};
-   QMatrix4x4 mVmatrix{};
    float& operator () (int i, int j) {return A[i][j]; }
 public:
    Camera();
@@ -22,6 +20,9 @@ public:
    void perspective(int fovy, double aspect, double nearplane, double farplane);
    void lookAt(const QVector3D& eye, const QVector3D& at, const QVector3D& up);
    void update();
+
+   QMatrix4x4 mPmatrix{};
+   QMatrix4x4 mVmatrix{};
    //void translate(float dx, float dy, float dz);
 };
 

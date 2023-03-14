@@ -19,9 +19,9 @@ private:
 public:
    Vertex();
    Vertex(float x, float y, float z, float r, float g, float b);
+   Vertex(float x, float y, float z, float r, float g, float b, float u, float v);
    float getX() {return m_xyz[0];}
    float getY() {return m_xyz[1];}
    float getZ() {return m_xyz[2];}
-
 };
 #endif // VERTEX_H

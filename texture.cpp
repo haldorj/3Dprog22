@@ -1,141 +1,86 @@
+#define STB_IMAGE_IMPLEMENTATION
+
 #include <iostream>
-#include <fstream>
 #include <string>
 
-#include "texture.h"
+#include "Texture.h"
 #include "logger.h" //only needed for logging to our Output Log
 
 Texture::Texture()
 {
-    //Get the instance of the utility Output logger
-    //Have to do this, else program will crash (or you have to put in nullptr tests...)
-    //Or you can replace this with writing to QDebug or cout
-    mLogger = Logger::getInstance();
-
     initializeOpenGLFunctions();
-
-    //Make small dummy texture
+    textureID = 0;
+    width = 0;
+    height = 0;
+    bitDepth = 0;
+    fileLocation = nullptr;
     makeDummyTexture();
 }
 
-Texture::Texture(const std::string& filename)
+Texture::Texture(char* fileLoc)
 {
-    //Get the instance of the utility Output logger
-    //Have to do this, else program will crash (or you have to put in nullptr tests...)
-    mLogger = Logger::getInstance();
-
-    textureFilename = filename;
     initializeOpenGLFunctions();
-    bool success = readBitmap(filename);       //reads the BMP into memory
-    if(success)
-        setTexture();               //set texture up for OpenGL
+    textureID = 0;
+    width = 0;
+    height = 0;
+    bitDepth = 0;
+    fileLocation = fileLoc;
 }
 
-GLuint Texture::id() const
+Texture::~Texture()
 {
-    return mId;
+    ClearTexture();
 }
 
-bool Texture::readBitmap(const std::string &filename)
+void Texture::LoadTexture()
 {
-    OBITMAPFILEHEADER bmFileHeader;
-    OBITMAPINFOHEADER bmInfoHeader;
-
-    std::string fileWithPath = filename;
-
-    std::ifstream file;
-    file.open (fileWithPath.c_str(), std::ifstream::in | std::ifstream::binary);
-    if (file.is_open())
+    unsigned char* texData = stbi_load(fileLocation, &width, &height, &bitDepth, 0);
+    if (!texData)
     {
-        file.read((char *) &bmFileHeader, 14);
-
-        file.read((char *) &bmInfoHeader, sizeof(OBITMAPINFOHEADER));
-
-        if (bmFileHeader.bfType != 19778)
-        {
-            mLogger->logText("ERROR: File is not a propper BMP file - no BM as first bytes", LogType::REALERROR);
-            makeDummyTexture();
-            return false;
-        }
-
-        mColumns = bmInfoHeader.biWidth;
-        mRows = bmInfoHeader.biHeight;
-        mBytesPrPixel = bmInfoHeader.biBitCount / 8;
-        if(mBytesPrPixel == 4)
-            mAlphaUsed = true;
-
-        if(mBytesPrPixel <3)    //we only support 24 or 32 bit images
-        {
-            mLogger->logText("ERROR: Image not 24 or 32 bit RBG or RBGA", LogType::REALERROR);
-            makeDummyTexture();
-            return false;
-        }
-
-        mBitmap = new unsigned char[mColumns * mRows * mBytesPrPixel];
-
-        //check if image data is offset - most often not used...
-        if(bmFileHeader.bfOffBits !=0)
-            file.seekg(bmFileHeader.bfOffBits);
-        else if(bmInfoHeader.biSize != 40) //try next trick if file is not a plain old BMP
-        {
-            int discard = bmInfoHeader.biSize - sizeof(OBITMAPINFOHEADER);
-            //should use seekg instead of this hackery!
-            char* temp = new char[discard];
-            file.read( temp, discard);   //discard extra info if header is not old 40 byte header
-            mLogger->logText("WARNING: InfoHeader is not 40 bytes, so image might not be correct", LogType::WARNING);
-            delete[] temp;
-        }
-        file.read((char *) mBitmap, mColumns * mRows * mBytesPrPixel);
-        file.close();
-        return true;
+        printf("failed to find %s\n", fileLocation);
+        return;
     }
-    else
-    {
-        mLogger->logText("ERROR: Can not read " + fileWithPath, LogType::REALERROR);
-        makeDummyTexture();
-    }
-    return false;
-}
-
-//Set up texture for use in OpenGL
-void Texture::setTexture()
-{
-    // Make a Texture ID in OpenGL
-    glGenTextures(1, &mId);
-    // Set parameters on this Texture ID
-    glBindTexture(GL_TEXTURE_2D, mId);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glEnable(GL_TEXTURE_2D);
+    // 1. Generate a texture object.
+    glGenTextures(1, &textureID);
+    // 2. Bind the texture object to a target.
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    // 3. Configure texture state.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // Wrapping X axis
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // Wrapping Y axis
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    // It's the Texture ID that holds these settings.
 
-    // Transfer texture data to GPU:
-    if(mAlphaUsed == false)                     //no alpha in this bmp
-        glTexImage2D(
-                    GL_TEXTURE_2D,
-                    0,                  //mipmap level
-                    GL_RGB,             //internal format - what format should OpenGL use
-                    mColumns,
-                    mRows,
-                    0,                  //always 0
-                    GL_BGR,             //format of data from texture file -  bmp uses BGR, not RGB
-                    GL_UNSIGNED_BYTE,   //specifies the data type of the pixel data
-                    mBitmap);           //pointer to texture data in memory
-
-    else                                //alpha is present, so we set up an alpha channel
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mColumns, mRows, 0,  GL_BGRA, GL_UNSIGNED_BYTE, mBitmap);
-
-    // After you transfer the texture you usually create the mipmap textures
+    // 4. Load the texture image into the texture object
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData);
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    mLogger->logText("Texture " + textureFilename + " successfully read | id = " + std::to_string(mId) +
-                     "| bytes pr pixel: " + std::to_string(mBytesPrPixel) + " | using alpha:"+ std::to_string(mAlphaUsed));
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    stbi_image_free(texData);
+}
+
+void Texture::UseTexture()
+{
+    // 5. Make the texture unit active
+    glActiveTexture(GL_TEXTURE0);
+    // 6. Bind the texture object to the texture unit.
+    glBindTexture(GL_TEXTURE_2D, textureID);
+}
+
+void Texture::ClearTexture()
+{
+    glDeleteTextures(1, &textureID);
+    textureID = 0;
+    width = 0;
+    height = 0;
+    bitDepth = 0;
+    fileLocation = nullptr;
 }
 
 void Texture::makeDummyTexture()
 {
-    mLogger->logText("Making dummy texture");
+    printf("Making dummy texture \n");
     for (int i=0; i<16; i++)
         pixels[i] = 0;
     pixels[0] = 255;
@@ -146,9 +91,9 @@ void Texture::makeDummyTexture()
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    glGenTextures(1, &mId);
-    glBindTexture(GL_TEXTURE_2D, mId);
-    mLogger->logText("Texture id: " + std::to_string(mId));
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    std::cout << "Texture id: " << std::to_string(textureID) << "\n";
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_UNSIGNED_BYTE,

@@ -9,7 +9,6 @@
 #include <QDebug>
 #include <QVector3D>
 
-
 #include "qthread.h"
 
 #include <string>
@@ -24,6 +23,7 @@
 #include "collisionvolume.h"
 #include "interactivecollisionvolume.h"
 #include "plane.h"
+#include "triangulation.h"
 
 typedef std::pair<std::string, VisualObject*> MapPair;
 
@@ -57,18 +57,14 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //Make the gameloop timer:
     mRenderTimer = new QTimer(this);
 
-    mMap.insert(MapPair{"Surface",new TriangleSurface("frankes.txt")});
-    //mMap.insert(MapPair{"xyz",new XYZ{}});
+    mObjects.push_back(new Triangulation());
+    //mMap.insert(MapPair{"Surface",new TriangleSurface("frankes.txt")});
+    mMap.insert(MapPair{"xyz",new XYZ{}});
 
     Path = new Curves("curve.txt");
     Path2 = new Curves("curve2.txt");
     mMap.insert(MapPair{"Path", Path});
     mMap.insert(MapPair{"Path2", Path2});
-
-    mia = new InteractiveObject;
-    miaCollision = new InteractiveCollisionVolume(1);
-    mMap.insert(MapPair{"mia", mia});
-    mMap.insert(MapPair{"miaCollision", miaCollision});
 
     mMap.insert(MapPair{"house",new Cube(2,   -6, -1.5, 0,    0.8, 0.6, 0.3)});
     mMap.insert(MapPair{"house2",new Cube(4,   -12, -12, -0.1,    0.8, 0.6, 0.3)});
@@ -109,6 +105,11 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     BOT2 = new NPC("curve2.txt");
     mMap.insert(MapPair{"NPC", BOT});
     mMap.insert(MapPair{"NPC2", BOT2});
+
+    mia = new InteractiveObject;
+    miaCollision = new InteractiveCollisionVolume(1);
+    //mMap.insert(MapPair{"mia", mia});
+    mMap.insert(MapPair{"miaCollision", miaCollision});
 }
 
 RenderWindow::~RenderWindow()
@@ -180,26 +181,33 @@ void RenderWindow::init()
     //NB: hardcoded path to files! You have to change this if you change directories for the project.
     //Qt makes a build-folder besides the project folder. That is why we go down one directory
     // (out of the build-folder) and then up into the project folder.
-    mShaderProgram = new Shader("C:/4 semester/3D Prog/3Dprog22/3Dprog22/plainshader.vert",
-                                "C:/4 semester/3D Prog/3Dprog22/3Dprog22/plainshader.frag");
+    mPlainShaderProgram = new Shader( "C:/4 semester/3D Prog/3Dprog22/3Dprog22/plainshader.vert",
+                                    "C:/4 semester/3D Prog/3Dprog22/3Dprog22/plainshader.frag");
 
-    mPmatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "pmatrix" );
-    mVmatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "vmatrix" );
-    mMmatrixUniform = glGetUniformLocation( mShaderProgram->getProgram(), "matrix" );
+    mTexShaderProgram = new Shader( "C:/4 semester/3D Prog/3Dprog22/3Dprog22/texshader.vert",
+                                    "C:/4 semester/3D Prog/3Dprog22/3Dprog22/texshader.frag");
+
+    setupPlainShader();
+    setupTextureShader();
+
+    dirtTexture = new Texture((char*)("Textures/brick.png"));
+    dirtTexture->LoadTexture();
 
    // mCamera.init(mPmatrixUniform, mVmatrixUniform);
 
     // Pickups
     for (auto it=mObjects.begin(); it!=mObjects.end(); it++)
-        (*it)->init(mMmatrixUniform);
+        (*it)->init(mMmatrixUniform0);
 
     // Kollisjonsvolum
     for (auto it=mItems.begin(); it!=mItems.end(); it++)
-        (*it)->init(mMmatrixUniform);
+        (*it)->init(mMmatrixUniform0);
 
     // Alternativ: Erstatter std::vector<VisualObject*> med unordered map
     for (auto it=mMap.begin(); it!=mMap.end(); it++)
-        (*it).second->init(mMmatrixUniform);
+        (*it).second->init(mMmatrixUniform0);
+
+    mia->init(mMmatrixUniform1);
 
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 
@@ -208,14 +216,14 @@ void RenderWindow::init()
     moveMiaY(-3);
 
     BOT2->bShouldRender = false;
-    Path2->bShouldRender = false;    
+    Path2->bShouldRender = false;
 }
 
 // Called each frame - doing the rendering!!!
 void RenderWindow::render()
 {
-    mCamera.init(mPmatrixUniform, mVmatrixUniform);
-    mCamera.perspective(60.0f, 16.0f/9.0f, 0.1f, 10.f);
+    mCamera.init(mPmatrixUniform0, mVmatrixUniform0);
+    mCamera.perspective(60.0f, 16.0f/9.0f, 0.1f, 20.f);
 
     mTimeStart.restart(); //restart FPS clock
     mContext->makeCurrent(this); //must be called every frame (every time mContext->swapBuffers is called)
@@ -224,13 +232,16 @@ void RenderWindow::render()
 
     //clear the screen for each redraw
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //what shader to use
-    glUseProgram(mShaderProgram->getProgram());
 
+    //what shader to use (plain shader)
+    glUseProgram(mPlainShaderProgram->getProgram());
+    glUniformMatrix4fv(mVmatrixUniform0, 1, GL_TRUE, mCamera.mVmatrix.constData());
+    glUniformMatrix4fv(mPmatrixUniform0, 1, GL_TRUE, mCamera.mPmatrix.constData());
 
     if (bSceneOne)
         // Scene 1
-        mCamera.lookAt( QVector3D{-0,-4,5}, QVector3D{0,-1,0}, QVector3D{0,1,0} );
+        //mCamera.lookAt( QVector3D{-0,-4,5}, QVector3D{0,-1,0}, QVector3D{0,1,0} );
+        mCamera.lookAt( QVector3D{-0, 3,10}, QVector3D{0,0,0}, QVector3D{0,1,0} );
     else
         // Scene 2
         mCamera.lookAt( QVector3D{-10,-10,3}, QVector3D{-10,-10,0}, QVector3D{0,1,0} );
@@ -240,6 +251,7 @@ void RenderWindow::render()
     //    (*it)->draw();
 
     // Alternativ: Erstatter std::vector<VisualObject*> med unordered map
+
     for (auto it=mMap.begin(); it!=mMap.end(); it++)
         (*it).second->draw();
 
@@ -249,26 +261,30 @@ void RenderWindow::render()
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
         (*it)->draw();
 
+    //what shader to use (texture shader)
+    QMatrix4x4 ind = QMatrix4x4();
+    ind.setToIdentity();
 
-    if (mia && miaCollision)
-    {
-        mia->getPosition();
-        miaCollision->getPosition();
+    glUseProgram(mTexShaderProgram->getProgram());
+    glUniformMatrix4fv(mVmatrixUniform1, 1, GL_TRUE, mCamera.mVmatrix.constData());
+    glUniformMatrix4fv(mPmatrixUniform1, 1, GL_TRUE, mCamera.mPmatrix.constData());
+    glUniform1i(mTextureUniform, 0);
+    dirtTexture->UseTexture();
 
-        if (miaCollision->getPosition().x() < -4.5
-            && miaCollision->getPosition().y() <= 1
-            && miaCollision->getPosition().y() >= -1)
-        {
-            bSceneOne = false;
-            if (bShouldMove)
-            {
-                moveMiaX(-4);
-                moveMiaY(-9.5);
+    mCamera.update();
 
-                bShouldMove = false;
-            }
-        }
-    }
+
+//    glUseProgram(mTexShaderProgram->getProgram());
+//    GLint mPmatrixUniform12 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "pmatrix" );
+//    GLint mVmatrixUniform12 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "vmatrix" );
+//    GLint mMmatrixUniform12 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "matrix" );
+//    glUniformMatrix4fv(mVmatrixUniform12, 1, GL_TRUE, mCamera.mVmatrix.constData());
+//    glUniformMatrix4fv(mPmatrixUniform12, 1, GL_TRUE, mCamera.mPmatrix.constData());
+//    glUniformMatrix4fv(mMmatrixUniform12, 1, GL_TRUE, ind.constData());
+//    glUniform1i(mTextureUniform, 0);
+//    dirtTexture->UseTexture();
+
+    mia->draw();
 
     //mMap["disc"]->move(0.05f);
 
@@ -313,9 +329,43 @@ void RenderWindow::render()
             }
         }
     }
+    if (mia && miaCollision)
+    {
+        mia->getPosition();
+        miaCollision->getPosition();
 
+        if (miaCollision->getPosition().x() < -4.5
+            && miaCollision->getPosition().y() <= 1
+            && miaCollision->getPosition().y() >= -1)
+        {
+            bSceneOne = false;
+            if (bShouldMove)
+            {
+                moveMiaX(-4);
+                moveMiaY(-9.5);
+
+                bShouldMove = false;
+            }
+        }
+    }
     ToggleCollision();
     TogglePath();
+}
+
+void RenderWindow::setupPlainShader()
+{
+    mPmatrixUniform0 =  glGetUniformLocation( mPlainShaderProgram->getProgram(), "pmatrix" );
+    mVmatrixUniform0 =  glGetUniformLocation( mPlainShaderProgram->getProgram(), "vmatrix" );
+    mMmatrixUniform0 =  glGetUniformLocation( mPlainShaderProgram->getProgram(), "matrix" );
+}
+
+void RenderWindow::setupTextureShader()
+{
+    mPmatrixUniform1 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "pmatrix" );
+    mVmatrixUniform1 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "vmatrix" );
+    mMmatrixUniform1 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "matrix" );
+    // Add sampler uniform to the shader
+    mTextureUniform  =  glGetUniformLocation( mTexShaderProgram->getProgram(), "textureSampler");
 }
 
 //This function is called from Qt when window is exposed (shown)
@@ -477,7 +527,8 @@ void RenderWindow::moveMiaX(float movespeed)
     movespeed = (movespeed * (1/miaCollision->getRadius()));
     miaCollision->move(movespeed, 0.0f, 0.0f);
     miaCollision->mWorldPosition += QVector3D{movespeed * miaCollision->getRadius(), 0.0f, 0.0f};
-    mMap["mia"]->move(movespeed * miaCollision->getRadius(), 0.0f, 0.0f);
+    //mMap["mia"]->move(movespeed * miaCollision->getRadius(), 0.0f, 0.0f);
+    mia->move(movespeed * miaCollision->getRadius(), 0.0f, 0.0f);
 }
 
 void RenderWindow::moveMiaY(float movespeed)
@@ -485,7 +536,8 @@ void RenderWindow::moveMiaY(float movespeed)
     movespeed = (movespeed * (1/miaCollision->getRadius()));
     miaCollision->move(0.0f, movespeed, 0.0f);
     miaCollision->mWorldPosition += QVector3D{0.0f, movespeed * miaCollision->getRadius(), 0.0f};
-    mMap["mia"]->move(0.0f, movespeed * miaCollision->getRadius(), 0.0f);
+    //mMap["mia"]->move(0.0f, movespeed * miaCollision->getRadius(), 0.0f);
+    mia->move(0.0f, movespeed * miaCollision->getRadius(), 0.0f);
 }
 
 void RenderWindow::ToggleCollision()
