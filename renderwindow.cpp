@@ -57,7 +57,6 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //Make the gameloop timer:
     mRenderTimer = new QTimer(this);
 
-    mObjects.push_back(new Triangulation());
     //mMap.insert(MapPair{"Surface",new TriangleSurface("frankes.txt")});
     mMap.insert(MapPair{"xyz",new XYZ{}});
 
@@ -70,6 +69,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mMap.insert(MapPair{"house2",new Cube(4,   -12, -12, -0.1,    0.8, 0.6, 0.3)});
     mMap.insert(MapPair{"Floor", new Plane(-12.5,-7.5,5)});
     mMap.insert(MapPair{"Object", new Tetrahedron(-10,-10, 0.2, 1.2)});
+
+    mMap.insert(MapPair{"Triangulation", (new Triangulation())});
 
     //Oppgave 1 OBLIG 2
     mObjects.push_back(new OctahedronBall(-3,-1, 3));
@@ -190,8 +191,8 @@ void RenderWindow::init()
     setupPlainShader();
     setupTextureShader();
 
-    dirtTexture = new Texture((char*)("Textures/brick.png"));
-    dirtTexture->LoadTexture();
+    brickTexture = new Texture((char*)("Textures/brick.png"));
+    brickTexture->LoadTexture();
 
    // mCamera.init(mPmatrixUniform, mVmatrixUniform);
 
@@ -212,8 +213,8 @@ void RenderWindow::init()
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 
     // Additional setup
-    moveMiaX(-1);
-    moveMiaY(-3);
+    //moveMiaX(-1);
+    //moveMiaY(-3);
 
     BOT2->bShouldRender = false;
     Path2->bShouldRender = false;
@@ -240,8 +241,8 @@ void RenderWindow::render()
 
     if (bSceneOne)
         // Scene 1
-        //mCamera.lookAt( QVector3D{-0,-4,5}, QVector3D{0,-1,0}, QVector3D{0,1,0} );
-        mCamera.lookAt( QVector3D{-0, 3,10}, QVector3D{0,0,0}, QVector3D{0,1,0} );
+        //mCamera.lookAt( QVector3D{-0,-4,4}, QVector3D{0,-1,0}, QVector3D{0,1,0} );
+        mCamera.lookAt( QVector3D{1, 0,10}, QVector3D{1,1,0}, QVector3D{0,1,0} );
     else
         // Scene 2
         mCamera.lookAt( QVector3D{-10,-10,3}, QVector3D{-10,-10,0}, QVector3D{0,1,0} );
@@ -261,28 +262,14 @@ void RenderWindow::render()
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
         (*it)->draw();
 
-    //what shader to use (texture shader)
-    QMatrix4x4 ind = QMatrix4x4();
-    ind.setToIdentity();
-
+    // what shader to use (texture shader)
     glUseProgram(mTexShaderProgram->getProgram());
     glUniformMatrix4fv(mVmatrixUniform1, 1, GL_TRUE, mCamera.mVmatrix.constData());
     glUniformMatrix4fv(mPmatrixUniform1, 1, GL_TRUE, mCamera.mPmatrix.constData());
     glUniform1i(mTextureUniform, 0);
-    dirtTexture->UseTexture();
-
+    brickTexture->UseTexture();
+    // need to update camera to apply changes!
     mCamera.update();
-
-
-//    glUseProgram(mTexShaderProgram->getProgram());
-//    GLint mPmatrixUniform12 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "pmatrix" );
-//    GLint mVmatrixUniform12 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "vmatrix" );
-//    GLint mMmatrixUniform12 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "matrix" );
-//    glUniformMatrix4fv(mVmatrixUniform12, 1, GL_TRUE, mCamera.mVmatrix.constData());
-//    glUniformMatrix4fv(mPmatrixUniform12, 1, GL_TRUE, mCamera.mPmatrix.constData());
-//    glUniformMatrix4fv(mMmatrixUniform12, 1, GL_TRUE, ind.constData());
-//    glUniform1i(mTextureUniform, 0);
-//    dirtTexture->UseTexture();
 
     mia->draw();
 

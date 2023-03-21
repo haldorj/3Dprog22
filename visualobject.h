@@ -38,7 +38,6 @@ public:
 protected:
    float radius = 0;
    std::vector<Vertex> mVertices;
-   std::vector<Vertex> mIndeces;
    GLuint mVAO{0};
    GLuint mVBO{0};
    GLuint mIBO{0};

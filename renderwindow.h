@@ -55,8 +55,6 @@ private:
     VisualObject* miaCollision;
     Camera mCamera{};
 
-    Texture* brickTexture;
-
     // NPCs
     VisualObject* BOT;
     VisualObject* BOT2;
@@ -79,7 +77,7 @@ private:
     GLint  mMmatrixUniform1{};
     GLint  mTextureUniform{};
 
-    Texture *dirtTexture;
+    Texture *brickTexture;
     Shader *mPlainShaderProgram{nullptr};    //holds pointer the GLSL shader program
     Shader *mTexShaderProgram{nullptr};
 

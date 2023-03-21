@@ -47,14 +47,14 @@ NPC::NPC(std::string path)
     if(path == "curve.txt")
     {
         // The function for the curve.
-        mA = 0; mB = 0.0728164; mC = 0.547531; mD = (-0.125218);
+        mA = 0; mB = 0.0728164f; mC = 0.547531f; mD = -0.125218f;
         // Set initial position.
         mMatrix.translate(-3.0,-1.112463,0.0);
     }
     if(path == "curve2.txt")
     {
         // The function for the curve.
-        mA = 0.4; mB = 0; mC = -2.6; mD = 0;
+        mA = 0.4f; mB = 0.0f; mC = -2.6f; mD = 0.0f;
         // Set initial position.
         mMatrix.translate(-3.0,-3.0,0.0);
     }

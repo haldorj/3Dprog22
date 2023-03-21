@@ -1,19 +1,22 @@
 #include "triangulation.h"
 
-struct Vec3
-{
-    float x;
-    float y;
-    float z;
+#include "CustomFiles/CustomVec2.h"
 
-    Vec3 operator ^ (const Vec3& v2) const
-    {
-        Vec3 sum;
-        sum.x =  x+v2.x;
-        sum.y =  y+v2.y;
-        sum.z =  z+v2.z;
-        return sum;
-    }
+unsigned int mIndices[] = {
+    0, 4, 1,
+    1, 4, 6,
+    1, 6, 5,
+    1, 5, 3,
+    1, 3, 2,
+    4, 10, 6,
+    4, 9, 10,
+    8, 10, 11,
+    5, 6, 10,
+    5, 10, 8,
+    7, 8, 11,
+    5, 8, 7,
+    3, 5, 7,
+    2, 3, 7
 };
 
 Triangulation::Triangulation() : VisualObject()
@@ -32,35 +35,30 @@ Triangulation::~Triangulation()
 {
 
 }
-// Parameternavnet er byttet ut fra leksjonen
-// Koden er ellers som for XYZ::init()
+
 void Triangulation::init(GLint matrixUniform)
 {
     mMatrixUniform = matrixUniform;
-
     initializeOpenGLFunctions();
 
-    //Vertex Array Object - VAO
-    glGenVertexArrays( 1, &mVAO );
-    glBindVertexArray( mVAO );
+    glGenVertexArrays(1, &mVAO);
+    glBindVertexArray(mVAO);
 
-    //Vertex Buffer Object to hold vertices - VBO
-    glGenBuffers( 1, &mVBO );
-    glBindBuffer( GL_ARRAY_BUFFER, mVBO );
+    glGenBuffers(1, &mVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 
-    glBufferData( GL_ARRAY_BUFFER, mVertices.size()*sizeof( Vertex ), mVertices.data(), GL_STATIC_DRAW );
-
+    // Setup indexed draws
     glGenBuffers(1, &mIBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, mIndeces.size()*sizeof( Vertex ), mIndeces.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(mIndices), mIndices, GL_STATIC_DRAW);
 
-    // 1rst attribute buffer : vertices
+    glBufferData( GL_ARRAY_BUFFER, mVertices.size()*sizeof(Vertex), mVertices.data(), GL_STATIC_DRAW );
     glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-    glVertexAttribPointer(0, 3, GL_FLOAT,GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(0));
     glEnableVertexAttribArray(0);
-
-    // 2nd attribute buffer : colors
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,  sizeof( Vertex ),  (GLvoid*)(3 * sizeof(GLfloat)) );
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,  sizeof(Vertex),  (GLvoid*)(3 * sizeof(GLfloat)));
     glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);
@@ -70,8 +68,13 @@ void Triangulation::init(GLint matrixUniform)
 void Triangulation::draw()
 {
     glBindVertexArray( mVAO );
+    // Bindbuffer, indexed draws
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
     glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
-    glDrawArrays(GL_LINES, 0, mVertices.size());
+    // DrawElements, indexed draws
+    glDrawElements(GL_TRIANGLES, 42, GL_UNSIGNED_INT, nullptr);
+    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void Triangulation::readFile(std::string filename)
@@ -99,8 +102,6 @@ void Triangulation::readFile(std::string filename)
     {
         std::cout << "READFILE: File " << filename << " was not opened." << std::endl;
     }
-
-
 }
 
 void Triangulation::writeFile(std::string filename)

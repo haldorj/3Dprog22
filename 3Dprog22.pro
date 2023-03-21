@@ -30,6 +30,9 @@ SOURCES += main.cpp \
     xyz.cpp
 
 HEADERS += \
+    CustomFiles/CustomVec2.h \
+    CustomFiles/CustomVec3.h \
+    Vectors.h \
     camera.h \
     collisionvolume.h \
     cube.h \
