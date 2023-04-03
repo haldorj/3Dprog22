@@ -62,6 +62,8 @@ void InteractiveObject::init(GLint matrixUniform)
 
     glBindVertexArray(0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    mMatrix.translate(0, 0, 2);
 }
 
 void InteractiveObject::draw()
@@ -73,10 +75,6 @@ void InteractiveObject::draw()
     // DrawElements, indexed draws
     glDrawElements(GL_TRIANGLE_STRIP, 34, GL_UNSIGNED_SHORT, nullptr);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    // Barycentric coord
-    PlayerCoords.x = mWorldPosition.x();
-    PlayerCoords.y = mWorldPosition.y();
 }
 
 void InteractiveObject::move(float x, float y, float z)
@@ -90,42 +88,10 @@ void InteractiveObject::move(float x, float y, float z)
     mz =0;
 }
 
-glm::vec3 InteractiveObject::barycentricCoordinates(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3)
-{
-    glm::vec2 p12 = p2-p1;
-    glm::vec3 v12(p12.x, p12.y, 0.0f);
-
-    glm::vec2 p13 = p3-p1;
-    glm::vec3 v13(p13.x, p13.y, 0.0f);
-
-    glm::vec3 n = glm::cross(v12, v13);
-
-    float areal_123 = n.length(); // dobbelt areal
-    glm::vec3 baryc; // til retur. Husk
-    // u
-    glm::vec2 p = p2 - PlayerCoords;
-    glm::vec3 P(p.x, p.y, 0.0f);
-    glm::vec2 q = p3 - PlayerCoords;
-    glm::vec3 Q(q.x, q.y, 0.0f);
-
-    n = glm::cross(P, Q);
-    baryc.x = n.z/areal_123;
-    // v
-    p = p3 - PlayerCoords;
-    q = p1 - PlayerCoords;
-    n = glm::cross(P, Q);
-    baryc.y = n.z/areal_123;
-    // w
-    p = p1 - PlayerCoords;
-    q = p2 - PlayerCoords;
-    n = glm::cross(P, Q);
-    baryc.z = n.z/areal_123;
-    return baryc;
-}
-
 void InteractiveObject::initCubeGeometry()
 {
-    float size = 0.5;
+    float size = 0.1;
+    radius = size;
     // For cube we would need only 8 vertices but we have to
     // duplicate vertex for each face because texture coordinate
     // is different.

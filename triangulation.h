@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include <glm/glm.hpp>
+
 #include "visualobject.h"
 #include "vertex.h"
 
@@ -18,10 +20,15 @@ public:
    void init(GLint matrixUniform) override;
    void draw() override;
 
-   std::vector<Vertex> GetTriangles();
-
+   // Get the vertices of the triangles.
+   void GetTriangleVertices();
    // Stores all corners of each triangle in the surface
-   std::vector<Vertex> TriangleCorners;
+   std::vector<glm::vec2> mTriangleVertices;
+
+   glm::vec3 getVertex(int index);
+   unsigned int getIndex(int triangleIndex, int vertexIndex);
+
+   int numTriangles = 14;
 };
 
 

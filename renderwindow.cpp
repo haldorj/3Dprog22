@@ -227,16 +227,6 @@ void RenderWindow::init()
 
     BOT2->bShouldRender = false;
     Path2->bShouldRender = false;
-
-    auto v = triangulation->GetTriangles();
-    for (int i = 0; i < v.size(); i++)
-    {
-        glm::vec2 xy;
-        xy.x = v[i].getX();
-        xy.y = v[i].getY();
-
-        mTriangles.push_back(xy);
-    }
 }
 
 // Called each frame - doing the rendering!!!
@@ -260,8 +250,11 @@ void RenderWindow::render()
 
     if (bSceneOne)
         // Scene 1
+        mCamera.lookAt( QVector3D{2,-2,5}, QVector3D{2,2,0}, QVector3D{0,1,0} );
         //mCamera.lookAt( QVector3D{-0,-4,4}, QVector3D{0,-1,0}, QVector3D{0,1,0} );
-        mCamera.lookAt( QVector3D{1, 0,10}, QVector3D{1,1,0}, QVector3D{0,1,0} );
+        //mCamera.lookAt( QVector3D{1, 0,10}, QVector3D{1,1,0}, QVector3D{0,1,0} );
+
+
     else
         // Scene 2
         mCamera.lookAt( QVector3D{-10,-10,3}, QVector3D{-10,-10,0}, QVector3D{0,1,0} );
@@ -359,11 +352,64 @@ void RenderWindow::render()
     }
     ToggleCollision();
     TogglePath();
+}
 
-    for (int i = 0; i < mTriangles.size() - 2; i++)
+glm::vec3 RenderWindow::barycentricCoordinates(const glm::vec2 &p1, const glm::vec2 &p2, const glm::vec2 &p3, const glm::vec2 &pt)
+{
+    glm::vec2 p12 = p2 - p1;
+    glm::vec2 p13 = p3 - p1;
+    glm::vec3 n = glm::vec3(glm::cross(glm::vec3(p12, 0.0f), glm::vec3(p13, 0.0f)));
+    float areal_123 = glm::length(n); // double area
+    glm::vec3 baryc;
+    // u
+    glm::vec2 p = p2 - pt;
+    glm::vec2 q = p3 - pt;
+    n = glm::vec3(glm::cross(glm::vec3(p, 0.0f), glm::vec3(q, 0.0f)));
+    baryc.x = n.z / areal_123;
+    // v
+    p = p3 - pt;
+    q = p1 - pt;
+    n = glm::vec3(glm::cross(glm::vec3(p, 0.0f), glm::vec3(q, 0.0f)));
+    baryc.y = n.z / areal_123;
+    // w
+    p = p1 - pt;
+    q = p2 - pt;
+    n = glm::vec3(glm::cross(glm::vec3(p, 0.0f), glm::vec3(q, 0.0f)));
+    baryc.z = n.z / areal_123;
+
+    return baryc;
+}
+
+float RenderWindow::GetSurfaceHeight()
+{
+    glm::vec3 playerPos = glm::vec3(mia->mWorldPosition.x(), mia->mWorldPosition.y(), mia->mWorldPosition.z());
+
+    // Loop through each triangle in the mesh.
+    for (int j = 0; j < (triangulation->numTriangles); j++)
     {
-        mia->barycentricCoordinates(mTriangles[i], mTriangles[i + 1], mTriangles[i + 2]);
+        // Get the vertices of the triangle.
+        unsigned int v0 = triangulation->getIndex(j, 0);
+        unsigned int v1 = triangulation->getIndex(j, 1);
+        unsigned int v2 = triangulation->getIndex(j, 2);
+        glm::vec3 p0 = triangulation->getVertex(v0);
+        glm::vec3 p1 = triangulation->getVertex(v1);
+        glm::vec3 p2 = triangulation->getVertex(v2);
+
+        glm::vec3 baryCoords = barycentricCoordinates(p0, p1, p2, playerPos);
+
+        // Check if the player's position is inside the triangle.
+        if (baryCoords.x >= 0.0f && baryCoords.y >= 0.0f && baryCoords.z >= 0.0f)
+        {
+            // The player's position is inside the triangle.
+            // Calculate the height of the surface at the player's position.
+            float height = baryCoords.x * p0.y + baryCoords.y * p1.y + baryCoords.z * p2.y;
+
+            // Return the height as the height of the surface at the player's position.
+            return height;
+        }
     }
+
+    return 0.0f;
 }
 
 void RenderWindow::setupPlainShader()
@@ -389,41 +435,6 @@ void RenderWindow::setupPhongShader()
     mMmatrixUniform2 =  glGetUniformLocation( mPhongShaderProgram->getProgram(), "matrix" );
     // Add sampler uniform to the shader
     mTextureUniform2  =  glGetUniformLocation( mPhongShaderProgram->getProgram(), "textureSampler");
-}
-
-void RenderWindow::calcAverageNormals(unsigned int* indices, unsigned int indexCount, GLfloat* vertices, unsigned int vertexCount,
-    unsigned int vLength, unsigned int normalOffset)
-{
-    for (size_t i = 0; i < indexCount; i += 3)
-    {
-        unsigned int in0 = indices[i] * vLength;
-        unsigned int in1 = indices[i + 1] * vLength;
-        unsigned int in2 = indices[i + 2] * vLength;
-
-        glm::vec3 v1(vertices[in1] - vertices[in0],
-                     vertices[in1 + 1] - vertices[in0 + 1],
-                     vertices[in1 + 2] - vertices[in0 + 2]);
-
-        glm::vec3 v2(vertices[in2] - vertices[in0],
-                    vertices[in2 + 1] - vertices[in0 + 1],
-                    vertices[in2 + 2] - vertices[in0 + 2]);
-
-        glm::vec3 normal = glm::cross(v1, v2);
-        normal = glm::normalize(normal);
-
-        in0 += normalOffset; in1 += normalOffset; in2 += normalOffset;
-        vertices[in0] += normal.x; vertices[in0 + 1] += normal.y; vertices[in0 + 2] += normal.z;
-        vertices[in1] += normal.x; vertices[in1 + 1] += normal.y; vertices[in1 + 2] += normal.z;
-        vertices[in2] += normal.x; vertices[in2 + 1] += normal.y; vertices[in2 + 2] += normal.z;
-    }
-
-    for (size_t i = 0; i < vertexCount / vLength; i++)
-    {
-        unsigned int nOffset = i * vLength + normalOffset;
-        glm::vec3 vec(vertices[nOffset], vertices[nOffset + 1], vertices[nOffset + 2]);
-        vec = glm::normalize(vec);
-        vertices[nOffset] = vec.x; vertices[nOffset + 1] = vec.y; vertices[nOffset + 2] = vec.z;
-    }
 }
 
 //This function is called from Qt when window is exposed (shown)
@@ -577,25 +588,29 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     }
 
     std::cout << "WorldPos: \n";
-    std::cout << "x: " << miaCollision->getPosition().x() << " y: " << miaCollision->getPosition().y() << " z: " << miaCollision->getPosition().z() << "\n";
+    std::cout << "x: " << mia->getPosition().x() << " y: " << mia->getPosition().y() << " z: " << mia->getPosition().z() << "\n";
 }
 
 void RenderWindow::moveMiaX(float movespeed)
 {
     movespeed = (movespeed * (1/miaCollision->getRadius()));
-    miaCollision->move(movespeed, 0.0f, 0.0f);
-    miaCollision->mWorldPosition += QVector3D{movespeed * miaCollision->getRadius(), 0.0f, 0.0f};
-    //mMap["mia"]->move(movespeed * miaCollision->getRadius(), 0.0f, 0.0f);
-    mia->move(movespeed * miaCollision->getRadius(), 0.0f, 0.0f);
+
+    miaCollision->move(movespeed, 0.0f, GetSurfaceHeight() - miaCollision->getPosition().z());
+    miaCollision->mWorldPosition += QVector3D{movespeed, 0.0f, GetSurfaceHeight() - miaCollision->getPosition().z()};
+
+    mia->move(movespeed, 0.0f, GetSurfaceHeight() - mia->getPosition().z());
+    mia->mWorldPosition += QVector3D{movespeed, 0.0f, GetSurfaceHeight() - mia->getPosition().z()};
 }
 
 void RenderWindow::moveMiaY(float movespeed)
 {
     movespeed = (movespeed * (1/miaCollision->getRadius()));
-    miaCollision->move(0.0f, movespeed, 0.0f);
-    miaCollision->mWorldPosition += QVector3D{0.0f, movespeed * miaCollision->getRadius(), 0.0f};
-    //mMap["mia"]->move(0.0f, movespeed * miaCollision->getRadius(), 0.0f);
-    mia->move(0.0f, movespeed * miaCollision->getRadius(), 0.0f);
+
+    miaCollision->move(0.0f, movespeed, GetSurfaceHeight() - miaCollision->getPosition().z());
+    miaCollision->mWorldPosition += QVector3D{0.0f, movespeed * miaCollision->getRadius(), GetSurfaceHeight() - miaCollision->getPosition().z()};
+
+    mia->move(0.0f, movespeed, GetSurfaceHeight() - miaCollision->getPosition().z());
+    mia->mWorldPosition += QVector3D{0.0f, movespeed, GetSurfaceHeight() - mia->getPosition().z()};
 }
 
 void RenderWindow::ToggleCollision()
