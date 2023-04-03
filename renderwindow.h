@@ -75,11 +75,21 @@ private:
     GLint  mPmatrixUniform1{};
     GLint  mVmatrixUniform1{};
     GLint  mMmatrixUniform1{};
-    GLint  mTextureUniform{};
+    GLint  mTextureUniform1{};
+
+    void calcAverageNormals(unsigned int* indices, unsigned int indexCount, GLfloat* vertices, unsigned int vertexCount,
+        unsigned int vLength, unsigned int normalOffset);
+
+    void setupPhongShader();
+    GLint  mPmatrixUniform2{};
+    GLint  mVmatrixUniform2{};
+    GLint  mMmatrixUniform2{};
+    GLint  mTextureUniform2{};
 
     Texture *brickTexture;
     Shader *mPlainShaderProgram{nullptr};    //holds pointer the GLSL shader program
     Shader *mTexShaderProgram{nullptr};
+    Shader *mPhongShaderProgram{nullptr};
 
     GLuint mVAO;                        //OpenGL reference to our VAO
     GLuint mVBO;                        //OpenGL reference to our VBO
