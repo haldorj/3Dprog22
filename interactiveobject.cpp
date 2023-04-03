@@ -73,6 +73,13 @@ void InteractiveObject::draw()
     // DrawElements, indexed draws
     glDrawElements(GL_TRIANGLE_STRIP, 34, GL_UNSIGNED_SHORT, nullptr);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+
+    // Barycentric coord
+    PlayerCoords.x = mWorldPosition.x();
+    PlayerCoords.y = mWorldPosition.y();
+
+    PlayerCoords.barycentricCoordinates();
 }
 
 void InteractiveObject::move(float x, float y, float z)

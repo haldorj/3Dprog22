@@ -11,6 +11,8 @@
 
 #include "qthread.h"
 
+#include <glm.hpp>
+
 #include <string>
 
 #include "shader.h"
@@ -188,8 +190,12 @@ void RenderWindow::init()
     mTexShaderProgram = new Shader( "C:/4 semester/3D Prog/3Dprog22/3Dprog22/texshader.vert",
                                     "C:/4 semester/3D Prog/3Dprog22/3Dprog22/texshader.frag");
 
+    mPhongShaderProgram = new Shader( "C:/4 semester/3D Prog/3Dprog22/3Dprog22/phongshader.vert",
+                                    "C:/4 semester/3D Prog/3Dprog22/3Dprog22/phongshader.frag");
+
     setupPlainShader();
     setupTextureShader();
+    setupPhongShader();
 
     brickTexture = new Texture((char*)("Textures/brick.png"));
     brickTexture->LoadTexture();
@@ -266,7 +272,8 @@ void RenderWindow::render()
     glUseProgram(mTexShaderProgram->getProgram());
     glUniformMatrix4fv(mVmatrixUniform1, 1, GL_TRUE, mCamera.mVmatrix.constData());
     glUniformMatrix4fv(mPmatrixUniform1, 1, GL_TRUE, mCamera.mPmatrix.constData());
-    glUniform1i(mTextureUniform, 0);
+    // tex-shader
+    glUniform1i(mTextureUniform1, 0);
     brickTexture->UseTexture();
     // need to update camera to apply changes!
     mCamera.update();
@@ -352,7 +359,51 @@ void RenderWindow::setupTextureShader()
     mVmatrixUniform1 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "vmatrix" );
     mMmatrixUniform1 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "matrix" );
     // Add sampler uniform to the shader
-    mTextureUniform  =  glGetUniformLocation( mTexShaderProgram->getProgram(), "textureSampler");
+    mTextureUniform1  =  glGetUniformLocation( mTexShaderProgram->getProgram(), "textureSampler");
+}
+
+void RenderWindow::setupPhongShader()
+{
+    mPmatrixUniform2 =  glGetUniformLocation( mPhongShaderProgram->getProgram(), "pmatrix" );
+    mVmatrixUniform2 =  glGetUniformLocation( mPhongShaderProgram->getProgram(), "vmatrix" );
+    mMmatrixUniform2 =  glGetUniformLocation( mPhongShaderProgram->getProgram(), "matrix" );
+    // Add sampler uniform to the shader
+    mTextureUniform2  =  glGetUniformLocation( mPhongShaderProgram->getProgram(), "textureSampler");
+}
+
+void RenderWindow::calcAverageNormals(unsigned int* indices, unsigned int indexCount, GLfloat* vertices, unsigned int vertexCount,
+    unsigned int vLength, unsigned int normalOffset)
+{
+    for (size_t i = 0; i < indexCount; i += 3)
+    {
+        unsigned int in0 = indices[i] * vLength;
+        unsigned int in1 = indices[i + 1] * vLength;
+        unsigned int in2 = indices[i + 2] * vLength;
+
+        glm::vec3 v1(vertices[in1] - vertices[in0],
+                     vertices[in1 + 1] - vertices[in0 + 1],
+                     vertices[in1 + 2] - vertices[in0 + 2]);
+
+        glm::vec3 v2(vertices[in2] - vertices[in0],
+                    vertices[in2 + 1] - vertices[in0 + 1],
+                    vertices[in2 + 2] - vertices[in0 + 2]);
+
+        glm::vec3 normal = glm::cross(v1, v2);
+        normal = glm::normalize(normal);
+
+        in0 += normalOffset; in1 += normalOffset; in2 += normalOffset;
+        vertices[in0] += normal.x; vertices[in0 + 1] += normal.y; vertices[in0 + 2] += normal.z;
+        vertices[in1] += normal.x; vertices[in1 + 1] += normal.y; vertices[in1 + 2] += normal.z;
+        vertices[in2] += normal.x; vertices[in2 + 1] += normal.y; vertices[in2 + 2] += normal.z;
+    }
+
+    for (size_t i = 0; i < vertexCount / vLength; i++)
+    {
+        unsigned int nOffset = i * vLength + normalOffset;
+        glm::vec3 vec(vertices[nOffset], vertices[nOffset + 1], vertices[nOffset + 2]);
+        vec = glm::normalize(vec);
+        vertices[nOffset] = vec.x; vertices[nOffset + 1] = vec.y; vertices[nOffset + 2] = vec.z;
+    }
 }
 
 //This function is called from Qt when window is exposed (shown)

@@ -2,6 +2,7 @@
 #define INTERACTIVEOBJECT_H
 
 #include "visualobject.h"
+#include "CustomFiles/CustomVec2.h"
 
 class InteractiveObject : public VisualObject {
 public:
@@ -11,6 +12,8 @@ public:
    void draw() override;
    void initCubeGeometry();
    void move(float x, float y, float z) override;
+
+   vec2f PlayerCoords;
 
 private:
    float mx, my, mz; // posisjon
