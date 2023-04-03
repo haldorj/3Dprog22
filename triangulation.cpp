@@ -3,9 +3,9 @@
 #include "CustomFiles/CustomVec2.h"
 
 unsigned int mIndices[] = {
-    0, 4, 1,
-    1, 4, 6,
-    1, 6, 5,
+    0, 4, 1,    // 1. trekant
+    1, 4, 6,    // 2. trekant
+    1, 6, 5,    // 3. osv...
     1, 5, 3,
     1, 3, 2,
     4, 10, 6,
@@ -22,12 +22,14 @@ unsigned int mIndices[] = {
 Triangulation::Triangulation() : VisualObject()
 {
     readFile("UKE11/6.3.7 vertexData.txt");
+    GetTriangles();
     mMatrix.setToIdentity();
 }
 
 Triangulation::Triangulation(std::string filnavn) : VisualObject()
 {
     readFile("UKE11/6.3.7 vertexData.txt");
+    GetTriangles();
     mMatrix.setToIdentity();
 }
 
@@ -73,8 +75,22 @@ void Triangulation::draw()
     glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
     // DrawElements, indexed draws
     glDrawElements(GL_TRIANGLES, 42, GL_UNSIGNED_INT, nullptr);
-    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    //glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+}
+
+std::vector<Vertex> Triangulation::GetTriangles()
+{
+    for (int i = 0; i < 42; i++)
+    {
+        int index = mIndices[i];
+        std::cout << index << "\n";
+
+        TriangleCorners.push_back(mVertices[index]);
+    }
+
+    return TriangleCorners;
 }
 
 void Triangulation::readFile(std::string filename)
@@ -125,3 +141,7 @@ void Triangulation::writeFile(std::string filename)
         std::cout << "WRITEFILE: File " << filename << " was not opened." << std::endl;
     }
 }
+
+
+
+

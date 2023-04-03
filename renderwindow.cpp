@@ -72,7 +72,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mMap.insert(MapPair{"Floor", new Plane(-12.5,-7.5,5)});
     mMap.insert(MapPair{"Object", new Tetrahedron(-10,-10, 0.2, 1.2)});
 
-    mMap.insert(MapPair{"Triangulation", (new Triangulation())});
+    //mMap.insert(MapPair{"Triangulation", (new Triangulation())});
 
     //Oppgave 1 OBLIG 2
     mObjects.push_back(new OctahedronBall(-3,-1, 3));
@@ -108,6 +108,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     BOT2 = new NPC("curve2.txt");
     mMap.insert(MapPair{"NPC", BOT});
     mMap.insert(MapPair{"NPC2", BOT2});
+    triangulation = new Triangulation();
 
     mia = new InteractiveObject;
     miaCollision = new InteractiveCollisionVolume(1);
@@ -214,6 +215,8 @@ void RenderWindow::init()
     for (auto it=mMap.begin(); it!=mMap.end(); it++)
         (*it).second->init(mMmatrixUniform0);
 
+    triangulation->init(mMmatrixUniform0);
+
     mia->init(mMmatrixUniform1);
 
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
@@ -224,6 +227,16 @@ void RenderWindow::init()
 
     BOT2->bShouldRender = false;
     Path2->bShouldRender = false;
+
+    auto v = triangulation->GetTriangles();
+    for (int i = 0; i < v.size(); i++)
+    {
+        glm::vec2 xy;
+        xy.x = v[i].getX();
+        xy.y = v[i].getY();
+
+        mTriangles.push_back(xy);
+    }
 }
 
 // Called each frame - doing the rendering!!!
@@ -267,6 +280,8 @@ void RenderWindow::render()
 
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
         (*it)->draw();
+
+    triangulation->draw();
 
     // what shader to use (texture shader)
     glUseProgram(mTexShaderProgram->getProgram());
@@ -344,6 +359,11 @@ void RenderWindow::render()
     }
     ToggleCollision();
     TogglePath();
+
+    for (int i = 0; i < mTriangles.size() - 2; i++)
+    {
+        mia->barycentricCoordinates(mTriangles[i], mTriangles[i + 1], mTriangles[i + 2]);
+    }
 }
 
 void RenderWindow::setupPlainShader()

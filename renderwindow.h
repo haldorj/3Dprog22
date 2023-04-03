@@ -9,6 +9,8 @@
 #include <list>
 #include <unordered_map>
 
+#include "CustomFiles/CustomVec2.h"
+#include "triangulation.h"
 #include "visualobject.h"
 #include "trianglesurface.h"
 #include "interactiveobject.h"
@@ -51,8 +53,12 @@ private:
     void init();            //initialize things we need before rendering
     std::vector<VisualObject*> mObjects;
     std::vector<VisualObject*> mItems; // kollisjonsvolum
-    VisualObject* mia;
+    InteractiveObject* mia;
     VisualObject* miaCollision;
+
+    Triangulation* triangulation;
+    std::vector<glm::vec2> mTriangles;
+
     Camera mCamera{};
 
     // NPCs
