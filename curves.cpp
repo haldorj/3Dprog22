@@ -37,6 +37,7 @@ void Curves::constructCurve(std::string filnavn)
 
 void Curves::calculateCurveTask1()
 {
+    //glm::mat<8,1> y
     MatrixXd y(8,1);
     y(0,0) = -1;
     y(1,0) = -1;

@@ -185,14 +185,14 @@ void RenderWindow::init()
     //NB: hardcoded path to files! You have to change this if you change directories for the project.
     //Qt makes a build-folder besides the project folder. That is why we go down one directory
     // (out of the build-folder) and then up into the project folder.
-    mPlainShaderProgram = new Shader( "C:/4 semester/3D Prog/3Dprog22/3Dprog22/plainshader.vert",
-                                    "C:/4 semester/3D Prog/3Dprog22/3Dprog22/plainshader.frag");
+    mPlainShaderProgram = new Shader( "../3Dprog22/plainshader.vert",
+                                    "../3Dprog22/plainshader.frag");
 
-    mTexShaderProgram = new Shader( "C:/4 semester/3D Prog/3Dprog22/3Dprog22/texshader.vert",
-                                    "C:/4 semester/3D Prog/3Dprog22/3Dprog22/texshader.frag");
+    mTexShaderProgram = new Shader( "../3Dprog22/texshader.vert",
+                                    "../3Dprog22/texshader.frag");
 
-    mPhongShaderProgram = new Shader( "C:/4 semester/3D Prog/3Dprog22/3Dprog22/phongshader.vert",
-                                    "C:/4 semester/3D Prog/3Dprog22/3Dprog22/phongshader.frag");
+    mPhongShaderProgram = new Shader( "../3Dprog22/phongshader.vert",
+                                    "../3Dprog22/phongshader.frag");
 
     setupPlainShader();
     setupTextureShader();

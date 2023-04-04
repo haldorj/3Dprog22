@@ -3,9 +3,12 @@
 
 #include <fstream>
 #include <iostream>
-#include <eigen-3.4.0/Eigen/Dense>
-
+//#include <eigen-3.4.0/Eigen/Dense>
+//#include <eigen-3.4.0/Eigen/Dense>
 #include "visualobject.h"
+//#include <Eigen/Core>
+//#include <eigen-3.4.0/Eigen/Dense>
+#include <Eigen/Dense>
 
 class Curves : public VisualObject
 {

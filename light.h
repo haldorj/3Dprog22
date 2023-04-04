@@ -12,7 +12,8 @@ public:
     Light(	GLfloat red, GLfloat green, GLfloat blue,
             GLfloat aIntensity, GLfloat dIntensity	);
     ~Light() { };
-
+    void calcAverageNormals(unsigned int* indices, unsigned int indexCount, GLfloat* vertices, unsigned int vertexCount,
+        unsigned int vLength, unsigned int normalOffset);
 // protected: sub-classes can access
 protected:
     glm::vec3 color;
