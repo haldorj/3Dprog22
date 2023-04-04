@@ -15,6 +15,7 @@ SOURCES += main.cpp \
     curves.cpp \
     directionallight.cpp \
     disc.cpp \
+    heightmap.cpp \
     interactivecollisionvolume.cpp \
     interactiveobject.cpp \
     light.cpp \
@@ -385,6 +386,7 @@ HEADERS += \
     curves.h \
     directionallight.h \
     disc.h \
+    heightmap.h \
     interactivecollisionvolume.h \
     interactiveobject.h \
     light.h \

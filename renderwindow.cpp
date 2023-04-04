@@ -114,6 +114,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     miaCollision = new InteractiveCollisionVolume(1);
     //mMap.insert(MapPair{"mia", mia});
     mMap.insert(MapPair{"miaCollision", miaCollision});
+
+    heightmap = new HeightMap;
 }
 
 RenderWindow::~RenderWindow()
