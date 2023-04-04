@@ -598,7 +598,10 @@ void RenderWindow::moveMiaX(float movespeed)
     miaCollision->move(movespeed, 0.0f, GetSurfaceHeight() - miaCollision->getPosition().z());
     miaCollision->mWorldPosition += QVector3D{movespeed, 0.0f, GetSurfaceHeight() - miaCollision->getPosition().z()};
 
-    mia->move(movespeed, 0.0f, GetSurfaceHeight() - mia->getPosition().z());
+    mia->move(movespeed,
+              0.0f,
+              GetSurfaceHeight() - mia->getPosition().z());
+
     mia->mWorldPosition += QVector3D{movespeed, 0.0f, GetSurfaceHeight() - mia->getPosition().z()};
 }
 
@@ -609,7 +612,10 @@ void RenderWindow::moveMiaY(float movespeed)
     miaCollision->move(0.0f, movespeed, GetSurfaceHeight() - miaCollision->getPosition().z());
     miaCollision->mWorldPosition += QVector3D{0.0f, movespeed * miaCollision->getRadius(), GetSurfaceHeight() - miaCollision->getPosition().z()};
 
-    mia->move(0.0f, movespeed, GetSurfaceHeight() - miaCollision->getPosition().z());
+    mia->move(0.0f,
+              movespeed,
+              GetSurfaceHeight() - mia->getPosition().z());
+
     mia->mWorldPosition += QVector3D{0.0f, movespeed, GetSurfaceHeight() - mia->getPosition().z()};
 }
 
