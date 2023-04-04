@@ -34,6 +34,11 @@ public:
    void SetRotation(float angle, float x, float y, float z) { mMatrix.rotate(angle, x, y, z); }
    void SetLocation(float x, float y, float z) { mMatrix.translate(x,y,z); }
 
+   // for phong lighting
+   //void calcAverageNormals(unsigned int* indices, unsigned int indexCount, GLfloat* vertices, unsigned int vertexCount,
+     //  unsigned int vLength, unsigned int normalOffset);
+
+
    QMatrix4x4 mMatrix;
 protected:
    float radius = 0;

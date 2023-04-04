@@ -15,6 +15,13 @@ Vertex::Vertex(float x, float y, float z, float r, float g, float b)
     m_normal[2] = b;
 }
 
+Vertex::Vertex(float x, float y, float z)
+{
+    m_xyz[0] = x;
+    m_xyz[1] = y;
+    m_xyz[2] = z;
+}
+
 Vertex::Vertex(float x, float y, float z, float r, float g, float b, float u, float v)
 {
     m_xyz[0] = x;

@@ -10,4 +10,3 @@ VisualObject::~VisualObject() {
    glDeleteBuffers( 1, &mVBO );
 }
 
-

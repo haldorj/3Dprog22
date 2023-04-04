@@ -217,6 +217,7 @@ void RenderWindow::init()
 
     triangulation->init(mMmatrixUniform0);
 
+
     mia->init(mMmatrixUniform1);
 
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
@@ -272,9 +273,13 @@ void RenderWindow::render()
         (*it)->draw();
 
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
+    {
         (*it)->draw();
+    }
+
 
     triangulation->draw();
+
 
     // what shader to use (texture shader)
     glUseProgram(mTexShaderProgram->getProgram());
@@ -572,19 +577,23 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     //You get the keyboard input like this
     if(event->key() == Qt::Key_A)
     {
-        moveMiaX(-0.05f);
+        if(mia!=nullptr)
+            moveMiaX(-0.05f);
     }
     if(event->key() == Qt::Key_D)
     {
-        moveMiaX(0.05f);
+        if(mia!=nullptr)
+            moveMiaX(0.05f);
     }
     if(event->key() == Qt::Key_W)
     {
-        moveMiaY(0.05f);
+        if(mia!=nullptr)
+            moveMiaY(0.05f);
     }
     if(event->key() == Qt::Key_S)
     {
-        moveMiaY(-0.05f);
+        if(mia!=nullptr)
+            moveMiaY(-0.05f);
     }
 
     std::cout << "WorldPos: \n";
@@ -654,3 +663,8 @@ void RenderWindow::TogglePath()
         Path->bShouldRender = true;
     }
 }
+
+
+
+
+

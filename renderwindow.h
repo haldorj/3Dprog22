@@ -85,8 +85,8 @@ private:
     GLint  mMmatrixUniform1{};
     GLint  mTextureUniform1{};
 
-    void calcAverageNormals(unsigned int* indices, unsigned int indexCount, GLfloat* vertices, unsigned int vertexCount,
-        unsigned int vLength, unsigned int normalOffset);
+   // void calcAverageNormals(unsigned int* indices, unsigned int indexCount, GLfloat* vertices, unsigned int vertexCount,
+     //   unsigned int vLength, unsigned int normalOffset);
 
     void setupPhongShader();
     GLint  mPmatrixUniform2{};
@@ -143,6 +143,7 @@ private:
 
     void ToggleCollision();
     void TogglePath();
+
 };
 
 #endif // RENDERWINDOW_H
