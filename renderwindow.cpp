@@ -402,7 +402,7 @@ float RenderWindow::GetSurfaceHeight()
         {
             // The player's position is inside the triangle.
             // Calculate the height of the surface at the player's position.
-            float height = baryCoords.x * p0.y + baryCoords.y * p1.y + baryCoords.z * p2.y;
+            float height = baryCoords.x * p0.z + baryCoords.y * p1.z + baryCoords.z * p2.z;
 
             // Return the height as the height of the surface at the player's position.
             return height;

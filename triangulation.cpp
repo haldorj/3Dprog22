@@ -22,14 +22,12 @@ unsigned int mIndices[] = {
 Triangulation::Triangulation() : VisualObject()
 {
     readFile("UKE11/6.3.7 vertexData.txt");
-    GetTriangleVertices();
     mMatrix.setToIdentity();
 }
 
 Triangulation::Triangulation(std::string filnavn) : VisualObject()
 {
     readFile("UKE11/6.3.7 vertexData.txt");
-    GetTriangleVertices();
     mMatrix.setToIdentity();
 }
 
@@ -78,17 +76,6 @@ void Triangulation::draw()
     glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-}
-
-void Triangulation::GetTriangleVertices()
-{    
-    for (int i = 0; i < 42; i++)
-    {
-        int index = mIndices[i];
-        glm::vec2 v(mVertices[index].getX(), mVertices[index].getY());
-
-        mTriangleVertices.push_back(v);
-    }
 }
 
 glm::vec3 Triangulation::getVertex(int index)
