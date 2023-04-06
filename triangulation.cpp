@@ -62,7 +62,7 @@ void Triangulation::draw()
     glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
     // DrawElements, indexed draws
     glDrawElements(GL_TRIANGLES, 42, GL_UNSIGNED_INT, nullptr);
-    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    //glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     //mMatrix.rotate(1, 10,0,0);

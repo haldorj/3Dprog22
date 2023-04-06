@@ -203,7 +203,9 @@ void RenderWindow::init()
     brickTexture = new Texture((char*)("Textures/brick.png"));
     brickTexture->LoadTexture();
 
-   // mCamera.init(mPmatrixUniform, mVmatrixUniform);
+    mainLight = new Light(1.0f, 0.0f, 0.0f, 1.0f);
+
+    //mCamera.init(mPmatrixUniform, mVmatrixUniform);
 
     // Pickups
     for (auto it=mObjects.begin(); it!=mObjects.end(); it++)
@@ -219,8 +221,8 @@ void RenderWindow::init()
 
     triangulation->init(mMmatrixUniform0);
 
-
-    mia->init(mMmatrixUniform1);
+    //mia->init(mMmatrixUniform1);
+    mia->init(mUniformModel);
 
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 
@@ -279,22 +281,38 @@ void RenderWindow::render()
         (*it)->draw();
     }
 
-
     triangulation->draw();
-
-
-    // what shader to use (texture shader)
-    glUseProgram(mTexShaderProgram->getProgram());
-    glUniformMatrix4fv(mVmatrixUniform1, 1, GL_TRUE, mCamera.mVmatrix.constData());
-    glUniformMatrix4fv(mPmatrixUniform1, 1, GL_TRUE, mCamera.mPmatrix.constData());
-    // tex-shader
-    glUniform1i(mTextureUniform1, 0);
-    brickTexture->UseTexture();
-    // need to update camera to apply changes!
     mCamera.update();
 
+//    // what shader to use (texture shader)
+//    glUseProgram(mTexShaderProgram->getProgram());
+//    glUniformMatrix4fv(mVmatrixUniform1, 1, GL_TRUE, mCamera.mVmatrix.constData());
+//    glUniformMatrix4fv(mPmatrixUniform1, 1, GL_TRUE, mCamera.mPmatrix.constData());
+//    // tex-shader
+//    glUniform1i(mTextureUniform1, 0);
+//    brickTexture->UseTexture();
+//    // need to update camera to apply changes!
+//    mCamera.update();
+
+    //light
+
+    //Second object - mia with texture & light shader
+    glUseProgram(mPhongShaderProgram->getProgram());
+    glUniformMatrix4fv(mUniformView, 1, GL_TRUE, mCamera.mVmatrix.constData());
+    glUniformMatrix4fv(mUniformProjection, 1, GL_TRUE, mCamera.mPmatrix.constData());
+    //glUniformMatrix4fv(mUniformModel, 1, GL_TRUE, mia->mMatrix.constData());
+    //checkForGLerrors();
+    //Additional parameters for light shader:
+    mainLight->UseLight(mUniformAmbientIntensity, mUniformAmbientColor);
+    brickTexture->UseTexture();
+    //Texture
+    glUniform1i(mTextureUniform, 1);
+    //Update Camera
+    mCamera.update();
+    //Draw
     mia->draw();
 
+    mCamera.update();
     //mMap["disc"]->move(0.05f);
 
     //Calculate framerate before
@@ -305,58 +323,12 @@ void RenderWindow::render()
     //using our expanded OpenGL debugger to check if everything is OK.
     checkForGLerrors();
 
-    //Qt require us to call this swapBuffers() -function.
+    // Qt require us to call this swapBuffers() -function.
     // swapInterval is 1 by default which means that swapBuffers() will (hopefully) block
     // and wait for vsync.
     mContext->swapBuffers(this);
 
-    //just to make the triangle rotate - tweak this:
-    //                   degree, x,   y,   z -axis
-    //if(mRotate)
-        //mPmatrix->rotate(2.f, 0.f, 1.0, 0.f);
-
-    // "Kollisjon"
-    for (auto i = 0; i < mItems.size(); i++)
-    {
-        // Finne avstand mellom posisjoner
-        QVector3D dist = miaCollision->getPosition() - mItems[i]->getPosition();
-        // [x1 – x2, y1 – y2, z1 – z2]
-        float d = dist.length();
-        //sqrt((x1 – x2)^2, (y1 – y2)^2, (z1 – z2)^2)
-        float r1 = miaCollision->getRadius(); // Må legges til
-        float r2 = mItems[i]->getRadius();
-
-        if (d < r1 + r2 && mItems[i]->bIsActive == true)
-        {
-            // slå av rendering / flytt ob
-            mItems[i]->move(100,100,100);
-            mItems[i]->bIsActive = false;
-            if (mObjects[i])
-            {
-                mObjects[i]->bShouldRender = false;
-                mObjects[i]->OpenDoor();
-            }
-        }
-    }
-    if (mia && miaCollision)
-    {
-        mia->getPosition();
-        miaCollision->getPosition();
-
-        if (miaCollision->getPosition().x() < -4.5
-            && miaCollision->getPosition().y() <= 1
-            && miaCollision->getPosition().y() >= -1)
-        {
-            bSceneOne = false;
-            if (bShouldMove)
-            {
-                moveMiaX(-4);
-                moveMiaY(-9.5);
-
-                bShouldMove = false;
-            }
-        }
-    }
+    CollisionHandling();
     ToggleCollision();
     TogglePath();
 }
@@ -419,6 +391,52 @@ float RenderWindow::GetSurfaceHeight()
     return 0.0f;
 }
 
+void RenderWindow::CollisionHandling()
+{
+    // "Kollisjon"
+    for (auto i = 0; i < mItems.size(); i++)
+    {
+        // Finne avstand mellom posisjoner
+        QVector3D dist = miaCollision->getPosition() - mItems[i]->getPosition();
+        // [x1 – x2, y1 – y2, z1 – z2]
+        float d = dist.length();
+        //sqrt((x1 – x2)^2, (y1 – y2)^2, (z1 – z2)^2)
+        float r1 = miaCollision->getRadius(); // Må legges til
+        float r2 = mItems[i]->getRadius();
+
+        if (d < r1 + r2 && mItems[i]->bIsActive == true)
+        {
+            // slå av rendering / flytt ob
+            mItems[i]->move(100,100,100);
+            mItems[i]->bIsActive = false;
+            if (mObjects[i])
+            {
+                mObjects[i]->bShouldRender = false;
+                mObjects[i]->OpenDoor();
+            }
+        }
+    }
+    if (mia && miaCollision)
+    {
+        mia->getPosition();
+        miaCollision->getPosition();
+
+        if (miaCollision->getPosition().x() < -4.5
+            && miaCollision->getPosition().y() <= 1
+            && miaCollision->getPosition().y() >= -1)
+        {
+            bSceneOne = false;
+            if (bShouldMove)
+            {
+                moveMiaX(-4);
+                moveMiaY(-9.5);
+
+                bShouldMove = false;
+            }
+        }
+    }
+}
+
 void RenderWindow::setupPlainShader()
 {
     mPmatrixUniform0 =  glGetUniformLocation( mPlainShaderProgram->getProgram(), "pmatrix" );
@@ -437,11 +455,13 @@ void RenderWindow::setupTextureShader()
 
 void RenderWindow::setupPhongShader()
 {
-    mPmatrixUniform2 =  glGetUniformLocation( mPhongShaderProgram->getProgram(), "pmatrix" );
-    mVmatrixUniform2 =  glGetUniformLocation( mPhongShaderProgram->getProgram(), "vmatrix" );
-    mMmatrixUniform2 =  glGetUniformLocation( mPhongShaderProgram->getProgram(), "matrix" );
-    // Add sampler uniform to the shader
-    mTextureUniform2  =  glGetUniformLocation( mPhongShaderProgram->getProgram(), "textureSampler");
+    mUniformProjection = glGetUniformLocation(mPhongShaderProgram->getProgram(), "projection");
+    mUniformModel = glGetUniformLocation(mPhongShaderProgram->getProgram(), "model");
+    mUniformView = glGetUniformLocation(mPhongShaderProgram->getProgram(), "view");
+    mTextureUniform = mTextureUniform1  =  glGetUniformLocation( mTexShaderProgram->getProgram(), "theTexture");
+
+    mUniformAmbientIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.ambientIntensity");
+    mUniformAmbientColor = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.color");
 }
 
 //This function is called from Qt when window is exposed (shown)

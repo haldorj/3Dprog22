@@ -9,6 +9,8 @@
 #include <list>
 #include <unordered_map>
 
+#include <Light/light.h>
+
 #include "CustomFiles/CustomVec2.h"
 #include "triangulation.h"
 #include "visualobject.h"
@@ -71,6 +73,7 @@ private:
     VisualObject* BOT2;
     VisualObject* Path;
     VisualObject* Path2;
+    void CollisionHandling();
 
     std::unordered_map<std::string, VisualObject*> mMap;    // alternativ container
 
@@ -91,11 +94,16 @@ private:
    // void calcAverageNormals(unsigned int* indices, unsigned int indexCount, GLfloat* vertices, unsigned int vertexCount,
      //   unsigned int vLength, unsigned int normalOffset);
 
-    void setupPhongShader();
-    GLint  mPmatrixUniform2{};
-    GLint  mVmatrixUniform2{};
-    GLint  mMmatrixUniform2{};
-    GLint  mTextureUniform2{};
+    void  setupPhongShader();
+    GLint mUniformProjection{};
+    GLint mUniformModel{};
+    GLint mUniformView{};
+    GLint mTextureUniform{};
+
+    GLint mUniformAmbientIntensity{};
+    GLint mUniformAmbientColor{};
+
+    Light *mainLight;
 
     Texture *brickTexture;
     Shader *mPlainShaderProgram{nullptr};    //holds pointer the GLSL shader program
