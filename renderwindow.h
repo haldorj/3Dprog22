@@ -9,7 +9,8 @@
 #include <list>
 #include <unordered_map>
 
-#include <Light/light.h>
+#include "Light/light.h"
+#include "Light/material.h"
 
 #include "triangulation.h"
 #include "visualobject.h"
@@ -98,14 +99,18 @@ private:
     GLint mUniformModel{};
     GLint mUniformView{};
     GLint mTextureUniform{};
-
-    GLuint mUniformAmbientIntensity{} , mUniformAmbientColor{}, mUniformDirection{}, mUniformDiffuseIntensity{};
+    GLint mUniformEyePosition{};
+    GLuint mUniformAmbientIntensity{} , mUniformAmbientColor{}, mUniformDirection{}, mUniformDiffuseIntensity{},
+    mUniformSpecularIntensity{}, mUniformShininess{};
 
     Light *mainLight;
 
     Texture *brickTexture;
     Texture *dirtTexture;
     Texture *plainTexture;
+
+    Material *shinyMaterial;
+    Material *dullMaterial;
 
     Shader *mPlainShaderProgram{nullptr};    //holds pointer the GLSL shader program
     Shader *mTexShaderProgram{nullptr};

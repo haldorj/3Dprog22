@@ -1,9 +1,8 @@
-#include "Material.h"
+#include "material.h"
 
 Material::Material()
 {
     initializeOpenGLFunctions();
-
     specularIntensity = 0.0f;
     shininess = 0.0f;
 }
@@ -11,7 +10,6 @@ Material::Material()
 Material::Material(GLfloat sIntensity, GLfloat shine)
 {
     initializeOpenGLFunctions();
-
     specularIntensity = sIntensity;
     shininess = shine;
 }

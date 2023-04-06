@@ -26,6 +26,7 @@ void Camera::perspective(int fovy, double aspect, double nearplane, double farpl
 void Camera::lookAt(const QVector3D &eye, const QVector3D &at, const QVector3D &up)
 {
     mVmatrix.lookAt(eye, at, up);
+    mEye = eye;
 }
 
 
@@ -34,6 +35,14 @@ void Camera::update()
     initializeOpenGLFunctions();
     glUniformMatrix4fv(mPmatrixUniform, 1, GL_FALSE, mPmatrix.constData());
     glUniformMatrix4fv(mVmatrixUniform, 1, GL_FALSE, mVmatrix.constData());
+}
+
+glm::vec3 Camera::getCameraPosition()
+{
+    glm::vec3 position = {mEye.x(),
+                         mEye.y(),
+                         mEye.z()};
+    return position;
 }
 
 //void Camera::translate(float dx, float dy, float dz){}

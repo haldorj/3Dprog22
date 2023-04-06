@@ -9,6 +9,7 @@ INCLUDEPATH += $$PWD/glm
 
 SOURCES += main.cpp \
     Light/light.cpp \
+    Light/material.cpp \
     bsplinecurve.cpp \
     camera.cpp \
     collisionvolume.cpp \
@@ -20,7 +21,6 @@ SOURCES += main.cpp \
     interactiveobject.cpp \
     logger.cpp \
     mainwindow.cpp \
-    material.cpp \
     npc.cpp \
     octahedronball.cpp \
     plane.cpp \
@@ -375,6 +375,7 @@ HEADERS += \
     Eigen/src/plugins/MatrixCwiseUnaryOps.h \
     Eigen/src/plugins/ReshapedMethods.h \
     Light/light.h \
+    Light/material.h \
     Vectors.h \
     bsplinecurve.h \
     camera.h \
@@ -387,7 +388,6 @@ HEADERS += \
     interactiveobject.h \
     logger.h \
     mainwindow.h \
-    material.h \
     npc.h \
     octahedronball.h \
     plane.h \

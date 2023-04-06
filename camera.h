@@ -4,6 +4,7 @@
 #include <QOpenGLFunctions_4_1_Core>
 #include <QVector3D>
 #include <QMatrix4x4>
+#include <glm.hpp>
 
 class Camera : public QOpenGLFunctions_4_1_Core
 {
@@ -23,6 +24,8 @@ public:
 
    QMatrix4x4 mPmatrix{};
    QMatrix4x4 mVmatrix{};
+
+   glm::vec3 getCameraPosition();
    //void translate(float dx, float dy, float dz);
 };
 

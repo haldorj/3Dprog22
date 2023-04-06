@@ -198,9 +198,12 @@ void RenderWindow::init()
     plainTexture = new Texture((char*)("Textures/plain.png"));
     plainTexture->LoadTextureA();
 
+    shinyMaterial = new Material(4.0f, 256);
+    dullMaterial = new Material(0.3f, 4);
+
     mainLight = new Light(1.0f, 1.0f, 1.0f,
                           0.3f,
-                          1.0f, 5.0f, 1.0f,
+                          2.0f, -2.0f, 3.0f,
                           0.7f);
 
     //mCamera.init(mPmatrixUniform, mVmatrixUniform);
@@ -225,8 +228,9 @@ void RenderWindow::init()
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 
     // Additional setup
-    //moveMiaX(-1);
-    //moveMiaY(-3);
+    moveMiaX(1);
+    moveMiaY(1);
+    mia->mMatrix.translate(0,0,0.1);
 
     BOT2->bShouldRender = false;
     Path2->bShouldRender = false;
@@ -256,8 +260,6 @@ void RenderWindow::render()
         mCamera.lookAt( QVector3D{2,-2,5}, QVector3D{2,2,0}, QVector3D{0,1,0} );
         //mCamera.lookAt( QVector3D{-0,-4,4}, QVector3D{0,-1,0}, QVector3D{0,1,0} );
         //mCamera.lookAt( QVector3D{1, 0,10}, QVector3D{1,1,0}, QVector3D{0,1,0} );
-
-
     else
         // Scene 2
         mCamera.lookAt( QVector3D{-10,-10,3}, QVector3D{-10,-10,0}, QVector3D{0,1,0} );
@@ -295,6 +297,7 @@ void RenderWindow::render()
     glUseProgram(mPhongShaderProgram->getProgram());
     glUniformMatrix4fv(mUniformView, 1, GL_TRUE, mCamera.mVmatrix.constData());
     glUniformMatrix4fv(mUniformProjection, 1, GL_TRUE, mCamera.mPmatrix.constData());
+    glUniform3f(mUniformEyePosition, mCamera.getCameraPosition().x, mCamera.getCameraPosition().y, mCamera.getCameraPosition().z);
 
     //checkForGLerrors();
     //Additional parameters for light shader:
@@ -306,15 +309,17 @@ void RenderWindow::render()
 
     // mia
     brickTexture->UseTexture();
-    //Texture
+    shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
-    //Draw
     mia->draw();
+    mCamera.update();
 
     // surface obj
+    dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     plainTexture->UseTexture();
     glUniform1i(mTextureUniform, 1);
     triangulation->draw();
+    mCamera.update();
 
     //mMap["disc"]->move(0.05f);
 
@@ -461,12 +466,15 @@ void RenderWindow::setupPhongShader()
     mUniformProjection = glGetUniformLocation(mPhongShaderProgram->getProgram(), "projection");
     mUniformModel = glGetUniformLocation(mPhongShaderProgram->getProgram(), "model");
     mUniformView = glGetUniformLocation(mPhongShaderProgram->getProgram(), "view");
-    mTextureUniform = glGetUniformLocation( mTexShaderProgram->getProgram(), "theTexture");
+    mTextureUniform = glGetUniformLocation(mTexShaderProgram->getProgram(), "theTexture");
+    mUniformEyePosition = glGetUniformLocation(mPhongShaderProgram->getProgram(), "eyePosition");
 
     mUniformAmbientIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.ambientIntensity");
     mUniformAmbientColor = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.color");
     mUniformDirection = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.direction");
     mUniformDiffuseIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.diffuseIntensity");
+    mUniformSpecularIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), "material.specularIntensity");
+    mUniformShininess = glGetUniformLocation(mPhongShaderProgram->getProgram(),"material.shininess");
 }
 
 //This function is called from Qt when window is exposed (shown)
