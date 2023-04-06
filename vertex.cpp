@@ -22,6 +22,20 @@ Vertex::Vertex(float x, float y, float z)
     m_xyz[2] = z;
 }
 
+void Vertex::setXYZ(float x, float y, float z)
+{
+    m_xyz[0] = x;
+    m_xyz[1] = y;
+    m_xyz[2] = z;
+}
+
+void Vertex::setNorm(float nx, float ny, float nz)
+{
+    m_normal[0] = nx;
+    m_normal[1] = ny;
+    m_normal[2] = nz;
+}
+
 Vertex::Vertex(float x, float y, float z, float r, float g, float b, float u, float v)
 {
     m_xyz[0] = x;

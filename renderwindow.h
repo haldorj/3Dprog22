@@ -11,7 +11,6 @@
 
 #include <Light/light.h>
 
-#include "CustomFiles/CustomVec2.h"
 #include "triangulation.h"
 #include "visualobject.h"
 #include "trianglesurface.h"
@@ -100,12 +99,14 @@ private:
     GLint mUniformView{};
     GLint mTextureUniform{};
 
-    GLint mUniformAmbientIntensity{};
-    GLint mUniformAmbientColor{};
+    GLuint mUniformAmbientIntensity{} , mUniformAmbientColor{}, mUniformDirection{}, mUniformDiffuseIntensity{};
 
     Light *mainLight;
 
     Texture *brickTexture;
+    Texture *dirtTexture;
+    Texture *plainTexture;
+
     Shader *mPlainShaderProgram{nullptr};    //holds pointer the GLSL shader program
     Shader *mTexShaderProgram{nullptr};
     Shader *mPhongShaderProgram{nullptr};

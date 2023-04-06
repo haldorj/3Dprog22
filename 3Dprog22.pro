@@ -37,8 +37,6 @@ SOURCES += main.cpp \
 
 HEADERS += \
     CustomFiles/CommonValues.h \
-    CustomFiles/CustomVec2.h \
-    CustomFiles/CustomVec3.h \
     Eigen/Cholesky \
     Eigen/CholmodSupport \
     Eigen/Core \

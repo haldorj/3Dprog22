@@ -52,6 +52,34 @@ void Texture::LoadTexture()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     // 4. Load the texture image into the texture object
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, texData);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    stbi_image_free(texData);
+}
+
+void Texture::LoadTextureA()
+{
+    unsigned char* texData = stbi_load(fileLocation, &width, &height, &bitDepth, 0);
+    if (!texData)
+    {
+        printf("failed to find %s\n", fileLocation);
+        return;
+    }
+    glEnable(GL_TEXTURE_2D);
+    // 1. Generate a texture object.
+    glGenTextures(1, &textureID);
+    // 2. Bind the texture object to a target.
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    // 3. Configure texture state.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // Wrapping X axis
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // Wrapping Y axis
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    // 4. Load the texture image into the texture object
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData);
     glGenerateMipmap(GL_TEXTURE_2D);
 

@@ -28,9 +28,15 @@ public:
        return {m_xyz[0] - other.m_xyz[0], m_xyz[1] - other.m_xyz[1], m_xyz[2] - other.m_xyz[2]};
    };
 
+   void setXYZ(float x, float y, float z);
+   void setNorm(float nx, float ny, float nz);
 
    float getX() {return m_xyz[0];}
    float getY() {return m_xyz[1];}
    float getZ() {return m_xyz[2];}
+
+   float getNormX() {return m_normal[0];}
+   float getNormY() {return m_normal[1];}
+   float getNormZ() {return m_normal[2];}
 };
 #endif // VERTEX_H

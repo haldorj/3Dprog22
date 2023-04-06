@@ -1,20 +1,23 @@
 #version 410 core
 
-layout(location = 0) in vec4 pos;    // 1st attribute buffer = vertex positions
-layout(location = 1) in vec4 col;       // 2nd attribute buffer = colors
-layout(location = 2) in vec2 tex;     // 3rd attribute buffer = textures
+layout (location = 0) in vec3 pos;
+layout (location = 1) in vec3 norm;
+layout (location = 2) in vec2 tex;
 
-out vec4 vCol;                             //color sent to rest of pipeline
+out vec4 vCol;
+out vec3 Normal;
 out vec2 TexCoord;
 
 uniform mat4 model;
 uniform mat4 projection;
-uniform mat4 view;                        //the matrix for the model
+uniform mat4 view;
 
 void main()
 {
-    gl_Position = projection * view * model * pos; //calculate the position of the model
-    vCol  = col;                            //passing on the vertex color
+    gl_Position = projection * view * model * vec4(pos, 1.0);
+    vCol = vec4(clamp(pos, 0.0f, 1.0f), 1.0f);
 
     TexCoord = tex;
+
+    Normal = mat3(transpose(inverse(model))) * norm;
 }

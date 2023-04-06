@@ -2,6 +2,7 @@
 #define VISUALOBJECT_H
 
 #include <QOpenGLFunctions_4_1_Core>
+#include <glm.hpp>
 #include <QMatrix4x4>
 #include <QMatrix2x2>
 #include <vector>
@@ -35,14 +36,13 @@ public:
    void SetLocation(float x, float y, float z) { mMatrix.translate(x,y,z); }
 
    // for phong lighting
-   //void calcAverageNormals(unsigned int* indices, unsigned int indexCount, GLfloat* vertices, unsigned int vertexCount,
-     //  unsigned int vLength, unsigned int normalOffset);
-
+   void calcAverageNormals();
 
    QMatrix4x4 mMatrix;
 protected:
    float radius = 0;
    std::vector<Vertex> mVertices;
+   std::vector<unsigned int> mIndices;
    GLuint mVAO{0};
    GLuint mVBO{0};
    GLuint mIBO{0};

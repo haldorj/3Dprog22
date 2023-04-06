@@ -16,6 +16,7 @@ public:
     ~Texture();
 
     void LoadTexture();
+    void LoadTextureA();
     void UseTexture();
     void ClearTexture();
     void makeDummyTexture();

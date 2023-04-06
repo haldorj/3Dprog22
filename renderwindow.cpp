@@ -125,15 +125,6 @@ RenderWindow::~RenderWindow()
     glDeleteBuffers( 1, &mVBO );
 }
 
-//Simple global for vertices of a triangle - should belong to a class !
-static GLfloat vertices[] =
-{
-    // Positions         // Colors
-    -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // Bottom Left
-    0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f,  // Bottom Right
-    0.0f,  0.5f, 0.0f,   0.0f, 0.0f, 1.0f   // Top
-};
-
 // Sets up the general OpenGL stuff and the buffers needed to render a triangle
 void RenderWindow::init()
 {
@@ -201,9 +192,16 @@ void RenderWindow::init()
     setupPhongShader();
 
     brickTexture = new Texture((char*)("Textures/brick.png"));
-    brickTexture->LoadTexture();
+    brickTexture->LoadTextureA();
+    dirtTexture = new Texture((char*)("Textures/dirt.png"));
+    dirtTexture->LoadTextureA();
+    plainTexture = new Texture((char*)("Textures/plain.png"));
+    plainTexture->LoadTextureA();
 
-    mainLight = new Light(1.0f, 0.0f, 0.0f, 1.0f);
+    mainLight = new Light(1.0f, 1.0f, 1.0f,
+                          0.3f,
+                          1.0f, 5.0f, 1.0f,
+                          0.7f);
 
     //mCamera.init(mPmatrixUniform, mVmatrixUniform);
 
@@ -219,7 +217,7 @@ void RenderWindow::init()
     for (auto it=mMap.begin(); it!=mMap.end(); it++)
         (*it).second->init(mMmatrixUniform0);
 
-    triangulation->init(mMmatrixUniform0);
+    triangulation->init(mUniformModel);
 
     //mia->init(mMmatrixUniform1);
     mia->init(mUniformModel);
@@ -277,14 +275,11 @@ void RenderWindow::render()
         (*it)->draw();
 
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
-    {
         (*it)->draw();
-    }
 
-    triangulation->draw();
     mCamera.update();
 
-//    // what shader to use (texture shader)
+    // what shader to use (texture shader)
 //    glUseProgram(mTexShaderProgram->getProgram());
 //    glUniformMatrix4fv(mVmatrixUniform1, 1, GL_TRUE, mCamera.mVmatrix.constData());
 //    glUniformMatrix4fv(mPmatrixUniform1, 1, GL_TRUE, mCamera.mPmatrix.constData());
@@ -300,19 +295,27 @@ void RenderWindow::render()
     glUseProgram(mPhongShaderProgram->getProgram());
     glUniformMatrix4fv(mUniformView, 1, GL_TRUE, mCamera.mVmatrix.constData());
     glUniformMatrix4fv(mUniformProjection, 1, GL_TRUE, mCamera.mPmatrix.constData());
-    //glUniformMatrix4fv(mUniformModel, 1, GL_TRUE, mia->mMatrix.constData());
+
     //checkForGLerrors();
     //Additional parameters for light shader:
-    mainLight->UseLight(mUniformAmbientIntensity, mUniformAmbientColor);
+    mainLight->UseLight(mUniformAmbientIntensity, mUniformAmbientColor,
+                       mUniformDiffuseIntensity, mUniformDirection);
+
+    //Update Camera
+    mCamera.update();
+
+    // mia
     brickTexture->UseTexture();
     //Texture
     glUniform1i(mTextureUniform, 1);
-    //Update Camera
-    mCamera.update();
     //Draw
     mia->draw();
 
-    mCamera.update();
+    // surface obj
+    plainTexture->UseTexture();
+    glUniform1i(mTextureUniform, 1);
+    triangulation->draw();
+
     //mMap["disc"]->move(0.05f);
 
     //Calculate framerate before
@@ -364,12 +367,12 @@ float RenderWindow::GetSurfaceHeight()
     glm::vec3 playerPos = glm::vec3(mia->mWorldPosition.x(), mia->mWorldPosition.y(), mia->mWorldPosition.z());
 
     // Loop through each triangle in the mesh.
-    for (int j = 0; j < (triangulation->numTriangles); j++)
+    for (int i = 0; i < (triangulation->numTriangles); i++)
     {
         // Get the vertices of the triangle.
-        unsigned int v0 = triangulation->getIndex(j, 0);
-        unsigned int v1 = triangulation->getIndex(j, 1);
-        unsigned int v2 = triangulation->getIndex(j, 2);
+        unsigned int v0 = triangulation->getIndex(i, 0);
+        unsigned int v1 = triangulation->getIndex(i, 1);
+        unsigned int v2 = triangulation->getIndex(i, 2);
         glm::vec3 p0 = triangulation->getVertex(v0);
         glm::vec3 p1 = triangulation->getVertex(v1);
         glm::vec3 p2 = triangulation->getVertex(v2);
@@ -458,10 +461,12 @@ void RenderWindow::setupPhongShader()
     mUniformProjection = glGetUniformLocation(mPhongShaderProgram->getProgram(), "projection");
     mUniformModel = glGetUniformLocation(mPhongShaderProgram->getProgram(), "model");
     mUniformView = glGetUniformLocation(mPhongShaderProgram->getProgram(), "view");
-    mTextureUniform = mTextureUniform1  =  glGetUniformLocation( mTexShaderProgram->getProgram(), "theTexture");
+    mTextureUniform = glGetUniformLocation( mTexShaderProgram->getProgram(), "theTexture");
 
     mUniformAmbientIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.ambientIntensity");
     mUniformAmbientColor = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.color");
+    mUniformDirection = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.direction");
+    mUniformDiffuseIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.diffuseIntensity");
 }
 
 //This function is called from Qt when window is exposed (shown)

@@ -1,22 +1,18 @@
 #include "triangulation.h"
 
-#include "CustomFiles/CustomVec2.h"
-
-
-
 Triangulation::Triangulation() : VisualObject()
 {
     readFile("../3Dprog22/UKE11/6.3.7 vertexData.txt");
-    //readFile("UKE11/6.3.7 vertexData.txt");
+    initIndeces();
+    calcAverageNormals();
     mMatrix.setToIdentity();
-
-    calcAverageNormals(mIndices, 42, vertices ,mVertices.size(), 8, 5);
 }
 
 Triangulation::Triangulation(std::string filnavn) : VisualObject()
 {
     readFile("../3Dprog22/UKE11/6.3.7 vertexData.txt");
-    //readFile("UKE11/6.3.7 vertexData.txt");
+    initIndeces();
+    calcAverageNormals();
     mMatrix.setToIdentity();
 }
 
@@ -39,16 +35,19 @@ void Triangulation::init(GLint matrixUniform)
     // Setup indexed draws
     glGenBuffers(1, &mIBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(mIndices), mIndices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, mIndices.size() * sizeof(GLuint), mIndices.data(), GL_STATIC_DRAW);
 
     glBufferData( GL_ARRAY_BUFFER, mVertices.size()*sizeof(Vertex), mVertices.data(), GL_STATIC_DRAW );
     glBindBuffer(GL_ARRAY_BUFFER, mVBO);
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(0));
     glEnableVertexAttribArray(0);
-    // color attribute
+    // color/normal attribute
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,  sizeof(Vertex),  (GLvoid*)(3 * sizeof(GLfloat)));
     glEnableVertexAttribArray(1);
+    // texture coord attribute
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),  (GLvoid*)(6 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(2);
 
     glBindVertexArray(0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -61,7 +60,7 @@ void Triangulation::draw()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
     glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
     // DrawElements, indexed draws
-    glDrawElements(GL_TRIANGLES, 42, GL_UNSIGNED_INT, nullptr);
+    glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, nullptr);
     //glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
@@ -81,6 +80,28 @@ glm::vec3 Triangulation::getVertex(int index)
 unsigned int Triangulation::getIndex(int triangleIndex, int vertexIndex)
 {
     return mIndices[triangleIndex * 3 + vertexIndex];
+}
+
+void Triangulation::initIndeces()
+{
+    mIndices = {
+        0, 4, 1,    // 1. trekant
+        1, 4, 6,    // 2. trekant
+        1, 6, 5,    // 3. osv...
+        1, 5, 3,
+        1, 3, 2,
+        4, 10, 6,
+        4, 9, 10,
+        8, 10, 11,
+        5, 6, 10,
+        5, 10, 8,
+        7, 8, 11,
+        5, 8, 7,
+        3, 5, 7,
+        2, 3, 7
+    };
+
+    numTriangles = mIndices.size()/3;
 }
 
 void Triangulation::readFile(std::string filename)
@@ -131,43 +152,4 @@ void Triangulation::writeFile(std::string filename)
         std::cout << "WRITEFILE: File " << filename << " was not opened." << std::endl;
     }
 }
-
-
-
-void Triangulation::calcAverageNormals(unsigned int* indices, unsigned int indexCount, GLfloat* vertices, unsigned int vertexCount,
-    unsigned int vLength, unsigned int normalOffset)
-{
-    for (size_t i = 0; i < indexCount; i += 3)
-    {
-        unsigned int in0 = indices[i] * vLength;
-        unsigned int in1 = indices[i + 1] * vLength;
-        unsigned int in2 = indices[i + 2] * vLength;
-
-
-        glm::vec3 v1(vertices[in1] - vertices[in0],
-                     vertices[in1 + 1] - vertices[in0 + 1],
-                     vertices[in1 + 2] - vertices[in0 + 2]);
-
-        glm::vec3 v2(vertices[in2] - vertices[in0],
-                    vertices[in2 + 1] - vertices[in0 + 1],
-                    vertices[in2 + 2] - vertices[in0 + 2]);
-
-        glm::vec3 normal = glm::cross(v1, v2);
-        normal = glm::normalize(normal);
-
-        in0 += normalOffset; in1 += normalOffset; in2 += normalOffset;
-        vertices[in0] += normal.x; vertices[in0 + 1] += normal.y; vertices[in0 + 2] += normal.z;
-        vertices[in1] += normal.x; vertices[in1 + 1] += normal.y; vertices[in1 + 2] += normal.z;
-        vertices[in2] += normal.x; vertices[in2 + 1] += normal.y; vertices[in2 + 2] += normal.z;
-    }
-
-    for (size_t i = 0; i < vertexCount / vLength; i++)
-    {
-        unsigned int nOffset = i * vLength + normalOffset;
-        glm::vec3 vec(vertices[nOffset], vertices[nOffset + 1], vertices[nOffset + 2]);
-        vec = glm::normalize(vec);
-        vertices[nOffset] = vec.x; vertices[nOffset + 1] = vec.y; vertices[nOffset + 2] = vec.z;
-    }
-}
-
 
