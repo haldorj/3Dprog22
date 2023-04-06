@@ -197,14 +197,16 @@ void RenderWindow::init()
     dirtTexture->LoadTextureA();
     plainTexture = new Texture((char*)("Textures/plain.png"));
     plainTexture->LoadTextureA();
+    woodTexture = new Texture((char*)("Textures/wood.png"));
+    woodTexture->LoadTexture();
 
     shinyMaterial = new Material(4.0f, 256);
     dullMaterial = new Material(0.3f, 4);
 
-    mainLight = new Light(1.0f, 1.0f, 1.0f,
-                          0.3f,
-                          2.0f, -2.0f, 3.0f,
-                          0.7f);
+    mainLight = new Light(1.0f, 1.0f, 1.0f,     //rgb
+                          0.2f,                 //ambientIntensity
+                          -1.0f, 10.0f, 0.0f,    //xyz
+                          1.0f);                //specularIntensity
 
     //mCamera.init(mPmatrixUniform, mVmatrixUniform);
 
@@ -297,7 +299,7 @@ void RenderWindow::render()
     glUseProgram(mPhongShaderProgram->getProgram());
     glUniformMatrix4fv(mUniformView, 1, GL_TRUE, mCamera.mVmatrix.constData());
     glUniformMatrix4fv(mUniformProjection, 1, GL_TRUE, mCamera.mPmatrix.constData());
-    glUniform3f(mUniformEyePosition, mCamera.getCameraPosition().x, mCamera.getCameraPosition().y, mCamera.getCameraPosition().z);
+    glUniform3f(mUniformEyePosition, mCamera.getCameraPosition().x, mCamera.getCameraPosition().z, mCamera.getCameraPosition().y);
 
     //checkForGLerrors();
     //Additional parameters for light shader:
@@ -309,17 +311,17 @@ void RenderWindow::render()
 
     // mia
     brickTexture->UseTexture();
-    shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
+    dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
+
     mia->draw();
-    mCamera.update();
 
     // surface obj
-    dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
-    plainTexture->UseTexture();
+    woodTexture->UseTexture();
+    shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
+
     triangulation->draw();
-    mCamera.update();
 
     //mMap["disc"]->move(0.05f);
 

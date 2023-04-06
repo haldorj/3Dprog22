@@ -108,6 +108,7 @@ private:
     Texture *brickTexture;
     Texture *dirtTexture;
     Texture *plainTexture;
+    Texture *woodTexture;
 
     Material *shinyMaterial;
     Material *dullMaterial;
