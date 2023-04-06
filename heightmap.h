@@ -10,13 +10,13 @@
 class HeightMap : public VisualObject
 {
 public:
-    HeightMap();
-    HeightMap(char* fileLoc);
+//    HeightMap();
+//    HeightMap(char* fileLoc);
 
-    void LoadHeightMap();
+//    void LoadHeightMap();
 
-    void init(GLint matrixUniform) override;
-    void draw() override;
+//    void init(GLint matrixUniform) override;
+//    void draw() override;
 private:
     int width, height, nChannels;
     char* fileLocation;

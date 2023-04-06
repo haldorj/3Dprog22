@@ -115,7 +115,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //mMap.insert(MapPair{"mia", mia});
     mMap.insert(MapPair{"miaCollision", miaCollision});
 
-    heightmap = new HeightMap;
+    //heightmap = new HeightMap;
 }
 
 RenderWindow::~RenderWindow()
