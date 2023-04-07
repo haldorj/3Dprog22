@@ -57,7 +57,7 @@ InteractiveCollisionVolume::~InteractiveCollisionVolume()
 void InteractiveCollisionVolume::lagTriangel(const QVector3D& v1, const QVector3D& v2,
 const QVector3D& v3)
 {
-    Vertex v{v1.x(), v1.y(), v1.z(), 1, 1, 1};
+     Vertex v{v1.x(), v1.y(), v1.z(), 1, 1, 1};
      mVertices.push_back(v);
      v = Vertex{v2.x(), v2.y(), v2.z(), 1, 1, 1};
      mVertices.push_back(v);

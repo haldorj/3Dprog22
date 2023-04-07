@@ -191,6 +191,9 @@ void RenderWindow::init()
     setupTextureShader();
     setupPhongShader();
 
+    heightmap = new HeightMap((char*)("HeightMaps/iceland_heightmap.png"));
+    heightMap->LoadHeightMap();
+
     brickTexture = new Texture((char*)("Textures/brick.png"));
     brickTexture->LoadTextureA();
     dirtTexture = new Texture((char*)("Textures/dirt.png"));
@@ -204,19 +207,19 @@ void RenderWindow::init()
     dullMaterial = new Material(0.3f, 4);
 
     mainLight = new DirectionalLight(1.0f, 1.0f, 1.0f,      //rgb
-                                    0.25f, 0.75,              //ambientIntensity, specularIntensity
+                                    0.25f, 1.0,              //ambientIntensity, specularIntensity
                                     0.0f, 0.0f, -1.0f);    //xyz (directions)
 
-    mPointLights.push_back( new PointLight(1.0f, 0.0f, 1.0f,    //rgb
-                                    0.1f, 1.0f,                 //ambientIntensity, diffuseIntensity
-                                    2.0f, 2.0f, 3.0f,           //xyz
-                                    0.5f, 0.2f, 0.1f));         //const, lin, exp
-    PointLightCount++;
-    mPointLights.push_back( new PointLight(1.0f, 1.0f, 0.0f,
-                                    0.1f, 1.0f,
-                                    -1.0f, 2.0f, 3.0f,
-                                    0.2f, 0.1f, 0.1f));
-    PointLightCount++;
+//    mPointLights.push_back( new PointLight(1.0f, 0.0f, 1.0f,    //rgb
+//                                    0.1f, 1.0f,                 //ambientIntensity, diffuseIntensity
+//                                    2.0f, 2.0f, 3.0f,           //xyz
+//                                    0.5f, 0.2f, 0.1f));         //const, lin, exp
+//    PointLightCount++;
+//    mPointLights.push_back( new PointLight(1.0f, 1.0f, 0.0f,
+//                                    0.1f, 1.0f,
+//                                    -1.0f, 2.0f, 3.0f,
+//                                    0.2f, 0.1f, 0.1f));
+//    PointLightCount++;
 
 
     //mCamera.init(mPmatrixUniform, mVmatrixUniform);
@@ -233,10 +236,10 @@ void RenderWindow::init()
     for (auto it=mMap.begin(); it!=mMap.end(); it++)
         (*it).second->init(mMmatrixUniform0);
 
+    // objects using phong shading
     triangulation->init(mUniformModel);
-
-    //mia->init(mMmatrixUniform1);
     mia->init(mUniformModel);
+    heightMap->init(mUniformModel);
 
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 
@@ -298,7 +301,7 @@ void RenderWindow::render()
     glUseProgram(mPhongShaderProgram->getProgram());
     glUniformMatrix4fv(mUniformView, 1, GL_TRUE, mCamera.mVmatrix.constData());
     glUniformMatrix4fv(mUniformProjection, 1, GL_TRUE, mCamera.mPmatrix.constData());
-    glUniform3f(mUniformEyePosition, mCamera.getCameraPosition().x, mCamera.getCameraPosition().z, mCamera.getCameraPosition().y);
+    glUniform3f(mUniformEyePosition, -mCamera.getCameraPosition().x, mCamera.getCameraPosition().y, mCamera.getCameraPosition().z);
     //checkForGLerrors();
     //Additional parameters for light shader:
     SetDirectionalLight(mainLight);
@@ -307,15 +310,22 @@ void RenderWindow::render()
     mCamera.update();
 
     // mia
-    plainTexture->UseTexture();
-    dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
+    brickTexture->UseTexture();
+    shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
 
     mia->draw();
 
     // surface obj
     woodTexture->UseTexture();
-    shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
+    dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
+    glUniform1i(mTextureUniform, 1);
+
+    triangulation->draw();
+
+    // hmap
+    woodTexture->UseTexture();
+    dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
 
     triangulation->draw();

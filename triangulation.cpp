@@ -63,9 +63,6 @@ void Triangulation::draw()
     glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, nullptr);
     //glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    //mMatrix.rotate(1, 10,0,0);
-
 }
 
 glm::vec3 Triangulation::getVertex(int index)

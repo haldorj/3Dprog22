@@ -1,106 +1,108 @@
 #include "heightmap.h"
 
-//HeightMap::HeightMap()
-//{
-//    initializeOpenGLFunctions();
-//    width = 0;
-//    height = 0;
-//    fileLocation = nullptr;
+HeightMap::HeightMap()
+{
+    initializeOpenGLFunctions();
 
-//    LoadHeightMap();
-//}
+    width = 0;
+    height = 0;
+    nrChannels = 0;
+    fileLocation = nullptr;
+}
 
-//HeightMap::HeightMap(char* fileLoc)
-//{
-//    initializeOpenGLFunctions();
-//    width = 0;
-//    height = 0;
-//    fileLocation = fileLoc;
+HeightMap::HeightMap(char* fileLoc)
+{
+    initializeOpenGLFunctions();
 
-//    LoadHeightMap();
-//}
+    width = 0;
+    height = 0;
+    nrChannels = 0;
+    fileLocation = fileLoc;
+}
 
-//void HeightMap::LoadHeightMap()
-//{
-//    unsigned char *data = stbi_load("heightmaps/iceland_heightmap.png", &width, &height, &nChannels, 0);
+void HeightMap::LoadHeightMap()
+{
+    // load height map texture
 
-//    // vertex generation
-//    std::vector<float> vertices;
-//    float yScale = 64.0f / 256.0f, yShift = 16.0f;  // apply a scale+shift to the height data
-//    for(unsigned int i = 0; i < height; i++)
-//    {
-//        for(unsigned int j = 0; j < width; j++)
-//        {
-//            // retrieve texel for (i,j) tex coord
-//            unsigned char* texel = data + (j + width * i) * nChannels;
-//            // raw height at coordinate
-//            unsigned char y = texel[0];
+    unsigned char *data = stbi_load("HeightMaps/iceland_heightmap.png", &width, &height, &nrChannels, 0);
+    std::cout << "TexData: " << data
+              << " w: " << width << "h: " << height << "\n";
 
-//            // vertex
-//            vertices.push_back( -height/2.0f + i );        // v.x
-//            vertices.push_back( (int)y * yScale - yShift); // v.y
-//            vertices.push_back( -width/2.0f + j);        // v.z
-//        }
-//    }
+    // vertex generation
+    float yScale = 64.0f / 256.0f, yShift = 16.0f;  // apply a scale+shift to the height data
+    for(unsigned int i = 0; i < height; i++)
+    {
+        for(unsigned int j = 0; j < width; j++)
+        {
+            // retrieve texel for (i,j) tex coord
+            unsigned char* texel = data + (j + width * i) * nrChannels;
+            // raw height at coordinate
+            unsigned char y = texel[0];
 
-//    // index generation
-//    std::vector<unsigned int> indices;
-//    for(unsigned int i = 0; i < height-1; i++)       // for each row a.k.a. each strip
-//    {
-//        for(unsigned int j = 0; j < width; j++)      // for each column
-//        {
-//            for(unsigned int k = 0; k < 2; k++)      // for each side of the strip
-//            {
-//                indices.push_back(j + width * (i + k));
-//            }
-//        }
-//    }
+            glm::vec3 d = glm::vec3(-height/2.0f + height*i/(float)height,// v.x// v.x
+                                    (int) y * yScale - yShift,// v.y
+                                    -width/2.0f + width*j/(float)width);
 
-//    const unsigned int NUM_STRIPS = height-1;
-//    const unsigned int NUM_VERTS_PER_STRIP = width*2;
+            // vertex
+            mVertices.push_back(Vertex{d.x, d.y, d.z});
+        }
+    }
+    int rez = 1;
+    // After building up the vertex array, we can release the height map from memory.
+    std::cout << "Loaded " << mVertices.size() / 3 << " vertices" << std::endl;
+    stbi_image_free(data);
+    for(unsigned i = 0; i < height-1; i += rez) // for each row a.k.a. each strip
+    {
+        for(unsigned j = 0; j < width; j += rez) // for each row a.k.a. each strip
+        {
+            for(unsigned k = 0; k < 2; k++)  // for each side of the strip
+            {
+                mIndices.push_back(j + width * (i + k * rez));
+            }
+        }
+    }
+}
 
+void HeightMap::init(GLint matrixUniform)
+{
+    mMatrixUniform = matrixUniform;
+    initializeOpenGLFunctions();
 
-//    stbi_image_free(data);
-//}
+    glGenVertexArrays(1, &mVAO);
+    glBindVertexArray(mVAO);
 
-//void HeightMap::init(GLint matrixUniform)
-//{
-//    // register VAO
-//    GLuint terrainVAO, terrainVBO, terrainEBO;
-//    glGenVertexArrays(1, &terrainVAO);
-//    glBindVertexArray(terrainVAO);
+    glGenBuffers(1, &mVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 
-//    glGenBuffers(1, &terrainVBO);
-//    glBindBuffer(GL_ARRAY_BUFFER, terrainVBO);
-//    glBufferData(GL_ARRAY_BUFFER,
-//                 vertices.size() * sizeof(float),       // size of vertices buffer
-//                 &vertices[0],                          // pointer to first element
-//                 GL_STATIC_DRAW);
+    // Setup indexed draws
+    glGenBuffers(1, &mIBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, mIndices.size() * sizeof(GLuint), mIndices.data(), GL_STATIC_DRAW);
 
-//    // position attribute
-//    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-//    glEnableVertexAttribArray(0);
+    glBufferData( GL_ARRAY_BUFFER, mVertices.size()*sizeof(Vertex), mVertices.data(), GL_STATIC_DRAW );
+    glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(0));
+    glEnableVertexAttribArray(0);
+    // color/normal attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,  sizeof(Vertex),  (GLvoid*)(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
+    // texture coord attribute
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),  (GLvoid*)(6 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(2);
 
-//    glGenBuffers(1, &terrainEBO);
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, terrainEBO);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-//                 indices.size() * sizeof(unsigned int), // size of indices buffer
-//                 &indices[0],                           // pointer to first element
-//                 GL_STATIC_DRAW);
-//}
+    glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
 
-//void HeightMap::draw()
-//{
-//    // draw mesh
-//    glBindVertexArray(terrainVAO);
-//    // render the mesh triangle strip by triangle strip - each row at a time
-//    for(unsigned int strip = 0; strip < NUM_STRIPS; ++strip)
-//    {
-//        glDrawElements(GL_TRIANGLE_STRIP,   // primitive type
-//                       NUM_VERTS_PER_STRIP, // number of indices to render
-//                       GL_UNSIGNED_INT,     // index data type
-//                       (void*)(sizeof(unsigned int)
-//                                 * NUM_VERTS_PER_STRIP
-//                                 * strip)); // offset to starting index
-//    }
-//}
+void HeightMap::draw()
+{
+    glBindVertexArray( mVAO );
+    // Bindbuffer, indexed draws
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
+    glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
+    // DrawElements, indexed draws
+    glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, nullptr);
+    //glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}

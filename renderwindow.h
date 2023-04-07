@@ -141,6 +141,8 @@ private:
     Texture *plainTexture;
     Texture *woodTexture;
 
+    HeightMap *heightMap;
+
     Material *shinyMaterial;
     Material *dullMaterial;
 
