@@ -51,6 +51,8 @@ void Triangulation::init(GLint matrixUniform)
 
     glBindVertexArray(0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    mMatrix.translate(0,0,10);
 }
 
 void Triangulation::draw()

@@ -6,6 +6,7 @@
 #include "stb_image.h"
 
 #include "visualobject.h"
+#include "texture.h"
 
 class HeightMap : public VisualObject
 {
@@ -14,6 +15,8 @@ public:
     HeightMap(char* fileLoc);
 
     void LoadHeightMap();
+
+    void GenerateTerrain(unsigned char *data);
 
     void init(GLint matrixUniform) override;
     void draw() override;

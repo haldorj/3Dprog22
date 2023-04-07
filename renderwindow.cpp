@@ -191,7 +191,7 @@ void RenderWindow::init()
     setupTextureShader();
     setupPhongShader();
 
-    heightmap = new HeightMap((char*)("HeightMaps/iceland_heightmap.png"));
+    heightMap = new HeightMap((char*)("HeightMaps/iceland_heightmap.png"));
     heightMap->LoadHeightMap();
 
     brickTexture = new Texture((char*)("Textures/brick.png"));
@@ -273,9 +273,9 @@ void RenderWindow::render()
 
     if (bSceneOne)
         // Scene 1
-        mCamera.lookAt( QVector3D{2,-2,5}, QVector3D{2,2,0}, QVector3D{0,1,0} );
+        //mCamera.lookAt( QVector3D{2,-2,5}, QVector3D{2,2,0}, QVector3D{0,1,0} );
         //mCamera.lookAt( QVector3D{-0,-4,4}, QVector3D{0,-1,0}, QVector3D{0,1,0} );
-        //mCamera.lookAt( QVector3D{1, 0,10}, QVector3D{1,1,0}, QVector3D{0,1,0} );
+        mCamera.lookAt( QVector3D{1, 0,10}, QVector3D{1,1,0}, QVector3D{0,1,0} );
     else
         // Scene 2
         mCamera.lookAt( QVector3D{-10,-10,3}, QVector3D{-10,-10,0}, QVector3D{0,1,0} );
@@ -324,11 +324,11 @@ void RenderWindow::render()
     triangulation->draw();
 
     // hmap
-    woodTexture->UseTexture();
+    dirtTexture->UseTexture();
     dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
 
-    triangulation->draw();
+    heightMap->draw();
 
     //mMap["disc"]->move(0.05f);
 

@@ -24,12 +24,21 @@ void HeightMap::LoadHeightMap()
 {
     // load height map texture
 
-    unsigned char *data = stbi_load("HeightMaps/iceland_heightmap.png", &width, &height, &nrChannels, 0);
-    std::cout << "TexData: " << data
-              << " w: " << width << "h: " << height << "\n";
+    unsigned char *mapData = stbi_load(fileLocation, &width, &height, &nrChannels, 0);
+    if (!mapData)
+    {
+        printf("failed to find %s\n", fileLocation);
+        return;
+    }
+    GenerateTerrain(mapData);
+}
 
+void HeightMap::GenerateTerrain(unsigned char *data)
+{
     // vertex generation
-    float yScale = 64.0f / 256.0f, yShift = 16.0f;  // apply a scale+shift to the height data
+    float yScale = 64.0f / 256.0f;
+    float yShift = 16.0f;  // apply a scale+shift to the height data
+
     for(unsigned int i = 0; i < height; i++)
     {
         for(unsigned int j = 0; j < width; j++)
@@ -39,12 +48,12 @@ void HeightMap::LoadHeightMap()
             // raw height at coordinate
             unsigned char y = texel[0];
 
-            glm::vec3 d = glm::vec3(-height/2.0f + height*i/(float)height,// v.x// v.x
-                                    (int) y * yScale - yShift,// v.y
+            glm::vec3 d = glm::vec3(-height/2.0f + height*i/(float)height,// v.x
+                                    (int) y * yScale - yShift,
                                     -width/2.0f + width*j/(float)width);
 
             // vertex
-            mVertices.push_back(Vertex{d.x, d.y, d.z});
+            mVertices.push_back(Vertex{d.x, d.z, d.y});
         }
     }
     int rez = 1;
@@ -61,6 +70,7 @@ void HeightMap::LoadHeightMap()
             }
         }
     }
+    calcAverageNormals();
 }
 
 void HeightMap::init(GLint matrixUniform)
@@ -93,6 +103,8 @@ void HeightMap::init(GLint matrixUniform)
 
     glBindVertexArray(0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    mMatrix.scale(0.01);
 }
 
 void HeightMap::draw()
@@ -105,4 +117,7 @@ void HeightMap::draw()
     glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, nullptr);
     //glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+
+
 }
