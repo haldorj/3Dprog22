@@ -8,11 +8,11 @@
 #include <QStatusBar>
 #include <QDebug>
 #include <QVector3D>
+#include <stdio.h>
 
 #include "qthread.h"
 
 #include <glm.hpp>
-
 #include <string>
 
 #include "shader.h"
@@ -203,10 +203,20 @@ void RenderWindow::init()
     shinyMaterial = new Material(4.0f, 256);
     dullMaterial = new Material(0.3f, 4);
 
-    mainLight = new Light(1.0f, 1.0f, 1.0f,     //rgb
-                          0.2f,                 //ambientIntensity
-                          -1.0f, 10.0f, 0.0f,    //xyz
-                          1.0f);                //specularIntensity
+    mainLight = new DirectionalLight(1.0f, 1.0f, 1.0f,      //rgb
+                                    0.2f, 0.5,              //ambientIntensity, specularIntensity
+                                    -1.0f, 10.0f, 0.0f);    //xyz
+
+    mPointLights.push_back( new PointLight(0.0f, 0.0f, 1.0f,
+                                    0.1f, 1.0f,
+                                    1.0f, 0.0f, 0.0f,
+                                    0.3f, 0.2f, 0.1f));
+    PointLightCount++;
+    mPointLights.push_back( new PointLight(0.0f, 1.0f, 0.0f,
+                                    0.1f, 1.0f,
+                                    -3.0f, 2.0f, 0.0f,
+                                    0.3f, 0.1f, 0.1f));
+    PointLightCount++;
 
     //mCamera.init(mPmatrixUniform, mVmatrixUniform);
 
@@ -283,29 +293,15 @@ void RenderWindow::render()
 
     mCamera.update();
 
-    // what shader to use (texture shader)
-//    glUseProgram(mTexShaderProgram->getProgram());
-//    glUniformMatrix4fv(mVmatrixUniform1, 1, GL_TRUE, mCamera.mVmatrix.constData());
-//    glUniformMatrix4fv(mPmatrixUniform1, 1, GL_TRUE, mCamera.mPmatrix.constData());
-//    // tex-shader
-//    glUniform1i(mTextureUniform1, 0);
-//    brickTexture->UseTexture();
-//    // need to update camera to apply changes!
-//    mCamera.update();
-
-    //light
-
-    //Second object - mia with texture & light shader
+    // what shader to use (phong shader)
     glUseProgram(mPhongShaderProgram->getProgram());
     glUniformMatrix4fv(mUniformView, 1, GL_TRUE, mCamera.mVmatrix.constData());
     glUniformMatrix4fv(mUniformProjection, 1, GL_TRUE, mCamera.mPmatrix.constData());
     glUniform3f(mUniformEyePosition, mCamera.getCameraPosition().x, mCamera.getCameraPosition().z, mCamera.getCameraPosition().y);
-
     //checkForGLerrors();
     //Additional parameters for light shader:
-    mainLight->UseLight(mUniformAmbientIntensity, mUniformAmbientColor,
-                       mUniformDiffuseIntensity, mUniformDirection);
-
+    SetDirectionalLight(mainLight);
+    SetPointLights();
     //Update Camera
     mCamera.update();
 
@@ -469,14 +465,67 @@ void RenderWindow::setupPhongShader()
     mUniformModel = glGetUniformLocation(mPhongShaderProgram->getProgram(), "model");
     mUniformView = glGetUniformLocation(mPhongShaderProgram->getProgram(), "view");
     mTextureUniform = glGetUniformLocation(mTexShaderProgram->getProgram(), "theTexture");
-    mUniformEyePosition = glGetUniformLocation(mPhongShaderProgram->getProgram(), "eyePosition");
 
-    mUniformAmbientIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.ambientIntensity");
-    mUniformAmbientColor = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.color");
-    mUniformDirection = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.direction");
-    mUniformDiffuseIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.diffuseIntensity");
+    uniformDirectionalLight.uniformAmbientIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.base.ambientIntensity");
+    uniformDirectionalLight.uniformColor = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.base.color");
+    uniformDirectionalLight.uniformDirection = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.direction");
+    uniformDirectionalLight.uniformDiffuseIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.base.diffuseIntensity");
     mUniformSpecularIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), "material.specularIntensity");
     mUniformShininess = glGetUniformLocation(mPhongShaderProgram->getProgram(),"material.shininess");
+
+    mUniformEyePosition = glGetUniformLocation(mPhongShaderProgram->getProgram(), "eyePosition");
+
+    uniformPointLightCount = glGetUniformLocation(mPhongShaderProgram->getProgram(), "pointLightCount");
+
+    for (size_t i = 0; i < MAX_POINT_LIGHTS; i++)
+    {
+        char locBuff[100] = { '\0' };
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.color", i);
+        uniformPointLight[i].uniformColor = glGetUniformLocation(mPhongShaderProgram->getProgram(), locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.ambientIntensity", i);
+        uniformPointLight[i].uniformAmbientIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].base.diffuseIntensity", i);
+        uniformPointLight[i].uniformDiffuseIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].position", i);
+        uniformPointLight[i].uniformPosition = glGetUniformLocation(mPhongShaderProgram->getProgram(), locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].constant", i);
+        uniformPointLight[i].uniformConstant = glGetUniformLocation(mPhongShaderProgram->getProgram(), locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].linear", i);
+        uniformPointLight[i].uniformLinear = glGetUniformLocation(mPhongShaderProgram->getProgram(), locBuff);
+
+        snprintf(locBuff, sizeof(locBuff), "pointLights[%d].exponent", i);
+        uniformPointLight[i].uniformExponent = glGetUniformLocation(mPhongShaderProgram->getProgram(), locBuff);
+    }
+}
+
+void RenderWindow::SetDirectionalLight(DirectionalLight *dLight)
+{
+    dLight->UseLight(uniformDirectionalLight.uniformAmbientIntensity, uniformDirectionalLight.uniformColor,
+                     uniformDirectionalLight.uniformDiffuseIntensity, uniformDirectionalLight.uniformDirection);
+}
+
+void RenderWindow::SetPointLights()
+{
+    if (PointLightCount > MAX_POINT_LIGHTS) PointLightCount = MAX_POINT_LIGHTS;
+
+    glUniform1i(uniformPointLightCount, PointLightCount);
+
+    for (size_t i = 0; i < PointLightCount; i++)
+    {
+        mPointLights[i]->UseLight(uniformPointLight[i].uniformAmbientIntensity,
+                                uniformPointLight[i].uniformColor,
+                                uniformPointLight[i].uniformDiffuseIntensity,
+                                uniformPointLight[i].uniformPosition,
+                                uniformPointLight[i].uniformConstant,
+                                uniformPointLight[i].uniformLinear,
+                                uniformPointLight[i].uniformExponent);
+    }
 }
 
 //This function is called from Qt when window is exposed (shown)

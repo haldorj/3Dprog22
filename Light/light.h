@@ -8,20 +8,14 @@ class Light : public QOpenGLFunctions_4_1_Core
 {
 public:
     Light();
-    Light(GLfloat red, GLfloat green, GLfloat blue,
-          GLfloat aIntensity,
-          GLfloat xDir, GLfloat yDir, GLfloat zDir,
-          GLfloat dIntensity);
+    Light(	GLfloat red, GLfloat green, GLfloat blue,
+            GLfloat aIntensity, GLfloat dIntensity	);
     ~Light() { };
 
-    void UseLight(GLuint ambientIntensityLocation, GLuint ambientColorLocation,
-                  GLuint diffuseIntensityLocation, GLuint directionLocation);
-
-private:
+// protected: sub-classes can access
+protected:
     glm::vec3 color;
     GLfloat ambientIntensity;
-
-    glm::vec3 direction;
     GLfloat diffuseIntensity;
 };
 

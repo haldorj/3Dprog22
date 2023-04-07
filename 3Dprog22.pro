@@ -8,8 +8,10 @@ TARGET      = 3D-programmering
 INCLUDEPATH += $$PWD/glm
 
 SOURCES += main.cpp \
+    Light/directionallight.cpp \
     Light/light.cpp \
     Light/material.cpp \
+    Light/pointlight.cpp \
     bsplinecurve.cpp \
     camera.cpp \
     collisionvolume.cpp \
@@ -374,8 +376,10 @@ HEADERS += \
     Eigen/src/plugins/MatrixCwiseBinaryOps.h \
     Eigen/src/plugins/MatrixCwiseUnaryOps.h \
     Eigen/src/plugins/ReshapedMethods.h \
+    Light/directionallight.h \
     Light/light.h \
     Light/material.h \
+    Light/pointlight.h \
     Vectors.h \
     bsplinecurve.h \
     camera.h \

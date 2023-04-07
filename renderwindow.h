@@ -9,8 +9,11 @@
 #include <list>
 #include <unordered_map>
 
+#include "CustomFiles/CommonValues.h"
 #include "Light/light.h"
 #include "Light/material.h"
+#include <Light/directionallight.h>
+#include <Light/pointlight.h>
 
 #include "triangulation.h"
 #include "visualobject.h"
@@ -24,6 +27,8 @@
 #include "texture.h"
 #include "mesh.h"
 #include "heightmap.h"
+
+
 
 
 class QOpenGLContext;
@@ -91,19 +96,45 @@ private:
     GLint  mMmatrixUniform1{};
     GLint  mTextureUniform1{};
 
-   // void calcAverageNormals(unsigned int* indices, unsigned int indexCount, GLfloat* vertices, unsigned int vertexCount,
-     //   unsigned int vLength, unsigned int normalOffset);
-
     void  setupPhongShader();
+    void  SetDirectionalLight(DirectionalLight* dLight);
+    void  SetPointLights();
+    std::string GetUniformLocationString(const std::string& uniformName, int index);
+
+    int   pointLightCount, PointLightCount = 0;
+
     GLint mUniformProjection{};
     GLint mUniformModel{};
     GLint mUniformView{};
     GLint mTextureUniform{};
     GLint mUniformEyePosition{};
-    GLuint mUniformAmbientIntensity{} , mUniformAmbientColor{}, mUniformDirection{}, mUniformDiffuseIntensity{},
-    mUniformSpecularIntensity{}, mUniformShininess{};
+    GLuint mUniformSpecularIntensity{}, mUniformShininess{};
 
-    Light *mainLight;
+    struct {
+        GLuint uniformColor{};
+        GLuint uniformAmbientIntensity{};
+        GLuint uniformDiffuseIntensity{};
+
+        GLuint uniformDirection{};
+    } uniformDirectionalLight;
+
+    GLuint uniformPointLightCount;
+
+    struct {
+        GLuint uniformColor{};
+        GLuint uniformAmbientIntensity{};
+        GLuint uniformDiffuseIntensity{};
+
+        GLuint uniformPosition{};
+        GLuint uniformConstant{};
+        GLuint uniformLinear{};
+        GLuint uniformExponent{};
+    } uniformPointLight[MAX_POINT_LIGHTS];
+
+    DirectionalLight *mainLight;
+    //PointLight *pointLights[MAX_POINT_LIGHTS];
+
+    std::vector<PointLight*> mPointLights;
 
     Texture *brickTexture;
     Texture *dirtTexture;
