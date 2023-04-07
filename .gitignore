@@ -61,7 +61,7 @@ compile_commands.json
 # QtCreator local machine specific files for imported projects
 *creator.user*
 
-#other stuff
+# Other stuff
 *.mtl
 *.Debug
 *.Release
@@ -69,7 +69,7 @@ compile_commands.json
 # MacOS spam
 .DS_Store
 
-#Visual Studio spam
+# Visual Studio spam
 .vs/*
 debug/*
 release/*
@@ -79,4 +79,5 @@ release/*
 *.aps
 *.h.cpp
 
-
+# Temp files
+*tmp*
