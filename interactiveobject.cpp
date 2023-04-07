@@ -71,7 +71,7 @@ void InteractiveObject::initCubeGeometry()
     radius = size;
 
     // Define the vertices of the cube
-        // Front
+    // Front
     mVertices.push_back(Vertex{-size, -size,  size,    0.0, 0.0, 0.0,     0.0,  0.0}); // Bottom-left
     mVertices.push_back(Vertex{ size, -size,  size,    0.0, 0.0, 0.0,     1.0,  0.0}); // Bottom-right
     mVertices.push_back(Vertex{ size,  size,  size,    0.0, 0.0, 0.0,     1.0,  1.0}); // Top-right

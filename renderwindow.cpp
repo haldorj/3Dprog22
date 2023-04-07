@@ -191,7 +191,7 @@ void RenderWindow::init()
     setupTextureShader();
     setupPhongShader();
 
-    heightMap = new HeightMap((char*)("HeightMaps/iceland_heightmap.png"));
+    heightMap = new HeightMap((char*)("HeightMaps/hMap.png"));
     heightMap->LoadHeightMap();
 
     brickTexture = new Texture((char*)("Textures/brick.png"));
@@ -207,20 +207,19 @@ void RenderWindow::init()
     dullMaterial = new Material(0.3f, 4);
 
     mainLight = new DirectionalLight(1.0f, 1.0f, 1.0f,      //rgb
-                                    0.25f, 1.0,              //ambientIntensity, specularIntensity
+                                    0.2f, 0.4,              //ambientIntensity, specularIntensity
                                     0.0f, 0.0f, -1.0f);    //xyz (directions)
 
-//    mPointLights.push_back( new PointLight(1.0f, 0.0f, 1.0f,    //rgb
-//                                    0.1f, 1.0f,                 //ambientIntensity, diffuseIntensity
-//                                    2.0f, 2.0f, 3.0f,           //xyz
-//                                    0.5f, 0.2f, 0.1f));         //const, lin, exp
-//    PointLightCount++;
-//    mPointLights.push_back( new PointLight(1.0f, 1.0f, 0.0f,
-//                                    0.1f, 1.0f,
-//                                    -1.0f, 2.0f, 3.0f,
-//                                    0.2f, 0.1f, 0.1f));
-//    PointLightCount++;
-
+    mPointLights.push_back( new PointLight(1.0f, 0.0f, 1.0f,    //rgb
+                                    0.1f, 1.0f,                 //ambientIntensity, diffuseIntensity
+                                    2.0f, 2.0f, 3.0f,           //xyz
+                                    0.5f, 0.2f, 0.1f));         //const, lin, exp
+    PointLightCount++;
+    mPointLights.push_back( new PointLight(1.0f, 1.0f, 0.0f,
+                                    0.1f, 1.0f,
+                                    -1.0f, 2.0f, 3.0f,
+                                    0.2f, 0.1f, 0.1f));
+    PointLightCount++;
 
     //mCamera.init(mPmatrixUniform, mVmatrixUniform);
 
@@ -266,10 +265,6 @@ void RenderWindow::render()
     //clear the screen for each redraw
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //what shader to use (plain shader)
-    glUseProgram(mPlainShaderProgram->getProgram());
-    glUniformMatrix4fv(mVmatrixUniform0, 1, GL_TRUE, mCamera.mVmatrix.constData());
-    glUniformMatrix4fv(mPmatrixUniform0, 1, GL_TRUE, mCamera.mPmatrix.constData());
 
     if (bSceneOne)
         // Scene 1
@@ -280,11 +275,11 @@ void RenderWindow::render()
         // Scene 2
         mCamera.lookAt( QVector3D{-10,-10,3}, QVector3D{-10,-10,0}, QVector3D{0,1,0} );
 
+    //what shader to use (plain shader)
+    glUseProgram(mPlainShaderProgram->getProgram());
+    glUniformMatrix4fv(mVmatrixUniform0, 1, GL_TRUE, mCamera.mVmatrix.constData());
+    glUniformMatrix4fv(mPmatrixUniform0, 1, GL_TRUE, mCamera.mPmatrix.constData());
     mCamera.update();
-    //for (auto it = mObjects.begin(); it != mObjects.end(); it++)
-    //    (*it)->draw();
-
-    // Alternativ: Erstatter std::vector<VisualObject*> med unordered map
 
     for (auto it=mMap.begin(); it!=mMap.end(); it++)
         (*it).second->draw();
@@ -295,13 +290,11 @@ void RenderWindow::render()
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
         (*it)->draw();
 
-    mCamera.update();
-
     // what shader to use (phong shader)
     glUseProgram(mPhongShaderProgram->getProgram());
     glUniformMatrix4fv(mUniformView, 1, GL_TRUE, mCamera.mVmatrix.constData());
     glUniformMatrix4fv(mUniformProjection, 1, GL_TRUE, mCamera.mPmatrix.constData());
-    glUniform3f(mUniformEyePosition, -mCamera.getCameraPosition().x, mCamera.getCameraPosition().y, mCamera.getCameraPosition().z);
+    glUniform3f(mUniformEyePosition, mCamera.getCameraPosition().x, mCamera.getCameraPosition().y, mCamera.getCameraPosition().z);
     //checkForGLerrors();
     //Additional parameters for light shader:
     SetDirectionalLight(mainLight);
@@ -310,7 +303,7 @@ void RenderWindow::render()
     mCamera.update();
 
     // mia
-    brickTexture->UseTexture();
+    plainTexture->UseTexture();
     shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
 
@@ -325,7 +318,7 @@ void RenderWindow::render()
 
     // hmap
     dirtTexture->UseTexture();
-    dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
+    shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
 
     heightMap->draw();
@@ -701,7 +694,10 @@ void RenderWindow::moveMiaX(float movespeed)
 {
     movespeed = (movespeed * (1/miaCollision->getRadius()));
 
-    miaCollision->move(movespeed, 0.0f, GetSurfaceHeight() - miaCollision->getPosition().z());
+    miaCollision->move(movespeed,
+                       0.0f,
+                       GetSurfaceHeight() - miaCollision->getPosition().z());
+
     miaCollision->mWorldPosition += QVector3D{movespeed, 0.0f, GetSurfaceHeight() - miaCollision->getPosition().z()};
 
     mia->move(movespeed,

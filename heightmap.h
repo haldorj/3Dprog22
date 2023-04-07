@@ -18,11 +18,16 @@ public:
 
     void GenerateTerrain(unsigned char *data);
 
+    void calcNormalsHmap();
+
     void init(GLint matrixUniform) override;
     void draw() override;
 private:
     int width, height, nrChannels;
     char* fileLocation;
+
+    int numStrips;
+    int numTrisPerStrip;
 };
 
 #endif // HEIGHTMAP_H

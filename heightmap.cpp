@@ -8,6 +8,9 @@ HeightMap::HeightMap()
     height = 0;
     nrChannels = 0;
     fileLocation = nullptr;
+
+    numStrips = 0;
+    numTrisPerStrip = 0;
 }
 
 HeightMap::HeightMap(char* fileLoc)
@@ -18,6 +21,9 @@ HeightMap::HeightMap(char* fileLoc)
     height = 0;
     nrChannels = 0;
     fileLocation = fileLoc;
+
+    numStrips = 0;
+    numTrisPerStrip = 0;
 }
 
 void HeightMap::LoadHeightMap()
@@ -56,10 +62,12 @@ void HeightMap::GenerateTerrain(unsigned char *data)
             mVertices.push_back(Vertex{d.x, d.z, d.y});
         }
     }
-    int rez = 1;
+
     // After building up the vertex array, we can release the height map from memory.
     std::cout << "Loaded " << mVertices.size() / 3 << " vertices" << std::endl;
     stbi_image_free(data);
+
+    int rez = 1;
     for(unsigned i = 0; i < height-1; i += rez) // for each row a.k.a. each strip
     {
         for(unsigned j = 0; j < width; j += rez) // for each row a.k.a. each strip
@@ -70,7 +78,58 @@ void HeightMap::GenerateTerrain(unsigned char *data)
             }
         }
     }
-    calcAverageNormals();
+
+    calcNormalsHmap();
+
+    numStrips = (height-1)/rez;
+    numTrisPerStrip = (width/rez)*2-2;
+
+    std::cout << "Created lattice of " << numStrips << " strips with " << numTrisPerStrip << " triangles each" << std::endl;
+    std::cout << "Created " << numStrips * numTrisPerStrip << " triangles total" << std::endl;
+
+}
+
+void HeightMap::calcNormalsHmap()
+{
+    for (unsigned i = 0; i < mIndices.size() - 2; i += 2)
+    {
+        // Store each vertex of the current triangle
+        unsigned int in0 = mIndices[i];
+        unsigned int in1 = mIndices[i + 1];
+        unsigned int in2 = mIndices[i + 2];
+
+        glm::vec3 v1(mVertices[in1].getX() - mVertices[in0].getX(),
+                     mVertices[in1].getY() - mVertices[in0].getY(),
+                     mVertices[in1].getZ() - mVertices[in0].getZ());
+
+        glm::vec3 v2(mVertices[in2].getX() - mVertices[in0].getX(),
+                     mVertices[in2].getY() - mVertices[in0].getY(),
+                     mVertices[in2].getZ() - mVertices[in0].getZ());
+
+        glm::vec3 normal = glm::cross(v1, v2);
+        normal = glm::normalize(normal);
+
+        mVertices[in0].setNorm(mVertices[in0].getNormX() + normal.x,
+                               mVertices[in0].getNormY() + normal.y,
+                               mVertices[in0].getNormZ() + normal.z);
+
+        mVertices[in1].setNorm(mVertices[in1].getNormX() + normal.x,
+                               mVertices[in1].getNormY() + normal.y,
+                               mVertices[in1].getNormZ() + normal.z);
+
+        mVertices[in2].setNorm(mVertices[in2].getNormX() + normal.x,
+                               mVertices[in2].getNormY() + normal.y,
+                               mVertices[in2].getNormZ() + normal.z);
+    }
+    for (unsigned i = 0; i < mVertices.size(); i++)
+    {
+        glm::vec3 vec(mVertices[i].getNormX(),
+                      mVertices[i].getNormY(),
+                      mVertices[i].getNormZ());
+        vec = glm::normalize(vec);
+
+        mVertices[i].setNorm(vec.x, vec.y, vec.z);
+    }
 }
 
 void HeightMap::init(GLint matrixUniform)
@@ -104,7 +163,7 @@ void HeightMap::init(GLint matrixUniform)
     glBindVertexArray(0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    mMatrix.scale(0.01);
+    mMatrix.scale(0.03);
 }
 
 void HeightMap::draw()
@@ -114,10 +173,13 @@ void HeightMap::draw()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBO);
     glUniformMatrix4fv( mMatrixUniform, 1, GL_FALSE, mMatrix.constData());
     // DrawElements, indexed draws
-    glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, nullptr);
+    for(unsigned strip = 0; strip < numStrips; strip++)
+    {
+        glDrawElements(GL_TRIANGLE_STRIP,   // primitive type
+                       numTrisPerStrip + 2,   // number of indices to render
+                       GL_UNSIGNED_INT,     // index data type
+                       (void*)(sizeof(unsigned) * (numTrisPerStrip + 2) * strip)); // offset to starting index
+    }
     //glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-
-
 }
