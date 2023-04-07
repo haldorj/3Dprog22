@@ -52,7 +52,7 @@ void VisualObject::calcAverageNormals()
         glm::vec3 vec(mVertices[i].getNormX(),
                       mVertices[i].getNormY(),
                       mVertices[i].getNormZ());
-        vec = glm::normalize(vec);
+        vec = glm::normalize(-vec);
 
         mVertices[i].setNorm(vec.x, vec.y, vec.z);
     }

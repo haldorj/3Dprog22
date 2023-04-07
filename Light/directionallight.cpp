@@ -11,7 +11,7 @@ DirectionalLight::DirectionalLight(	GLfloat red, GLfloat green, GLfloat blue,
                                     GLfloat xDir, GLfloat yDir, GLfloat zDir) : Light(red, green, blue, aIntensity, dIntensity) // Calls specific super class constructor
 {
     initializeOpenGLFunctions();
-    direction = glm::vec3(xDir, zDir, yDir);
+    direction = glm::vec3(xDir, yDir, zDir);
 }
 
 void DirectionalLight::UseLight(GLuint ambientIntensityLocation, GLuint ambientColorLocation, GLuint diffuseIntensityLocation, GLuint directionLocation)

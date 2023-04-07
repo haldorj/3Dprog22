@@ -204,19 +204,20 @@ void RenderWindow::init()
     dullMaterial = new Material(0.3f, 4);
 
     mainLight = new DirectionalLight(1.0f, 1.0f, 1.0f,      //rgb
-                                    0.2f, 0.5,              //ambientIntensity, specularIntensity
-                                    -1.0f, 10.0f, 0.0f);    //xyz
+                                    0.25f, 0.75,              //ambientIntensity, specularIntensity
+                                    0.0f, 0.0f, -1.0f);    //xyz (directions)
 
-    mPointLights.push_back( new PointLight(0.0f, 0.0f, 1.0f,
-                                    0.1f, 1.0f,
-                                    1.0f, 0.0f, 0.0f,
-                                    0.3f, 0.2f, 0.1f));
+    mPointLights.push_back( new PointLight(1.0f, 0.0f, 1.0f,    //rgb
+                                    0.1f, 1.0f,                 //ambientIntensity, diffuseIntensity
+                                    2.0f, 2.0f, 3.0f,           //xyz
+                                    0.5f, 0.2f, 0.1f));         //const, lin, exp
     PointLightCount++;
-    mPointLights.push_back( new PointLight(0.0f, 1.0f, 0.0f,
+    mPointLights.push_back( new PointLight(1.0f, 1.0f, 0.0f,
                                     0.1f, 1.0f,
-                                    -3.0f, 2.0f, 0.0f,
-                                    0.3f, 0.1f, 0.1f));
+                                    -1.0f, 2.0f, 3.0f,
+                                    0.2f, 0.1f, 0.1f));
     PointLightCount++;
+
 
     //mCamera.init(mPmatrixUniform, mVmatrixUniform);
 
@@ -306,7 +307,7 @@ void RenderWindow::render()
     mCamera.update();
 
     // mia
-    brickTexture->UseTexture();
+    plainTexture->UseTexture();
     dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
 
