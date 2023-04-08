@@ -191,16 +191,16 @@ void RenderWindow::init()
     setupTextureShader();
     setupPhongShader();
 
-    heightMap = new HeightMap((char*)("HeightMaps/hMap.png"));
+    heightMap = new HeightMap((char*)("../3Dprog22/HeightMaps/hMap.png"));
     heightMap->LoadHeightMap();
 
-    brickTexture = new Texture((char*)("Textures/brick.png"));
+    brickTexture = new Texture((char*)("../3Dprog22/Textures/brick.png"));
     brickTexture->LoadTextureA();
-    dirtTexture = new Texture((char*)("Textures/dirt.png"));
+    dirtTexture = new Texture((char*)("../3Dprog22/Textures/dirt.png"));
     dirtTexture->LoadTextureA();
-    plainTexture = new Texture((char*)("Textures/plain.png"));
+    plainTexture = new Texture((char*)("../3Dprog22/Textures/plain.png"));
     plainTexture->LoadTextureA();
-    woodTexture = new Texture((char*)("Textures/wood.png"));
+    woodTexture = new Texture((char*)("../3Dprog22/Textures/wood.png"));
     woodTexture->LoadTexture();
 
     shinyMaterial = new Material(4.0f, 256);
