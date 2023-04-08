@@ -202,22 +202,29 @@ void RenderWindow::init()
     plainTexture->LoadTextureA();
     woodTexture = new Texture((char*)("../3Dprog22/Textures/wood.png"));
     woodTexture->LoadTexture();
+    glassTexture = new Texture((char*)("../3Dprog22/Textures/glass.png"));
+    glassTexture->LoadTextureA();
 
     shinyMaterial = new Material(4.0f, 256);
     dullMaterial = new Material(0.3f, 4);
 
-    mainLight = new DirectionalLight(1.0f, 1.0f, 1.0f,      //rgb
-                                    0.2f, 0.4,              //ambientIntensity, specularIntensity
+    mainLight = new DirectionalLight(0.4f, 0.2f, 0.8f,      //rgb
+                                    0.4f, 0.5,              //ambientIntensity, specularIntensity
                                     0.0f, 0.0f, -1.0f);    //xyz (directions)
 
+    mPointLights.push_back( new PointLight(0.0f, 0.5f, 1.0f,
+                                           0.1f, 1.0f,
+                                           -5.0f, 5.0f, 3.0f,
+                                           0.2f, 0.1f, 0.1f));
+    PointLightCount++;
     mPointLights.push_back( new PointLight(1.0f, 0.0f, 1.0f,    //rgb
                                     0.1f, 1.0f,                 //ambientIntensity, diffuseIntensity
                                     2.0f, 2.0f, 3.0f,           //xyz
                                     0.5f, 0.2f, 0.1f));         //const, lin, exp
     PointLightCount++;
-    mPointLights.push_back( new PointLight(1.0f, 1.0f, 0.0f,
+    mPointLights.push_back( new PointLight(0.0f, 0.0f, 1.0f,
                                     0.1f, 1.0f,
-                                    -1.0f, 2.0f, 3.0f,
+                                    -1.0f, 5.0f, 3.0f,
                                     0.2f, 0.1f, 0.1f));
     PointLightCount++;
 
@@ -243,8 +250,8 @@ void RenderWindow::init()
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 
     // Additional setup
-    moveMiaX(1);
-    moveMiaY(1);
+    moveMiaX(0);
+    moveMiaY(-3);
     mia->mMatrix.translate(0,0,0.1);
 
     BOT2->bShouldRender = false;
@@ -265,8 +272,8 @@ void RenderWindow::render()
     //clear the screen for each redraw
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    QVector3D followCamera = {mia->getPosition().x(), mia->getPosition().y() - 3, 7};
-    QVector3D playerPos = {mia->getPosition().x(), mia->getPosition().y(), 0};
+    QVector3D followCamera = {mia->getPosition().x(), mia->getPosition().y() - 5, 5};
+    QVector3D playerPos = {mia->getPosition().x(), mia->getPosition().y(), 2};
 
     if (bSceneOne)
         // Scene 1
@@ -306,7 +313,7 @@ void RenderWindow::render()
     mCamera.update();
 
     // mia
-    plainTexture->UseTexture();
+    glassTexture->UseTexture();
     shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
 
@@ -340,6 +347,10 @@ void RenderWindow::render()
     // swapInterval is 1 by default which means that swapBuffers() will (hopefully) block
     // and wait for vsync.
     mContext->swapBuffers(this);
+
+    mPointLights[0]->setPos(mia->getPosition().x() + mia->getRadius(),
+                            mia->getPosition().y() + mia->getRadius(),
+                            mia->getPosition().z() + 2);
 
     CollisionHandling();
     ToggleCollision();
@@ -610,29 +621,30 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     }
 
     //You get the keyboard input like this
+    float moveSpeed = 0.025;
     if(event->key() == Qt::Key_A)
     {
         if(mia!=nullptr)
-            moveMiaX(-0.05f);
+            moveMiaX(-moveSpeed);
     }
     if(event->key() == Qt::Key_D)
     {
         if(mia!=nullptr)
-            moveMiaX(0.05f);
+            moveMiaX(moveSpeed);
     }
     if(event->key() == Qt::Key_W)
     {
         if(mia!=nullptr)
-            moveMiaY(0.05f);
+            moveMiaY(moveSpeed);
     }
     if(event->key() == Qt::Key_S)
     {
         if(mia!=nullptr)
-            moveMiaY(-0.05f);
+            moveMiaY(-moveSpeed);
     }
 
     std::cout << "WorldPos: \n";
-    std::cout << "x: " << mia->getPosition().x() << " y: " << mia->getPosition().y() << " z: " << mia->getPosition().z() << "\n";
+    std::cout << "x: " << miaCollision->getPosition().x() << " y: " << mia->getPosition().y() << " z: " << mia->getPosition().z() << "\n";
 }
 
 void RenderWindow::moveMiaX(float movespeed)
@@ -642,7 +654,7 @@ void RenderWindow::moveMiaX(float movespeed)
 
     movespeed = (movespeed * (1/miaCollision->getRadius()));
 
-    miaCollision->move(movespeed * miaCollision->getRadius(), 0.0f, height);
+    miaCollision->move(movespeed, 0.0f, height);
     miaCollision->mWorldPosition += QVector3D{movespeed/miaCollision->getRadius(), 0.0f, height};
 
     mia->move(movespeed, 0.0f, height);
@@ -656,7 +668,7 @@ void RenderWindow::moveMiaY(float movespeed)
 
     movespeed = (movespeed * (1/miaCollision->getRadius()));
 
-    miaCollision->move(0.0f, movespeed * miaCollision->getRadius(), height);
+    miaCollision->move(0.0f, movespeed, height);
     miaCollision->mWorldPosition += QVector3D{0.0f, movespeed/miaCollision->getRadius(), height};
 
     mia->move(0.0f,movespeed,height);

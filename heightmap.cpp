@@ -63,7 +63,7 @@ void HeightMap::GenerateTerrain(unsigned char *data)
 
             // vertex
             d = d * mapScale;
-            mVertices.push_back(Vertex{d.x, d.z, d.y});
+            mVertices.push_back(Vertex{d.x, d.z, d.y - 2});
         }
     }
     // After building up the vertex array, we can release the height map from memory.
@@ -187,17 +187,17 @@ void HeightMap::calcNormalsHmap()
 
 float HeightMap::GetSurfaceHeight(const glm::vec3 p)
 {
+    // Loop through each triangle in the mesh.
     for (unsigned i = 0; i < mIndices.size() - 2; i += 2)
     {
         // Store each vertex of the current triangle
-        unsigned int in0 = mIndices[i];
-        unsigned int in1 = mIndices[i + 1];
-        unsigned int in2 = mIndices[i + 2];
+        unsigned int v0 = mIndices[i];
+        unsigned int v1 = mIndices[i + 1];
+        unsigned int v2 = mIndices[i + 2];
 
-        // Get the vertices of the triangle.
-        glm::vec3 p0 = getVertex(in0);
-        glm::vec3 p1 = getVertex(in1);
-        glm::vec3 p2 = getVertex(in2);
+        glm::vec3 p0 = getVertex(v0);
+        glm::vec3 p1 = getVertex(v1);
+        glm::vec3 p2 = getVertex(v2);
 
         glm::vec3 baryCoords = barycentricCoordinates(p0, p1, p2, p);
 
@@ -212,7 +212,7 @@ float HeightMap::GetSurfaceHeight(const glm::vec3 p)
             return height;
         }
     }
-    return 0; //p.z;
+    return p.z;
 }
 
 

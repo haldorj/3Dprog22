@@ -135,6 +135,7 @@ private:
     Texture *dirtTexture;
     Texture *plainTexture;
     Texture *woodTexture;
+    Texture *glassTexture;
 
     HeightMap *heightMap;
 
@@ -183,6 +184,8 @@ protected:
 private:
     void moveMiaX(float movespeed);
     void moveMiaY(float movespeed);
+
+    glm::vec3 playerLight{0,0,0};
 
     bool bSceneOne = true;
     bool bShouldMove = true;

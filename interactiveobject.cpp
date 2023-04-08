@@ -4,6 +4,7 @@ InteractiveObject::InteractiveObject() : mx{0.0f}, my{0.0f}, mz{0.0f}
 {
     initCubeGeometry();
     calcAverageNormals();
+    mMatrix.translate(0, 0, radius);
 }
 
 InteractiveObject::~InteractiveObject()
@@ -67,7 +68,7 @@ void InteractiveObject::move(float x, float y, float z)
 
 void InteractiveObject::initCubeGeometry()
 {
-    float size = 0.4;
+    float size = 0.3;
     radius = size;
 
     // Define the vertices of the cube

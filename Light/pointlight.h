@@ -17,6 +17,7 @@ public:
     void UseLight(GLuint ambientIntensityLocation, GLuint ambientColorLocation,
         GLuint diffuseIntensityLocation, GLuint positionLocation,
         GLuint constantLocation, GLuint linearLocation, GLuint exponentLocation);
+
 protected:
     glm::vec3 position;
 
@@ -25,6 +26,8 @@ protected:
     // x dist
     // a exponent, b linear, c constant
     //ax^2 + bx + c
+public:
+    void setPos(float x, float y, float z) {position = glm::vec3(x,y,z);}
 };
 
 
