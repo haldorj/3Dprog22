@@ -108,7 +108,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     BOT2 = new NPC("curve2.txt");
     mMap.insert(MapPair{"NPC", BOT});
     mMap.insert(MapPair{"NPC2", BOT2});
-    triangulation = new Triangulation();
+    //triangulation = new Triangulation();
 
     mia = new InteractiveObject;
     miaCollision = new InteractiveCollisionVolume(1);
@@ -236,7 +236,7 @@ void RenderWindow::init()
         (*it).second->init(mMmatrixUniform0);
 
     // objects using phong shading
-    triangulation->init(mUniformModel);
+    //triangulation->init(mUniformModel);
     mia->init(mUniformModel);
     heightMap->init(mUniformModel);
 
@@ -255,7 +255,7 @@ void RenderWindow::init()
 void RenderWindow::render()
 {
     mCamera.init(mPmatrixUniform0, mVmatrixUniform0);
-    mCamera.perspective(60.0f, 16.0f/9.0f, 0.1f, 20.f);
+    mCamera.perspective(90.0f, 16.0f/9.0f, 0.1f, 20.f);
 
     mTimeStart.restart(); //restart FPS clock
     mContext->makeCurrent(this); //must be called every frame (every time mContext->swapBuffers is called)
@@ -265,12 +265,15 @@ void RenderWindow::render()
     //clear the screen for each redraw
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    QVector3D followCamera = {mia->getPosition().x(), mia->getPosition().y() - 3, 7};
+    QVector3D playerPos = {mia->getPosition().x(), mia->getPosition().y(), 0};
 
     if (bSceneOne)
         // Scene 1
         //mCamera.lookAt( QVector3D{2,-2,5}, QVector3D{2,2,0}, QVector3D{0,1,0} );
         //mCamera.lookAt( QVector3D{-0,-4,4}, QVector3D{0,-1,0}, QVector3D{0,1,0} );
-        mCamera.lookAt( QVector3D{1, 0,10}, QVector3D{1,1,0}, QVector3D{0,1,0} );
+        //mCamera.lookAt( QVector3D{1, 0,10}, QVector3D{1,1,0}, QVector3D{0,1,0} );
+        mCamera.lookAt(followCamera, playerPos , QVector3D{0,1,0} );
     else
         // Scene 2
         mCamera.lookAt( QVector3D{-10,-10,3}, QVector3D{-10,-10,0}, QVector3D{0,1,0} );
@@ -314,11 +317,11 @@ void RenderWindow::render()
     dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
 
-    triangulation->draw();
+    //triangulation->draw();
 
     // hmap
     dirtTexture->UseTexture();
-    shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
+    dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
 
     heightMap->draw();
@@ -341,64 +344,6 @@ void RenderWindow::render()
     CollisionHandling();
     ToggleCollision();
     TogglePath();
-}
-
-glm::vec3 RenderWindow::barycentricCoordinates(const glm::vec2 &p1, const glm::vec2 &p2, const glm::vec2 &p3, const glm::vec2 &pt)
-{
-    glm::vec2 p12 = p2 - p1;
-    glm::vec2 p13 = p3 - p1;
-    glm::vec3 n = glm::vec3(glm::cross(glm::vec3(p12, 0.0f), glm::vec3(p13, 0.0f)));
-    float areal_123 = glm::length(n); // double area
-    glm::vec3 baryc;
-    // u
-    glm::vec2 p = p2 - pt;
-    glm::vec2 q = p3 - pt;
-    n = glm::vec3(glm::cross(glm::vec3(p, 0.0f), glm::vec3(q, 0.0f)));
-    baryc.x = n.z / areal_123;
-    // v
-    p = p3 - pt;
-    q = p1 - pt;
-    n = glm::vec3(glm::cross(glm::vec3(p, 0.0f), glm::vec3(q, 0.0f)));
-    baryc.y = n.z / areal_123;
-    // w
-    p = p1 - pt;
-    q = p2 - pt;
-    n = glm::vec3(glm::cross(glm::vec3(p, 0.0f), glm::vec3(q, 0.0f)));
-    baryc.z = n.z / areal_123;
-
-    return baryc;
-}
-
-float RenderWindow::GetSurfaceHeight()
-{
-    glm::vec3 playerPos = glm::vec3(mia->mWorldPosition.x(), mia->mWorldPosition.y(), mia->mWorldPosition.z());
-
-    // Loop through each triangle in the mesh.
-    for (int i = 0; i < (triangulation->numTriangles); i++)
-    {
-        // Get the vertices of the triangle.
-        unsigned int v0 = triangulation->getIndex(i, 0);
-        unsigned int v1 = triangulation->getIndex(i, 1);
-        unsigned int v2 = triangulation->getIndex(i, 2);
-        glm::vec3 p0 = triangulation->getVertex(v0);
-        glm::vec3 p1 = triangulation->getVertex(v1);
-        glm::vec3 p2 = triangulation->getVertex(v2);
-
-        glm::vec3 baryCoords = barycentricCoordinates(p0, p1, p2, playerPos);
-
-        // Check if the player's position is inside the triangle.
-        if (baryCoords.x >= 0.0f && baryCoords.y >= 0.0f && baryCoords.z >= 0.0f)
-        {
-            // The player's position is inside the triangle.
-            // Calculate the height of the surface at the player's position.
-            float height = baryCoords.x * p0.z + baryCoords.y * p1.z + baryCoords.z * p2.z;
-
-            // Return the height as the height of the surface at the player's position.
-            return height;
-        }
-    }
-
-    return 0.0f;
 }
 
 void RenderWindow::CollisionHandling()
@@ -692,33 +637,30 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
 
 void RenderWindow::moveMiaX(float movespeed)
 {
+    glm::vec3 playerpos = glm::vec3(mia->getPosition().x(), mia->getPosition().y(), mia->getPosition().z());
+    float height = heightMap->GetSurfaceHeight(playerpos) - miaCollision->getPosition().z();
+
     movespeed = (movespeed * (1/miaCollision->getRadius()));
 
-    miaCollision->move(movespeed,
-                       0.0f,
-                       GetSurfaceHeight() - miaCollision->getPosition().z());
+    miaCollision->move(movespeed * miaCollision->getRadius(), 0.0f, height);
+    miaCollision->mWorldPosition += QVector3D{movespeed/miaCollision->getRadius(), 0.0f, height};
 
-    miaCollision->mWorldPosition += QVector3D{movespeed, 0.0f, GetSurfaceHeight() - miaCollision->getPosition().z()};
-
-    mia->move(movespeed,
-              0.0f,
-              GetSurfaceHeight() - mia->getPosition().z());
-
-    mia->mWorldPosition += QVector3D{movespeed, 0.0f, GetSurfaceHeight() - mia->getPosition().z()};
+    mia->move(movespeed, 0.0f, height);
+    mia->mWorldPosition += QVector3D{movespeed, 0.0f, height};
 }
 
 void RenderWindow::moveMiaY(float movespeed)
 {
+    glm::vec3 playerpos = glm::vec3(mia->getPosition().x(), mia->getPosition().y(), mia->getPosition().z());
+    float height = heightMap->GetSurfaceHeight(playerpos) - miaCollision->getPosition().z();
+
     movespeed = (movespeed * (1/miaCollision->getRadius()));
 
-    miaCollision->move(0.0f, movespeed, GetSurfaceHeight() - miaCollision->getPosition().z());
-    miaCollision->mWorldPosition += QVector3D{0.0f, movespeed * miaCollision->getRadius(), GetSurfaceHeight() - miaCollision->getPosition().z()};
+    miaCollision->move(0.0f, movespeed * miaCollision->getRadius(), height);
+    miaCollision->mWorldPosition += QVector3D{0.0f, movespeed/miaCollision->getRadius(), height};
 
-    mia->move(0.0f,
-              movespeed,
-              GetSurfaceHeight() - mia->getPosition().z());
-
-    mia->mWorldPosition += QVector3D{0.0f, movespeed, GetSurfaceHeight() - mia->getPosition().z()};
+    mia->move(0.0f,movespeed,height);
+    mia->mWorldPosition += QVector3D{0.0f, movespeed, height};
 }
 
 void RenderWindow::ToggleCollision()

@@ -67,7 +67,7 @@ void InteractiveObject::move(float x, float y, float z)
 
 void InteractiveObject::initCubeGeometry()
 {
-    float size = 0.1;
+    float size = 0.4;
     radius = size;
 
     // Define the vertices of the cube

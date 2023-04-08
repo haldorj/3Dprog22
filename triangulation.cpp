@@ -52,7 +52,7 @@ void Triangulation::init(GLint matrixUniform)
     glBindVertexArray(0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    mMatrix.translate(0,0,10);
+    //mMatrix.translate(0,0,10);
 }
 
 void Triangulation::draw()
@@ -152,3 +152,58 @@ void Triangulation::writeFile(std::string filename)
     }
 }
 
+float Triangulation::GetSurfaceHeight(glm::vec3 p)
+{
+    // Loop through each triangle in the mesh.
+    for (int i = 0; i < (numTriangles); i++)
+    {
+        // Get the vertices of the triangle.
+        unsigned int v0 = getIndex(i, 0);
+        unsigned int v1 = getIndex(i, 1);
+        unsigned int v2 = getIndex(i, 2);
+        glm::vec3 p0 = getVertex(v0);
+        glm::vec3 p1 = getVertex(v1);
+        glm::vec3 p2 = getVertex(v2);
+
+        glm::vec3 baryCoords = barycentricCoordinates(p0, p1, p2, p);
+
+        // Check if the player's position is inside the triangle.
+        if (baryCoords.x >= 0.0f && baryCoords.y >= 0.0f && baryCoords.z >= 0.0f)
+        {
+            // The player's position is inside the triangle.
+            // Calculate the height of the surface at the player's position.
+            float height = baryCoords.x * p0.z + baryCoords.y * p1.z + baryCoords.z * p2.z;
+
+            // Return the height as the height of the surface at the player's position.
+            return height;
+        }
+    }
+
+    return 0.0f;
+}
+
+glm::vec3 Triangulation::barycentricCoordinates(const glm::vec2 &p1, const glm::vec2 &p2, const glm::vec2 &p3, const glm::vec2 &pt)
+{
+    glm::vec2 p12 = p2 - p1;
+    glm::vec2 p13 = p3 - p1;
+    glm::vec3 n = glm::vec3(glm::cross(glm::vec3(p12, 0.0f), glm::vec3(p13, 0.0f)));
+    float areal_123 = glm::length(n); // double area
+    glm::vec3 baryc;
+    // u
+    glm::vec2 p = p2 - pt;
+    glm::vec2 q = p3 - pt;
+    n = glm::vec3(glm::cross(glm::vec3(p, 0.0f), glm::vec3(q, 0.0f)));
+    baryc.x = n.z / areal_123;
+    // v
+    p = p3 - pt;
+    q = p1 - pt;
+    n = glm::vec3(glm::cross(glm::vec3(p, 0.0f), glm::vec3(q, 0.0f)));
+    baryc.y = n.z / areal_123;
+    // w
+    p = p1 - pt;
+    q = p2 - pt;
+    n = glm::vec3(glm::cross(glm::vec3(p, 0.0f), glm::vec3(q, 0.0f)));
+    baryc.z = n.z / areal_123;
+
+    return baryc;
+}

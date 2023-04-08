@@ -20,6 +20,9 @@ public:
    void init(GLint matrixUniform) override;
    void draw() override;
 
+   glm::vec3 barycentricCoordinates(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& pt);
+   float GetSurfaceHeight(glm::vec3 p);
+
    glm::vec3 getVertex(int index);
    unsigned int getIndex(int triangleIndex, int vertexIndex);
 

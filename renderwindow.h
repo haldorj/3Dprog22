@@ -65,9 +65,6 @@ private:
     VisualObject* miaCollision;
 
     Triangulation* triangulation;
-    std::vector<glm::vec2> mTriangles;
-    glm::vec3 barycentricCoordinates(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& pt);
-    float GetSurfaceHeight();
 
     Camera mCamera{};
 
