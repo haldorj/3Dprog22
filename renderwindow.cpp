@@ -69,9 +69,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mMap.insert(MapPair{"Path", Path});
     mMap.insert(MapPair{"Path2", Path2});
 
-    mMap.insert(MapPair{"house",new Cube(2,   -6, -1.5, 0,    0.8, 0.6, 0.3)});
-    mMap.insert(MapPair{"house2",new Cube(4,   -12, -12, -0.1,    0.8, 0.6, 0.3)});
-    mMap.insert(MapPair{"Floor", new Plane(-12.5,-7.5,5)});
+    house=new House();
+
     mMap.insert(MapPair{"Object", new Tetrahedron(-10,-10, 0.2, 1.2)});
 
     //mMap.insert(MapPair{"Triangulation", (new Triangulation())});
@@ -266,13 +265,14 @@ void RenderWindow::init()
     //triangulation->init(mUniformModel);
     mia->init(mUniformModel);
     heightMap->init(mUniformModel);
-
+    house->init(mUniformModel);
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 
     // Additional setup
     moveMiaX(0);
     moveMiaY(-3);
     mia->mMatrix.translate(0,0,0.1);
+    house->move(-7.0,0,1);
 
     BOT2->bShouldRender = false;
     Path2->bShouldRender = false;
@@ -303,13 +303,10 @@ void RenderWindow::render()
 
     if (bSceneOne)
         // Scene 1
-        //mCamera.lookAt( QVector3D{2,-2,5}, QVector3D{2,2,0}, QVector3D{0,1,0} );
-        //mCamera.lookAt( QVector3D{-0,-4,4}, QVector3D{0,-1,0}, QVector3D{0,1,0} );
-        //mCamera.lookAt( QVector3D{1, 0,10}, QVector3D{1,1,0}, QVector3D{0,1,0} );
         mCamera.lookAt(followCamera, playerPos , QVector3D{0,1,0} );
     else
         // Scene 2
-        mCamera.lookAt( QVector3D{-10,-10,3}, QVector3D{-10,-10,0}, QVector3D{0,1,0} );
+        mCamera.lookAt( QVector3D{-7,-1,2}, QVector3D{-7,0,0}, QVector3D{0,1,0} );
 
     //what shader to use (plain shader)
     glUseProgram(mPlainShaderProgram->getProgram());
@@ -352,9 +349,15 @@ void RenderWindow::render()
 
     // hmap
     dirtTexture->UseTexture();
-    dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
+    shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
     heightMap->draw();
+
+    //house obj
+    brickTexture->UseTexture();
+    dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
+    glUniform1i(mTextureUniform, 1);
+    house->draw();
 
     //mMap["disc"]->move(0.05f);
 
@@ -409,19 +412,25 @@ void RenderWindow::CollisionHandling()
     {
         mia->getPosition();
         miaCollision->getPosition();
+        QVector3D dist = miaCollision->getPosition() - house->getPosition();
+        float d = dist.length();
 
-        if (miaCollision->getPosition().x() < -4.5
-            && miaCollision->getPosition().y() <= 1
-            && miaCollision->getPosition().y() >= -1)
+        float r1 = miaCollision->getRadius(); // Må legges til
+                float r2 =house->getRadius();
+
+                if (d < r1 + r2)
         {
             bSceneOne = false;
-            if (bShouldMove)
-            {
-                moveMiaX(-4);
-                moveMiaY(-9.5);
+            //if (bShouldMaave)
+//            {
+//                moveMiaX(-4);
+//                moveMiaY(-9.5);
 
-                bShouldMove = false;
-            }
+//                bShouldMove = false;
+//            }
+        }
+        else {
+            bSceneOne=true;
         }
     }
 }
@@ -644,7 +653,7 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     }
 
     //You get the keyboard input like this
-    float moveSpeed = 0.015;
+    float moveSpeed = 0.03;
     if(event->key() == Qt::Key_A)
     {
         if(mia!=nullptr)
@@ -675,10 +684,12 @@ void RenderWindow::moveMiaX(float movespeed)
     glm::vec3 playerpos = glm::vec3(mia->getPosition().x(), mia->getPosition().y(), mia->getPosition().z());
     float height = heightMap->GetSurfaceHeight(playerpos) - miaCollision->getPosition().z();
 
-    movespeed = (movespeed * (1/miaCollision->getRadius()));
+    //movespeed = (movespeed * ));
 
-    miaCollision->move(movespeed, 0.0f, height);
-    miaCollision->mWorldPosition += QVector3D{movespeed/miaCollision->getRadius(), 0.0f, height};
+    miaCollision->move(movespeed*(1/miaCollision->getRadius()), 0.0f, height*1/miaCollision->getRadius());
+
+
+    miaCollision->mWorldPosition += QVector3D{movespeed, 0.0f, height};
 
     mia->move(movespeed, 0.0f, height);
     mia->mWorldPosition += QVector3D{movespeed, 0.0f, height};
@@ -689,10 +700,9 @@ void RenderWindow::moveMiaY(float movespeed)
     glm::vec3 playerpos = glm::vec3(mia->getPosition().x(), mia->getPosition().y(), mia->getPosition().z());
     float height = heightMap->GetSurfaceHeight(playerpos) - miaCollision->getPosition().z();
 
-    movespeed = (movespeed * (1/miaCollision->getRadius()));
 
-    miaCollision->move(0.0f, movespeed, height);
-    miaCollision->mWorldPosition += QVector3D{0.0f, movespeed/miaCollision->getRadius(), height};
+    miaCollision->move(0.0f, movespeed * (1/miaCollision->getRadius()), height*1/miaCollision->getRadius());
+    miaCollision->mWorldPosition += QVector3D{0.0f, movespeed, height};
 
     mia->move(0.0f,movespeed,height);
     mia->mWorldPosition += QVector3D{0.0f, movespeed, height};

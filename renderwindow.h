@@ -24,6 +24,7 @@
 #include "octahedronball.h"
 #include "disc.h"
 #include "npc.h"
+#include "house.h"
 #include "texture.h"
 #include "mesh.h"
 #include "heightmap.h"
@@ -75,6 +76,7 @@ private:
     VisualObject* Path2;
     void CollisionHandling();
 
+    House* house;
     std::unordered_map<std::string, VisualObject*> mMap;    // alternativ container
 
     QOpenGLContext *mContext{nullptr};  //Our OpenGL context

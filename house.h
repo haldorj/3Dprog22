@@ -1,13 +1,14 @@
-#ifndef INTERACTIVEOBJECT_H
-#define INTERACTIVEOBJECT_H
+#ifndef HOUSE_H
+#define HOUSE_H
 
 #include <glm/glm.hpp>
-#include "visualobject.h"
+#include <visualobject.h>
 
-class InteractiveObject : public VisualObject {
+class House : public VisualObject
+{
 public:
-    InteractiveObject();
-    ~InteractiveObject() override;
+    House();
+    ~House() {};
     void init(GLint matrixUniform) override;
     void draw() override;
     void initCubeGeometry();
@@ -17,4 +18,4 @@ public:
     float mx, my, mz; // posisjon
 };
 
-#endif // INTERACTIVEOBJECT_H
+#endif // HOUSE_H

@@ -19,6 +19,7 @@ SOURCES += main.cpp \
     curves.cpp \
     disc.cpp \
     heightmap.cpp \
+    house.cpp \
     interactivecollisionvolume.cpp \
     interactiveobject.cpp \
     logger.cpp \
@@ -389,6 +390,7 @@ HEADERS += \
     curves.h \
     disc.h \
     heightmap.h \
+    house.h \
     interactivecollisionvolume.h \
     interactiveobject.h \
     logger.h \
