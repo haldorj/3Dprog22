@@ -72,37 +72,56 @@ void InteractiveObject::initCubeGeometry()
     radius = size;
 
     // Define the vertices of the cube
-    // Front
-    mVertices.push_back(Vertex{-size, -size,  size,    0.0, 0.0, 0.0,     0.0,  0.0}); // Bottom-left
-    mVertices.push_back(Vertex{ size, -size,  size,    0.0, 0.0, 0.0,     1.0,  0.0}); // Bottom-right
-    mVertices.push_back(Vertex{ size,  size,  size,    0.0, 0.0, 0.0,     1.0,  1.0}); // Top-right
-    mVertices.push_back(Vertex{-size,  size,  size,    0.0, 0.0, 0.0,     0.0,  1.0}); // Top-left
 
-    // Back
-    mVertices.push_back(Vertex{-size, -size, -size,    0.0, 0.0, 0.0,      1.0,  0.0}); // Bottom-left
-    mVertices.push_back(Vertex{ size, -size, -size,    0.0, 0.0, 0.0,      0.0,  0.0}); // Bottom-right
-    mVertices.push_back(Vertex{ size,  size, -size,    0.0, 0.0, 0.0,      0.0,  1.0}); // Top-right
-    mVertices.push_back(Vertex{-size,  size, -size,    0.0, 0.0, 0.0,      1.0,  1.0});  // Top-left
+    // Front face
+    mVertices.push_back(Vertex{-size, -size,  size, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}); // Bottom left
+    mVertices.push_back(Vertex{ size, -size,  size, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f}); // Bottom right
+    mVertices.push_back(Vertex{ size,  size,  size, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f}); // Top right
+    mVertices.push_back(Vertex{-size,  size,  size, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f}); // Top left
+
+    // Back face
+    mVertices.push_back(Vertex{ size, -size, -size, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}); // Bottom left
+    mVertices.push_back(Vertex{-size, -size, -size, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f}); // Bottom right
+    mVertices.push_back(Vertex{-size,  size, -size, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f}); // Top right
+    mVertices.push_back(Vertex{ size,  size, -size, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f}); // Top left
+
+    // Top face
+    mVertices.push_back(Vertex{-size,  size,  size, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}); // Bottom left
+    mVertices.push_back(Vertex{ size,  size,  size, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f}); // Bottom right
+    mVertices.push_back(Vertex{ size,  size, -size, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f}); // Top right
+    mVertices.push_back(Vertex{-size,  size, -size, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f}); // Top left
+
+    // Bottom face
+    mVertices.push_back(Vertex{ size, -size,  size, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}); // Bottom left
+    mVertices.push_back(Vertex{-size, -size,  size, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f}); // Bottom right
+    mVertices.push_back(Vertex{-size, -size, -size, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f}); // Top right
+    mVertices.push_back(Vertex{ size, -size, -size, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f}); // Top left
+
+    // Right face
+    mVertices.push_back(Vertex{ size, -size,  size, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}); // Bottom left
+    mVertices.push_back(Vertex{ size, -size, -size, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f}); // Bottom right
+    mVertices.push_back(Vertex{ size,  size, -size, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f}); // Top right
+    mVertices.push_back(Vertex{ size,  size,  size, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f}); // Top left
+
+    // Left face
+    mVertices.push_back(Vertex{-size, -size, -size, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}); // Bottom left
+    mVertices.push_back(Vertex{-size, -size,  size, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f}); // Bottom right
+    mVertices.push_back(Vertex{-size,  size,  size, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f}); // Top right
+    mVertices.push_back(Vertex{-size,  size, -size, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f}); // Top left
 
     // Define the index array
     mIndices = {
-        // Front
-        0, 1, 2,
+        0, 1, 2, // Front face
         2, 3, 0,
-        // Top
-        3, 2, 6,
-        6, 7, 3,
-        // Back
-        7, 6, 5,
-        5, 4, 7,
-        // Bottom
-        4, 5, 1,
-        1, 0, 4,
-        // Left
-        4, 0, 3,
-        3, 7, 4,
-        // Right
-        1, 5, 6,
-        6, 2, 1
+        4, 5, 6, // Back face
+        6, 7, 4,
+        8, 9, 10, // Top face
+        10, 11, 8,
+        12, 13, 14, // Bottom face
+        14, 15, 12,
+        16, 17, 18, // Right face
+        18, 19, 16,
+        20, 21, 22, // Left face
+        22, 23, 20
     };
 }

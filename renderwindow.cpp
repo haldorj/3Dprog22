@@ -212,12 +212,12 @@ void RenderWindow::init()
 
     mainLight = new DirectionalLight(0.8f, 0.4f, 0.2f,      //rgb
                                     0.4f, 0.5,              //ambientIntensity, specularIntensity
-                                    0.0f, 0.0f, -1.0f);    //xyz (directions)
+                                    0.0f, 0.0f, -1.0f);     //xyz (directions)
 
     mPointLights.push_back( new PointLight(1.0f, 0.5f, 0.0f,
-                                           0.1f, 1.0f,
-                                           -5.0f, 5.0f, 3.0f,
-                                           0.2f, 0.1f, 0.1f));
+                                    0.2f, 0.25f,
+                                    -5.0f, 5.0f, 3.0f,
+                                    0.2f, 0.1f, 0.1f));
     PointLightCount++;
     mPointLights.push_back( new PointLight(1.0f, 0.0f, 1.0f,    //rgb
                                     0.1f, 1.0f,                 //ambientIntensity, diffuseIntensity
@@ -282,7 +282,7 @@ void RenderWindow::init()
 void RenderWindow::render()
 {
     mCamera.init(mPmatrixUniform0, mVmatrixUniform0);
-    mCamera.perspective(90.0f, 16.0f/9.0f, 0.1f, 20.f);
+    mCamera.perspective(70.0f, 16.0f/9.0f, 0.1f, 20.f);
 
     mTimeStart.restart(); //restart FPS clock
     mContext->makeCurrent(this); //must be called every frame (every time mContext->swapBuffers is called)
@@ -294,8 +294,12 @@ void RenderWindow::render()
 
     skybox->DrawSkybox(mCamera.mVmatrix, mCamera.mPmatrix);
 
-    QVector3D followCamera = {mia->getPosition().x(), mia->getPosition().y() - 4, 3};
-    QVector3D playerPos = {mia->getPosition().x(), mia->getPosition().y(), 2};
+    QVector3D followCamera = {mia->getPosition().x(),
+                              mia->getPosition().y() - 3,
+                              2};
+    QVector3D playerPos = {mia->getPosition().x(),
+                           mia->getPosition().y(),
+                           1};
 
     if (bSceneOne)
         // Scene 1
@@ -335,24 +339,21 @@ void RenderWindow::render()
     mCamera.update();
 
     // mia
-    glassTexture->UseTexture();
-    shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
+    brickTexture->UseTexture();
+    dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
-
     mia->draw();
 
     // surface obj
     woodTexture->UseTexture();
     dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
-
     //triangulation->draw();
 
     // hmap
     dirtTexture->UseTexture();
     dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
-
     heightMap->draw();
 
     //mMap["disc"]->move(0.05f);
@@ -370,9 +371,9 @@ void RenderWindow::render()
     // and wait for vsync.
     mContext->swapBuffers(this);
 
-    mPointLights[0]->setPos(mia->getPosition().x() + mia->getRadius(),
-                            mia->getPosition().y() + mia->getRadius(),
-                            mia->getPosition().z() + 2);
+    mPointLights[0]->setPos(mia->getPosition().x(),
+                            mia->getPosition().y(),
+                            mia->getPosition().z() + 1.5);
 
     CollisionHandling();
     ToggleCollision();
@@ -643,7 +644,7 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     }
 
     //You get the keyboard input like this
-    float moveSpeed = 0.025;
+    float moveSpeed = 0.015;
     if(event->key() == Qt::Key_A)
     {
         if(mia!=nullptr)
