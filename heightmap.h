@@ -3,10 +3,8 @@
 
 #include <QOpenGLFunctions_4_1_Core>
 
-#include "stb_image.h"
-
 #include "visualobject.h"
-#include "texture.h"
+#include "CustomFiles/CommonValues.h"
 
 class HeightMap : public VisualObject
 {

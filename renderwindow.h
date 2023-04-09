@@ -27,7 +27,7 @@
 #include "texture.h"
 #include "mesh.h"
 #include "heightmap.h"
-
+#include "skybox.h"
 
 
 
@@ -138,6 +138,8 @@ private:
     Texture *glassTexture;
 
     HeightMap *heightMap;
+
+    Skybox *skybox;
 
     Material *shinyMaterial;
     Material *dullMaterial;

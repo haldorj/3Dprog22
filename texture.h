@@ -1,9 +1,9 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include <QOpenGLFunctions_4_1_Core>
+#include "CustomFiles/CommonValues.h"
 
-#include "stb_image.h"
+#include <QOpenGLFunctions_4_1_Core>
 
 class Texture : protected QOpenGLFunctions_4_1_Core
 {
@@ -15,8 +15,8 @@ public:
     Texture(char* fileLoc);
     ~Texture();
 
-    void LoadTexture();
-    void LoadTextureA();
+    bool LoadTexture();
+    bool LoadTextureA();
     void UseTexture();
     void ClearTexture();
     void makeDummyTexture();

@@ -1,3 +1,5 @@
+#define STB_IMAGE_IMPLEMENTATION
+
 #include "renderwindow.h"
 #include <QTimer>
 #include <QMatrix4x4>
@@ -208,11 +210,11 @@ void RenderWindow::init()
     shinyMaterial = new Material(4.0f, 256);
     dullMaterial = new Material(0.3f, 4);
 
-    mainLight = new DirectionalLight(0.4f, 0.2f, 0.8f,      //rgb
+    mainLight = new DirectionalLight(0.8f, 0.4f, 0.2f,      //rgb
                                     0.4f, 0.5,              //ambientIntensity, specularIntensity
                                     0.0f, 0.0f, -1.0f);    //xyz (directions)
 
-    mPointLights.push_back( new PointLight(0.0f, 0.5f, 1.0f,
+    mPointLights.push_back( new PointLight(1.0f, 0.5f, 0.0f,
                                            0.1f, 1.0f,
                                            -5.0f, 5.0f, 3.0f,
                                            0.2f, 0.1f, 0.1f));
@@ -227,6 +229,24 @@ void RenderWindow::init()
                                     -1.0f, 5.0f, 3.0f,
                                     0.2f, 0.1f, 0.1f));
     PointLightCount++;
+
+    // order: rt, lf, up, dn, bk, ft.
+    std::vector<std::string> skyboxFaces;
+//        skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_rt.tga");
+//        skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_lf.tga");
+//        skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_up.tga");
+//        skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_dn.tga");
+//        skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_bk.tga");
+//        skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_ft.tga");
+
+    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_rt.tga");
+    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_lf.tga");
+    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_up.tga");
+    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_dn.tga");
+    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_bk.tga");
+    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_ft.tga");
+
+    skybox = new Skybox(skyboxFaces);
 
     //mCamera.init(mPmatrixUniform, mVmatrixUniform);
 
@@ -272,7 +292,9 @@ void RenderWindow::render()
     //clear the screen for each redraw
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    QVector3D followCamera = {mia->getPosition().x(), mia->getPosition().y() - 5, 5};
+    skybox->DrawSkybox(mCamera.mVmatrix, mCamera.mPmatrix);
+
+    QVector3D followCamera = {mia->getPosition().x(), mia->getPosition().y() - 4, 3};
     QVector3D playerPos = {mia->getPosition().x(), mia->getPosition().y(), 2};
 
     if (bSceneOne)

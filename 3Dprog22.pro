@@ -29,6 +29,7 @@ SOURCES += main.cpp \
     quadtree.cpp \
     renderwindow.cpp \
     shader.cpp \
+    skybox.cpp \
     tetrahedron.cpp \
     texture.cpp \
     trianglesurface.cpp \
@@ -398,6 +399,7 @@ HEADERS += \
     quadtree.h \
     renderwindow.h \
     shader.h \
+    skybox.h \
     tetrahedron.h \
     texture.h \
     trianglesurface.h \
@@ -414,5 +416,7 @@ DISTFILES += \
     phongshader.vert \
     plainshader.frag \
     plainshader.vert \
+    skybox.frag \
+    skybox.vert \
     texshader.frag \
     texshader.vert

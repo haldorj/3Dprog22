@@ -1,5 +1,3 @@
-#define STB_IMAGE_IMPLEMENTATION
-
 #include <iostream>
 #include <string>
 
@@ -32,13 +30,13 @@ Texture::~Texture()
     ClearTexture();
 }
 
-void Texture::LoadTexture()
+bool Texture::LoadTexture()
 {
     unsigned char* texData = stbi_load(fileLocation, &width, &height, &bitDepth, 0);
     if (!texData)
     {
         printf("failed to find %s\n", fileLocation);
-        return;
+        return false;
     }
     glEnable(GL_TEXTURE_2D);
     // 1. Generate a texture object.
@@ -58,15 +56,17 @@ void Texture::LoadTexture()
     glBindTexture(GL_TEXTURE_2D, 0);
 
     stbi_image_free(texData);
+
+    return true;
 }
 
-void Texture::LoadTextureA()
+bool Texture::LoadTextureA()
 {
     unsigned char* texData = stbi_load(fileLocation, &width, &height, &bitDepth, 0);
     if (!texData)
     {
         printf("failed to find %s\n", fileLocation);
-        return;
+        return false;
     }
     glEnable(GL_TEXTURE_2D);
     // 1. Generate a texture object.
@@ -86,6 +86,8 @@ void Texture::LoadTextureA()
     glBindTexture(GL_TEXTURE_2D, 0);
 
     stbi_image_free(texData);
+
+    return true;
 }
 
 void Texture::UseTexture()
