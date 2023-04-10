@@ -3,9 +3,7 @@
 House::House()
 {
     initCubeGeometry();
-    mMatrix.rotate(-90,1,0,0);
     calcAverageNormals();
-
 }
 
 void House::init(GLint matrixUniform)

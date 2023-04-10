@@ -349,7 +349,7 @@ void RenderWindow::render()
 
     // hmap
     dirtTexture->UseTexture();
-    shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
+    dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
     heightMap->draw();
 
@@ -653,7 +653,7 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     }
 
     //You get the keyboard input like this
-    float moveSpeed = 0.03;
+    float moveSpeed = 0.08;
     if(event->key() == Qt::Key_A)
     {
         if(mia!=nullptr)

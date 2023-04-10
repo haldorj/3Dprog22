@@ -188,31 +188,43 @@ void HeightMap::calcNormalsHmap()
 float HeightMap::GetSurfaceHeight(const glm::vec3 p)
 {
     // Loop through each triangle in the mesh.
-    for (unsigned i = 0; i < mIndices.size() - 2; i += 2)
+    for(unsigned strip = 0; strip < numStrips; strip++)
     {
-        // Store each vertex of the current triangle
-        unsigned int v0 = mIndices[i];
-        unsigned int v1 = mIndices[i + 1];
-        unsigned int v2 = mIndices[i + 2];
-
-        glm::vec3 p0 = getVertex(v0);
-        glm::vec3 p1 = getVertex(v1);
-        glm::vec3 p2 = getVertex(v2);
-
-        glm::vec3 baryCoords = barycentricCoordinates(p0, p1, p2, p);
-
-        // Check if the player's position is inside the triangle.
-        if (baryCoords.x >= 0.0f && baryCoords.y >= 0.0f && baryCoords.z >= 0.0f)
+        for (unsigned i = 0; i < numTrisPerStrip + 2; i ++)
         {
-            // The player's position is inside the triangle.
-            // Calculate the height of the surface at the player's position.
-            float height = baryCoords.x * p0.z + baryCoords.y * p1.z + baryCoords.z * p2.z;
+            unsigned int v0, v1, v2;
+            if (i % 2 == 0)
+            {
+                v0 = mIndices[strip * (numTrisPerStrip + 2) + i];
+                v1 = mIndices[strip * (numTrisPerStrip + 2) + i + 1];
+                v2 = mIndices[strip * (numTrisPerStrip + 2) + i + 2];
+            }
+            else
+            {
+                v0 = mIndices[strip * (numTrisPerStrip + 2) + i + 2];
+                v1 = mIndices[strip * (numTrisPerStrip + 2) + i + 1];
+                v2 = mIndices[strip * (numTrisPerStrip + 2) + i];
+            }
 
-            // Return the height as the height of the surface at the player's position.
-            return height;
+            glm::vec3 p0 = getVertex(v0);
+            glm::vec3 p1 = getVertex(v1);
+            glm::vec3 p2 = getVertex(v2);
+
+            glm::vec3 baryCoords = barycentricCoordinates(p0, p1, p2, p);
+
+            // Check if the player's position is inside the triangle.
+            if (baryCoords.x >= 0.0f && baryCoords.y >= 0.0f && baryCoords.z >= 0.0f)
+            {
+                // The player's position is inside the triangle.
+                // Calculate the height of the surface at the player's position.
+                float height = baryCoords.x * p0.z + baryCoords.y * p1.z + baryCoords.z * p2.z;
+
+                // Return the height as the height of the surface at the player's position.
+                return height;
+            }
         }
     }
-    return p.z;
+    return 0;
 }
 
 
