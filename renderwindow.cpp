@@ -130,13 +130,6 @@ RenderWindow::~RenderWindow()
 // Sets up the general OpenGL stuff and the buffers needed to render a triangle
 void RenderWindow::init()
 {
-    QLibrary myLib("../3Dprog22/assimp-vc143-mtd.dll");
-    if (myLib.load()) {
-        std::cout << "DLL loaded successfully, do something with it \n";
-    } else {
-        std::cout << "DLL failed to load, handle the error";
-    }
-
     //Get the instance of the utility Output logger
     //Have to do this, else program will crash (or you have to put in nullptr tests...)
     mLogger = Logger::getInstance();
@@ -200,7 +193,7 @@ void RenderWindow::init()
     setupTextureShader();
     setupPhongShader();
 
-    heightMap = new HeightMap((char*)("../3Dprog22/HeightMaps/hMap2.png"));
+    heightMap = new HeightMap((char*)("../3Dprog22/HeightMaps/hMap3.png"));
     heightMap->LoadHeightMap();
 
     brickTexture = new Texture((char*)("../3Dprog22/Textures/brick.png"));
@@ -239,19 +232,19 @@ void RenderWindow::init()
 
     // order: rt, lf, up, dn, bk, ft.
     std::vector<std::string> skyboxFaces;
-        skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_rt.tga");
-        skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_lf.tga");
-        skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_up.tga");
-        skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_dn.tga");
-        skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_bk.tga");
-        skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_ft.tga");
+//    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_rt.tga");
+//    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_lf.tga");
+//    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_up.tga");
+//    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_dn.tga");
+//    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_bk.tga");
+//    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_ft.tga");
 
-//    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_rt.tga");
-//    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_lf.tga");
-//    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_up.tga");
-//    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_dn.tga");
-//    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_bk.tga");
-//    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_ft.tga");
+    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_rt.tga");
+    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_lf.tga");
+    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_up.tga");
+    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_dn.tga");
+    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_bk.tga");
+    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_ft.tga");
 
     skybox = new Skybox(skyboxFaces);
 
@@ -279,7 +272,7 @@ void RenderWindow::init()
     // Additional setup
     moveMiaX(0);
     moveMiaY(-3);
-    mia->mMatrix.translate(0,0,0.1);
+
     house->move(-7.0,0,1);
 
     BOT2->bShouldRender = false;

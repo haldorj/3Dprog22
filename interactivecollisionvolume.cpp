@@ -31,8 +31,8 @@ InteractiveCollisionVolume::InteractiveCollisionVolume(int n) : m_rekursjoner(n)
    oktaederUnitBall();
 
    mWorldPosition = {0.0f,0.0f,0.0f};
-   mMatrix.translate(0.05f, -0.05f, radius);
    mMatrix.scale(radius);
+   mMatrix.translate(0.05f, -0.05f, radius);
 }
 
 //!//! \brief OctahedronBall::~OctahedronBall() virtual destructor

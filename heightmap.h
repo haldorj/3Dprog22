@@ -25,7 +25,7 @@ public:
     void init(GLint matrixUniform) override;
     void draw() override;
 private:
-    float mapScale = 0.4;
+    float mapScale = 0.2;
 
     int width, height, nrChannels;
     char* fileLocation;

@@ -45,7 +45,7 @@ void HeightMap::LoadHeightMap()
 void HeightMap::GenerateTerrain(unsigned char *data)
 {
     // vertex generation
-    float yScale = 32.0f / 256.0f;
+    float yScale = 8.0f / 256.0f;
     float yShift = 16.0f;  // apply a scale+shift to the height data
 
     for(unsigned int i = 0; i < height; i++)
@@ -63,7 +63,7 @@ void HeightMap::GenerateTerrain(unsigned char *data)
 
             // vertex
             d = d * mapScale;
-            mVertices.push_back(Vertex{d.x, d.z, d.y + 2});
+            mVertices.push_back(Vertex{d.x, d.z, d.y + 2.2f});
         }
     }
     // After building up the vertex array, we can release the height map from memory.
