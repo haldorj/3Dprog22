@@ -72,7 +72,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
 
     house=new House();
 
-    mMap.insert(MapPair{"Object", new Tetrahedron(-10,-10, 0.2, 1.2)});
+    mMap.insert(MapPair{"Object", new Tetrahedron(-7.5, 0.2, 0.3, 1.2)});
 
     //mMap.insert(MapPair{"Triangulation", (new Triangulation())});
 
@@ -117,7 +117,10 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //mMap.insert(MapPair{"mia", mia});
     mMap.insert(MapPair{"miaCollision", miaCollision});
 
-    //heightmap = new HeightMap;
+    mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_1.obj"));
+    mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_2.obj"));
+    mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_3.obj"));
+    mModels.push_back(new ObjMesh("../3Dprog22/Objects/Log/Log_5.obj"));
 }
 
 RenderWindow::~RenderWindow()
@@ -262,6 +265,21 @@ void RenderWindow::init()
     for (auto it=mMap.begin(); it!=mMap.end(); it++)
         (*it).second->init(mMmatrixUniform0);
 
+    // .obj modeller
+    for (auto it=mModels.begin(); it!=mModels.end(); it++)
+    {
+        (*it)->init(mUniformModel);
+        (*it)->mMatrix.translate(0, 7, -0.5);
+        (*it)->mMatrix.rotate(90, 1, 0, 0);
+    }
+    // Trees
+    mModels[0]->mMatrix.translate(6,-0,-1);
+    mModels[1]->mMatrix.translate(-7,-0,-1);
+
+    // Log
+    mModels[3]->mMatrix.translate(-4, 0.6, 2);
+    mModels[3]->mMatrix.rotate(45, 0,1,0);
+
     // objects using phong shading
     //triangulation->init(mUniformModel);
     mia->init(mUniformModel);
@@ -273,7 +291,7 @@ void RenderWindow::init()
     moveMiaX(0);
     moveMiaY(-3);
 
-    house->move(-7.0,0,1);
+    house->move(-7.0, 0.0, 1.0);
 
     BOT2->bShouldRender = false;
     Path2->bShouldRender = false;
@@ -324,6 +342,7 @@ void RenderWindow::render()
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
         (*it)->draw();
 
+
     // what shader to use (phong shader)
     glUseProgram(mPhongShaderProgram->getProgram());
     glUniformMatrix4fv(mUniformView, 1, GL_TRUE, mCamera.mVmatrix.constData());
@@ -359,6 +378,11 @@ void RenderWindow::render()
     dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
     house->draw();
+
+    plainTexture->UseTexture();
+    shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
+    for (auto it = mModels.begin(); it != mModels.end(); it++)
+        (*it)->draw();
 
     //mMap["disc"]->move(0.05f);
 
@@ -417,21 +441,15 @@ void RenderWindow::CollisionHandling()
         float d = dist.length();
 
         float r1 = miaCollision->getRadius(); // Må legges til
-                float r2 =house->getRadius();
+        float r2 =house->getRadius();
 
-                if (d < r1 + r2)
+        if (d < r1 + r2)
         {
             bSceneOne = false;
-            //if (bShouldMaave)
-//            {
-//                moveMiaX(-4);
-//                moveMiaY(-9.5);
-
-//                bShouldMove = false;
-//            }
         }
-        else {
-            bSceneOne=true;
+        else
+        {
+            bSceneOne = true;
         }
     }
 }

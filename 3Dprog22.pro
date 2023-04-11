@@ -25,6 +25,7 @@ SOURCES += main.cpp \
     logger.cpp \
     mainwindow.cpp \
     npc.cpp \
+    objmesh.cpp \
     octahedronball.cpp \
     plane.cpp \
     quadtree.cpp \
@@ -396,6 +397,7 @@ HEADERS += \
     logger.h \
     mainwindow.h \
     npc.h \
+    objmesh.h \
     octahedronball.h \
     plane.h \
     quadtree.h \

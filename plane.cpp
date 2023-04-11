@@ -12,7 +12,7 @@ Plane::Plane()
 
    mMatrix.setToIdentity();
 
-   mMatrix.translate(-3.99f, -1.0f, -0.5f);
+   mMatrix.translate(-4.99f, -0.5f, -0.5f);
    mMatrix.rotate(90,0,0,1);
 }
 

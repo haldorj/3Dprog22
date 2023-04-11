@@ -29,6 +29,7 @@
 #include "mesh.h"
 #include "heightmap.h"
 #include "skybox.h"
+#include "objmesh.h"
 
 
 
@@ -142,6 +143,8 @@ private:
     HeightMap *heightMap;
 
     Skybox *skybox;
+
+    std::vector<ObjMesh*> mModels;
 
     Material *shinyMaterial;
     Material *dullMaterial;
