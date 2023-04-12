@@ -105,6 +105,20 @@ void MainWindow::on_pathButton_toggled(bool checked)
     }
 }
 
+void MainWindow::on_wireframeButton_toggled(bool checked)
+{
+    if(checked)
+    {
+        mRenderWindow->mWireframe = !mRenderWindow->mWireframe;
+        //ui->wireframeButton->setText("Toggle wireframe");
+    }
+    else
+    {
+        mRenderWindow->mWireframe = !mRenderWindow->mWireframe;
+        //ui->wireframeButton->setText("Toggle wireframe");
+    }
+}
+
 //File menu Exit closes the program
 void MainWindow::on_fileExit_triggered()
 {

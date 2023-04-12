@@ -55,6 +55,7 @@ public:
     bool mRotate{true};
     bool mPathOne{false};
     bool mCollision{false};
+    bool mWireframe{false};
 
 private slots:
     void render();          //the actual render - function
@@ -199,7 +200,7 @@ private:
 
     void ToggleCollision();
     void TogglePath();
-
+    void ToggleWireframe();
 };
 
 #endif // RENDERWINDOW_H

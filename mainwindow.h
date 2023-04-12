@@ -22,6 +22,7 @@ private slots:
     ///Slot called from the button in the mainwindow.ui file
     void on_collisionButton_toggled(bool checked);
     void on_pathButton_toggled(bool checked);
+    void on_wireframeButton_toggled(bool checked);
     ///Slot called from the File->Exit menu in the mainwindow.ui file
     void on_fileExit_triggered();
 

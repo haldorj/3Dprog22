@@ -406,6 +406,7 @@ void RenderWindow::render()
     CollisionHandling();
     ToggleCollision();
     TogglePath();
+    ToggleWireframe();
 }
 
 void RenderWindow::CollisionHandling()
@@ -671,6 +672,11 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
         mCollision = !mCollision;
     }
 
+    if(event->key() == Qt::Key_V)
+    {
+        mWireframe = !mWireframe;
+    }
+
     //You get the keyboard input like this
     float moveSpeed = 0.08;
     if(event->key() == Qt::Key_A)
@@ -761,6 +767,14 @@ void RenderWindow::TogglePath()
         Path2->bShouldRender = false;
         Path->bShouldRender = true;
     }
+}
+
+void RenderWindow::ToggleWireframe()
+{
+    if(mWireframe)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);    //turn on wireframe mode
+    else
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);    //turn off wireframe mode
 }
 
 

@@ -46,17 +46,17 @@ void ObjMesh::readFile(std::string filename)
 
         if (oneWord == "#")
         {
-            qDebug() << "Line is comment";
+            //qDebug() << "Line is comment";
             continue;
         }
         if (oneWord == "")
         {
-            qDebug() << "Line is blank";
+            //qDebug() << "Line is blank";
             continue;
         }
         if (oneWord == "v")
         {
-            qDebug() << "Line is vertex " << QString::fromStdString(oneWord) << " ";
+            //qDebug() << "Line is vertex " << QString::fromStdString(oneWord) << " ";
             glm::vec3 tempVertex;
             sStream >> oneWord;
             tempVertex.x = stof(oneWord);
@@ -72,7 +72,7 @@ void ObjMesh::readFile(std::string filename)
         }
         if (oneWord == "vt")
         {
-            qDebug() << "Line is UV-coordinate " << QString::fromStdString(oneWord) << " ";
+            //qDebug() << "Line is UV-coordinate " << QString::fromStdString(oneWord) << " ";
             glm::vec3 tempUV;
             sStream >> oneWord;
             tempUV.x = stof(oneWord);
@@ -86,7 +86,7 @@ void ObjMesh::readFile(std::string filename)
         }
         if (oneWord == "vn")
         {
-            qDebug() << "Line is normal " << QString::fromStdString(oneWord) << " ";
+            //qDebug() << "Line is normal " << QString::fromStdString(oneWord) << " ";
             glm::vec3 tempNormal;
             sStream >> oneWord;
             tempNormal.x = stof(oneWord);
@@ -102,7 +102,7 @@ void ObjMesh::readFile(std::string filename)
         }
         if (oneWord == "f")
         {
-            qDebug() << "Line is a face " << QString::fromStdString(oneWord) << " ";
+            //qDebug() << "Line is a face " << QString::fromStdString(oneWord) << " ";
             int index, normal, uv;
             for (int i = 0; i < 3; i++)
             {
@@ -121,7 +121,7 @@ void ObjMesh::readFile(std::string filename)
                 }
                 else
                 {
-                    qDebug() << "No uvs in mesh";
+                    //qDebug() << "No uvs in mesh";
                     uv = 0;
                 }
                 normal = std::stoi(segmentArray[2]); // third is normal
