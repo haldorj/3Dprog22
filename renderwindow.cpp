@@ -214,7 +214,7 @@ void RenderWindow::init()
     dullMaterial = new Material(0.3f, 4);
 
     mainLight = new DirectionalLight(0.8f, 0.4f, 0.2f,      //rgb
-                                    0.4f, 0.5,              //ambientIntensity, specularIntensity
+                                    0.5f, 0.5,              //ambientIntensity, specularIntensity
                                     0.0f, 0.0f, -1.0f);     //xyz (directions)
 
     mPointLights.push_back( new PointLight(1.0f, 0.5f, 0.0f,
@@ -292,6 +292,7 @@ void RenderWindow::init()
     moveMiaY(-3);
 
     house->move(-8.0, 0.0, 1.0);
+    house->mMatrix.rotate(90, 1, 0, 0);
 
     BOT2->bShouldRender = false;
     Path2->bShouldRender = false;
@@ -369,11 +370,11 @@ void RenderWindow::render()
 
     // hmap
     dirtTexture->UseTexture();
-    dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
+    shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
     heightMap->draw();
 
-    //house obj
+    // house obj
     brickTexture->UseTexture();
     dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
@@ -678,7 +679,7 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     }
 
     //You get the keyboard input like this
-    float moveSpeed = 0.08;
+    float moveSpeed = 0.06;
     if(event->key() == Qt::Key_A)
     {
         if(mia!=nullptr)
