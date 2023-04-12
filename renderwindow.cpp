@@ -98,7 +98,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mItems.push_back(new CollisionVolume(0.2, 2, 2, 1));
     mItems.push_back(new CollisionVolume(0.2, 3, 2, 1));
     // Door
-    mItems.push_back(new CollisionVolume(1.25, -4.5, -0.5, 2));
+    mItems.push_back(new CollisionVolume(1.25, -5, -0.5, 2));
 
     // Oppgave 2 OBLIG 2
     mMap.insert(std::pair<std::string, VisualObject*>{"P1", new Tetrahedron(-3,-3, 0, 0.5)});
@@ -291,7 +291,7 @@ void RenderWindow::init()
     moveMiaX(0);
     moveMiaY(-3);
 
-    house->move(-7.0, 0.0, 1.0);
+    house->move(-8.0, 0.0, 1.0);
 
     BOT2->bShouldRender = false;
     Path2->bShouldRender = false;
