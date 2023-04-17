@@ -139,7 +139,7 @@ private:
     Texture *dirtTexture;
     Texture *plainTexture;
     Texture *woodTexture;
-    Texture *glassTexture;
+    Texture *crateTexture;
 
     HeightMap *heightMap;
 

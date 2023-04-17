@@ -98,7 +98,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mItems.push_back(new CollisionVolume(0.2, 2, 2, 1));
     mItems.push_back(new CollisionVolume(0.2, 3, 2, 1));
     // Door
-    mItems.push_back(new CollisionVolume(1.25, -5, -0.5, 2));
+    mItems.push_back(new CollisionVolume(1.25, -5, 0, 2));
 
     // Oppgave 2 OBLIG 2
     mMap.insert(std::pair<std::string, VisualObject*>{"P1", new Tetrahedron(-3,-3, 0, 0.5)});
@@ -207,8 +207,8 @@ void RenderWindow::init()
     plainTexture->LoadTextureA();
     woodTexture = new Texture((char*)("../3Dprog22/Textures/wood.png"));
     woodTexture->LoadTexture();
-    glassTexture = new Texture((char*)("../3Dprog22/Textures/glass.png"));
-    glassTexture->LoadTextureA();
+    crateTexture = new Texture((char*)("../3Dprog22/Textures/woodencrate.png"));
+    crateTexture->LoadTextureA();
 
     shinyMaterial = new Material(4.0f, 256);
     dullMaterial = new Material(0.3f, 4);
@@ -357,8 +357,8 @@ void RenderWindow::render()
     mCamera.update();
 
     // mia
-    brickTexture->UseTexture();
-    dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
+    crateTexture->UseTexture();
+    shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
     mia->draw();
 

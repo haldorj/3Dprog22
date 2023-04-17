@@ -56,7 +56,7 @@ NPC::NPC(std::string path)
         // The function for the curve.
         mA = 0.4f; mB = 0.0f; mC = -2.6f; mD = 0.0f;
         // Set initial position.
-        mMatrix.translate(-3.0,-3.0,0.0);
+        mMatrix.translate(-3.5,-3.5,0.0);
     }
 }
 
@@ -152,7 +152,7 @@ void NPC::moveNPC()
     QVector3D Trajectory;
 
     float z = 0;
-    float h = 0.05f;
+    float h = 0.03f;
     if (bForward)
     {
 

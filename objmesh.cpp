@@ -9,8 +9,6 @@ ObjMesh::ObjMesh(std::string filename)
 {
     readFile(filename);
     mMatrix.setToIdentity();
-
-
 }
 
 void ObjMesh::readFile(std::string filename)
@@ -182,6 +180,8 @@ void ObjMesh::init(GLint matrixUniform)
 
     glBindVertexArray(0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+        calcAverageNormals();
 }
 
 void ObjMesh::draw()
