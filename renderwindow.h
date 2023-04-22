@@ -71,6 +71,11 @@ private:
 
     Camera mCamera{};
 
+    VisualObject* mSurface = nullptr; // brukes til å opprette triangle surface.
+    VisualObject* mPlayer = nullptr;
+    VisualObject* mNPC = nullptr;
+
+
     // NPCs
     VisualObject* BOT;
     VisualObject* BOT2;

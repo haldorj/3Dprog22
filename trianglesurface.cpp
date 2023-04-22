@@ -153,3 +153,34 @@ void TriangleSurface::constructFrankes()
         }
         writeFile("frankes.txt");
 }
+
+
+
+void TriangleSurface::contructPlane()
+{
+    /* for eksamen 2019 oppg 1*/
+    // Sette slik at det blir max 8 i x, og max 6 i y. Z skal være 0.
+
+    float xmin=0.0f, xmax=1.0f, ymin=0.0f, ymax=1.0f, h=2.0f;
+    for (auto x=xmin; x<xmax; x+=h)
+        for (auto y=ymin; y<ymax; y+=h)
+        {
+            float z = 0;
+            mVertices.push_back(Vertex{x,y,z,x,y,z});
+            // x + h
+            z = 0;
+            mVertices.push_back(Vertex{x+h,y,z,x,y,z});
+            // y + h
+            z = 0;
+            mVertices.push_back(Vertex{x,y+h,z,x,y,z});
+            mVertices.push_back(Vertex{x,y+h,z,x,y,z});
+
+            // x + h
+            z = 0;
+            mVertices.push_back(Vertex{x+h,y,z,x,y,z});
+
+            // x + h, y + h
+            z =0;
+            mVertices.push_back(Vertex{x+h,y+h,z,x,y,z});
+        }
+}

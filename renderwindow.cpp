@@ -121,6 +121,23 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_2.obj"));
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_3.obj"));
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Log/Log_5.obj"));
+
+    /*Eksamen 2019 oppgave relater*/
+    /*
+     * Bruk mSurface til å opprette et TriangleSurface objekt som laget i oppgave 1.
+       Bruk mPlayer til å opprette et TriangleSurface objekt av Cylinder.txt.
+       Skaler objektet til radius=0.5 og høyde=2.0 og plasser det initielt normalt
+       på mSurface i posisjon (x,y) = (2.5, 0.0) eller (x,z) = (2.5, 0.0).
+       Skriv kode i RenderWindow.cpp slik at mSurface og mPlayer objektene
+       rendres med shadere plainvertex.vert og plainfragment.frag.
+*/
+
+    mSurface = new TriangleSurface();
+    mPlayer = new TriangleSurface("text"); // endre text til noe annet
+    mPlayer->mMatrix.translate(2.5f,0.0f);
+    mPlayer->mMatrix.scale(0.5f,2.0f,0);
+
+
 }
 
 RenderWindow::~RenderWindow()
@@ -296,6 +313,12 @@ void RenderWindow::init()
 
     BOT2->bShouldRender = false;
     Path2->bShouldRender = false;
+
+
+    /*Eksamen 2019 relatert*/
+    //mSurface
+
+
 }
 
 // Called each frame - doing the rendering!!!

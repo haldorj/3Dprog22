@@ -12,6 +12,7 @@ public:
    TriangleSurface(std::string filnavn);
    ~TriangleSurface() override;
 
+   void contructPlane();
    void constructFrankes();
    void readFile(std::string filename);
    void writeFile(std::string filename);
