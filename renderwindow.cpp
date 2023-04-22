@@ -315,8 +315,9 @@ void RenderWindow::init()
     Path2->bShouldRender = false;
 
 
-    /*Eksamen 2019 relatert*/
+    /*Eksamen 2019 relatert. Sette opp shaders?*/
     //mSurface
+    //mPlayer
 
 
 }
@@ -707,21 +708,33 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     {
         if(mia!=nullptr)
             moveMiaX(-moveSpeed);
+
+        if(mPlayer)
+            mPlayer->move(-1,0,0);
     }
     if(event->key() == Qt::Key_D)
     {
         if(mia!=nullptr)
             moveMiaX(moveSpeed);
+
+        if(mPlayer)
+            mPlayer->move(1,0,0);
     }
     if(event->key() == Qt::Key_W)
     {
         if(mia!=nullptr)
             moveMiaY(moveSpeed);
+
+        if(mPlayer)
+            mPlayer->move(0,1,0);
     }
     if(event->key() == Qt::Key_S)
     {
         if(mia!=nullptr)
             moveMiaY(-moveSpeed);
+
+        if(mPlayer)
+            mPlayer->move(0,-1,0);
     }
 
     std::cout << "WorldPos: \n";
