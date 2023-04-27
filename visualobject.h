@@ -36,7 +36,8 @@ public:
    void SetLocation(float x, float y, float z) { mMatrix.translate(x,y,z); }
 
    // for phong lighting
-   void calcAverageNormals();
+   void calcAverageNormalsSmooth();
+   void calcAverageNormalsFlat();
 
    QMatrix4x4 mMatrix;
 protected:

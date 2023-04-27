@@ -179,6 +179,10 @@ void RenderWindow::init()
     //    glEnable(GL_CULL_FACE);       //draws only front side of models - usually what you want - test it out!
     glClearColor(0.2f, 0.0f, 0.4f, 1.0f);    //gray color used in glClear GL_COLOR_BUFFER_BIT
 
+    // Calculate normals
+    mia->calcAverageNormalsSmooth();
+    house->calcAverageNormalsSmooth();
+
     //Compile shaders:
     //NB: hardcoded path to files! You have to change this if you change directories for the project.
     //Qt makes a build-folder besides the project folder. That is why we go down one directory
@@ -235,12 +239,6 @@ void RenderWindow::init()
 
     // order: rt, lf, up, dn, bk, ft.
     std::vector<std::string> skyboxFaces;
-//    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_rt.tga");
-//    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_lf.tga");
-//    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_up.tga");
-//    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_dn.tga");
-//    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_bk.tga");
-//    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/dejavu/dejavu_ft.tga");
 
     skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_rt.tga");
     skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_lf.tga");
@@ -312,6 +310,7 @@ void RenderWindow::render()
     //clear the screen for each redraw
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // Make sure to call glClear BEFORE the Skybox
     skybox->DrawSkybox(mCamera.mVmatrix, mCamera.mPmatrix);
 
     QVector3D followCamera = {mia->getPosition().x(),

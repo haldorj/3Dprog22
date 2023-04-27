@@ -3,7 +3,6 @@
 InteractiveObject::InteractiveObject() : mx{0.0f}, my{0.0f}, mz{0.0f}
 {
     initCubeGeometry();
-    calcAverageNormals();
     mMatrix.translate(0, 0, radius);
 }
 

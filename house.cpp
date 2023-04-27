@@ -3,7 +3,6 @@
 House::House()
 {
     initCubeGeometry();
-    calcAverageNormals();
 }
 
 void House::init(GLint matrixUniform)

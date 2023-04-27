@@ -5,6 +5,11 @@ Skybox::Skybox()
     initializeOpenGLFunctions();
 }
 
+Skybox::~Skybox()
+{
+    ClearMesh();
+}
+
 Skybox::Skybox(std::vector<std::string> faceLocations)
 {
     initializeOpenGLFunctions();
@@ -16,12 +21,13 @@ Skybox::Skybox(std::vector<std::string> faceLocations)
     uniformProjection = glGetUniformLocation( skyShader->getProgram(), "projection" );
     uniformView = glGetUniformLocation( skyShader->getProgram(), "view" );
 
-    // Texture setup
+    // Texture setup (cube mapping)
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
     int width, height, bitDepth;
 
+    // Load the textures for each of the faces of the cube
     for (size_t i = 0; i < 6; i++)
     {
         unsigned char* texData = stbi_load(faceLocations[i].c_str(), &width, &height, &bitDepth, 0);
@@ -79,6 +85,7 @@ Skybox::Skybox(std::vector<std::string> faceLocations)
 
 void Skybox::CreateMesh(GLfloat *vertices, unsigned int *indices, unsigned int numOfVertices, unsigned int numOfIndices)
 {
+    // init function
     indexCount = numOfIndices;
 
     glGenVertexArrays(1, &VAO);

@@ -6,12 +6,8 @@
 
 #include <QOpenGLFunctions_4_1_Core>
 
-#include <glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include "CustomFiles/CommonValues.h"
-#include "shader.h""
+#include "CustomFiles/CommonValues.h" // has stb_image included
+#include "shader.h"
 
 #include "qmatrix4x4.h"
 
@@ -19,12 +15,15 @@ class Skybox : public QOpenGLFunctions_4_1_Core
 {
 public:
     Skybox();
+    ~Skybox();
     Skybox(std::vector<std::string> faceLocations);
     void CreateMesh(GLfloat *vertices, unsigned int *indices, unsigned int numOfVertices, unsigned int numOfIndices);
+
+    // We need the view and projection matrix of our camera when drawing the skybox
     void DrawSkybox(QMatrix4x4 viewMatrix, QMatrix4x4 projectionMatrix);
     void ClearMesh();
 
-    ~Skybox() { ClearMesh(); }
+
 private:
     GLuint VAO, VBO, IBO;
     GLsizei indexCount;

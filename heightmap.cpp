@@ -81,7 +81,7 @@ void HeightMap::GenerateTerrain(unsigned char *data)
         }
     }
     // Calculate normals for lighting
-    calcNormalsHmap();
+    terrainCalcAvgNormalsSmooth();
 
     numStrips = (height-1)/rez;
     numTrisPerStrip = (width/rez)*2-2;
@@ -142,11 +142,10 @@ void HeightMap::draw()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void HeightMap::calcNormalsHmap()
+void HeightMap::terrainCalcAvgNormalsSmooth()
 {
     for (unsigned i = 0; i < mIndices.size() - 2; i += 2)
     {
-        // Store each vertex of the current triangle
         unsigned int in0 = mIndices[i];
         unsigned int in1 = mIndices[i + 1];
         unsigned int in2 = mIndices[i + 2];
@@ -182,6 +181,42 @@ void HeightMap::calcNormalsHmap()
         vec = glm::normalize(vec);
 
         mVertices[i].setNorm(vec.x, vec.y, vec.z);
+    }
+}
+
+void HeightMap::terrainCalcAvgNormalsFlat()
+{
+    for (unsigned i = 0; i < mIndices.size() - 2; i ++)
+    {
+
+        unsigned int in0, in1, in2;
+        if (i % 2 == 0)
+        {
+            in0 = mIndices[i];
+            in1 = mIndices[i + 1];
+            in2 = mIndices[i + 2];
+        }
+        else
+        {
+            in0 = mIndices[i + 2];
+            in1 = mIndices[i + 1];
+            in2 = mIndices[i];
+        }
+
+        glm::vec3 v1(mVertices[in1].getX() - mVertices[in0].getX(),
+                     mVertices[in1].getY() - mVertices[in0].getY(),
+                     mVertices[in1].getZ() - mVertices[in0].getZ());
+
+        glm::vec3 v2(mVertices[in2].getX() - mVertices[in0].getX(),
+                     mVertices[in2].getY() - mVertices[in0].getY(),
+                     mVertices[in2].getZ() - mVertices[in0].getZ());
+
+        glm::vec3 normal = glm::cross(v1, v2);
+        normal = glm::normalize(normal);
+
+        mVertices[in0].setNorm(normal.x, normal.y, normal.z);
+        mVertices[in1].setNorm(normal.x, normal.y, normal.z);
+        mVertices[in2].setNorm(normal.x, normal.y, normal.z);
     }
 }
 

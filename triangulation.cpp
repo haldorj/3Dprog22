@@ -4,7 +4,6 @@ Triangulation::Triangulation() : VisualObject()
 {
     readFile("../3Dprog22/UKE11/6.3.7 vertexData.txt");
     initIndeces();
-    calcAverageNormals();
     mMatrix.setToIdentity();
 }
 
@@ -12,7 +11,6 @@ Triangulation::Triangulation(std::string filnavn) : VisualObject()
 {
     readFile("../3Dprog22/UKE11/6.3.7 vertexData.txt");
     initIndeces();
-    calcAverageNormals();
     mMatrix.setToIdentity();
 }
 
