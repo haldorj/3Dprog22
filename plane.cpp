@@ -11,9 +11,6 @@ Plane::Plane()
    mVertices.push_back(Vertex{0, 0,   0,    0.45,0.3,0.21});
 
    mMatrix.setToIdentity();
-
-   mMatrix.translate(-4.99f, -0.5f, -0.4f);
-   mMatrix.rotate(90,0,0,1);
 }
 
 Plane::Plane(float x, float y, float s)
@@ -65,6 +62,8 @@ void Plane::init(GLint matrixUniform)
     glEnableVertexAttribArray(1);
     glBindVertexArray(0);
 
+    mMatrix.translate(-4.99f, -0.5f, -0.4f);
+    mMatrix.rotate(90,0,0,1);
 
     //mMatrix.scale(1,1,1);
 }

@@ -300,7 +300,7 @@ void RenderWindow::init()
     moveMiaX(0);
     moveMiaY(-3);
 
-    house->move(-7.0, 0.0, 1.0);
+    house->move(-8.0, 0.0, 1.0);
     house->mMatrix.rotate(90, 1, 0, 0);
 
     BOT2->bShouldRender = false;
@@ -353,9 +353,6 @@ void RenderWindow::render()
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
         (*it)->draw();
 
-    cat->mMatrix.rotate(1.0, 0.0 , 1.0, 0.0);
-
-
     // what shader to use (phong shader)
     glUseProgram(mPhongShaderProgram->getProgram());
     glUniformMatrix4fv(mUniformView, 1, GL_TRUE, mCamera.mVmatrix.constData());
@@ -397,6 +394,7 @@ void RenderWindow::render()
     for (auto it = mModels.begin(); it != mModels.end(); it++)
         (*it)->draw();
 
+    cat->mMatrix.rotate(1.0, 0.0 , 1.0, 0.0);
     catTexture->UseTexture();
     dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     cat->draw();
