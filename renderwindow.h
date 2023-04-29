@@ -66,6 +66,7 @@ private:
     std::vector<VisualObject*> mItems; // kollisjonsvolum
     InteractiveObject* mia;
     VisualObject* miaCollision;
+    VisualObject* cat;
 
     Triangulation* triangulation;
 
@@ -140,6 +141,7 @@ private:
     Texture *plainTexture;
     Texture *woodTexture;
     Texture *crateTexture;
+    Texture *catTexture;
 
     HeightMap *heightMap;
 

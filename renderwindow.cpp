@@ -121,6 +121,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_2.obj"));
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_3.obj"));
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Log/Log_5.obj"));
+
+    cat = new ObjMesh("../3Dprog22/Objects/cat.obj");
 }
 
 RenderWindow::~RenderWindow()
@@ -213,6 +215,9 @@ void RenderWindow::init()
     woodTexture->LoadTexture();
     crateTexture = new Texture((char*)("../3Dprog22/Textures/woodencrate.png"));
     crateTexture->LoadTextureA();
+    catTexture = new Texture((char*)("../3Dprog22/Textures/cat.png"));
+    catTexture->LoadTextureA();
+
 
     shinyMaterial = new Material(4.0f, 256);
     dullMaterial = new Material(0.3f, 4);
@@ -278,18 +283,24 @@ void RenderWindow::init()
     mModels[3]->mMatrix.translate(-4, 0.6, 2);
     mModels[3]->mMatrix.rotate(45, 0,1,0);
 
+    // Cat
+    cat->mMatrix.translate(3,0,0);
+    cat->mMatrix.rotate(90, 1.0 , 0.0, 0.0);
+    cat->mMatrix.scale(0.5);
+
     // objects using phong shading
     //triangulation->init(mUniformModel);
     mia->init(mUniformModel);
     heightMap->init(mUniformModel);
     house->init(mUniformModel);
+    cat->init(mUniformModel);
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 
     // Additional setup
     moveMiaX(0);
     moveMiaY(-3);
 
-    house->move(-8.0, 0.0, 1.0);
+    house->move(-7.0, 0.0, 1.0);
     house->mMatrix.rotate(90, 1, 0, 0);
 
     BOT2->bShouldRender = false;
@@ -342,6 +353,8 @@ void RenderWindow::render()
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
         (*it)->draw();
 
+    cat->mMatrix.rotate(1.0, 0.0 , 1.0, 0.0);
+
 
     // what shader to use (phong shader)
     glUseProgram(mPhongShaderProgram->getProgram());
@@ -383,6 +396,10 @@ void RenderWindow::render()
     shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     for (auto it = mModels.begin(); it != mModels.end(); it++)
         (*it)->draw();
+
+    catTexture->UseTexture();
+    dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
+    cat->draw();
 
     //mMap["disc"]->move(0.05f);
 
