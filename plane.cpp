@@ -62,7 +62,7 @@ void Plane::init(GLint matrixUniform)
     glEnableVertexAttribArray(1);
     glBindVertexArray(0);
 
-    mMatrix.translate(-4.99f, -0.5f, -0.4f);
+    mMatrix.translate(-5.95f, -0.5f, -0.4f);
     mMatrix.rotate(90,0,0,1);
 
     //mMatrix.scale(1,1,1);

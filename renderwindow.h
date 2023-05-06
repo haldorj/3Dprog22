@@ -68,6 +68,11 @@ private:
     VisualObject* miaCollision;
     VisualObject* cat;
 
+    QVector3D followCamera;
+    QVector3D playerPos;
+
+    float rotation;
+
     Triangulation* triangulation;
 
     Camera mCamera{};

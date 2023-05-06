@@ -30,6 +30,14 @@
 #include "plane.h"
 #include "triangulation.h"
 
+/*
+    23DPRO101 3D-programmering
+    - - - - - - - - - - - - - -
+    This project is a collaboration between candidates:
+    1210, 1216, 1219.
+
+*/
+
 typedef std::pair<std::string, VisualObject*> MapPair;
 
 RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
@@ -305,6 +313,9 @@ void RenderWindow::init()
 
     BOT2->bShouldRender = false;
     Path2->bShouldRender = false;
+
+    // Camera
+    mCamera.rotateAroundTarget(mia->mWorldPosition, 0.0, -90);
 }
 
 // Called each frame - doing the rendering!!!
@@ -321,22 +332,25 @@ void RenderWindow::render()
     //clear the screen for each redraw
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Make sure to call glClear BEFORE the Skybox
-    skybox->DrawSkybox(mCamera.mVmatrix, mCamera.mPmatrix);
-
-    QVector3D followCamera = {mia->getPosition().x(),
-                              mia->getPosition().y() - 3,
-                              2};
-    QVector3D playerPos = {mia->getPosition().x(),
-                           mia->getPosition().y(),
-                           1};
+    followCamera = {mia->getPosition().x(),
+                  mia->getPosition().y() - 3,
+                  2};
+    playerPos = {mia->getPosition().x(),
+               mia->getPosition().y(),
+               1};
 
     if (bSceneOne)
+    {
         // Scene 1
-        mCamera.lookAt(followCamera, playerPos , QVector3D{0,1,0} );
+        mCamera.rotateAroundTarget(mia->mWorldPosition, 0.0, rotation);
+        rotation = 0;
+    }
     else
         // Scene 2
         mCamera.lookAt( QVector3D{-7,-1,2}, QVector3D{-7,0,0}, QVector3D{0,1,0} );
+
+    // Make sure to call glClear BEFORE the Skybox
+    skybox->DrawSkybox(mCamera.mVmatrix, mCamera.mPmatrix);
 
     //what shader to use (plain shader)
     glUseProgram(mPlainShaderProgram->getProgram());
@@ -715,8 +729,18 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
             moveMiaY(-moveSpeed);
     }
 
-    std::cout << "WorldPos: \n";
-    std::cout << "x: " << miaCollision->getPosition().x() << " y: " << mia->getPosition().y() << " z: " << mia->getPosition().z() << "\n";
+    if(event->key() == Qt::Key_Left)
+    {
+        rotation = -2;
+    }
+
+    if(event->key() == Qt::Key_Right)
+    {
+        rotation = 2;
+    }
+
+//    std::cout << "WorldPos: \n";
+//    std::cout << "x: " << miaCollision->getPosition().x() << " y: " << mia->getPosition().y() << " z: " << mia->getPosition().z() << "\n";
 }
 
 void RenderWindow::moveMiaX(float movespeed)

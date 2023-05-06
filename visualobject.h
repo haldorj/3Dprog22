@@ -44,9 +44,9 @@ protected:
    float radius = 0;
    std::vector<Vertex> mVertices;
    std::vector<unsigned int> mIndices;
-   GLuint mVAO{0};
-   GLuint mVBO{0};
-   GLuint mIBO{0};
+   GLuint mVAO{0}; // Vertex Array Object
+   GLuint mVBO{0}; // Vertex Buffer Object
+   GLuint mIBO{0}; // Index Buffer Object
    GLint mMatrixUniform{0};
 
    // Velger å lagre posisjon, rotasjon og translasjon

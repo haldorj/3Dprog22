@@ -115,6 +115,8 @@ void Skybox::CreateMesh(GLfloat *vertices, unsigned int *indices, unsigned int n
 void Skybox::DrawSkybox(QMatrix4x4 viewMatrix, QMatrix4x4 projectionMatrix)
 {
     viewMatrix = QMatrix4x4(viewMatrix.toGenericMatrix<3, 3>());
+    // rotate view matrix
+    viewMatrix.rotate(90,1,0,0);
 
     glDepthMask(GL_FALSE);
 
