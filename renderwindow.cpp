@@ -436,6 +436,18 @@ void RenderWindow::render()
     ToggleCollision();
     TogglePath();
     ToggleWireframe();
+
+    if (miaCollision->mWorldPosition.x() < -10)
+        moveMiaX(0.03);
+
+    if (miaCollision->mWorldPosition.x() > 10)
+        moveMiaX(-0.03);
+
+    if ( miaCollision->mWorldPosition.y() < -8)
+        moveMiaY(0.03);
+
+    if (miaCollision->mWorldPosition.y() > 8)
+        moveMiaY(-0.03);
 }
 
 void RenderWindow::CollisionHandling()
