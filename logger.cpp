@@ -51,8 +51,8 @@ void Logger::logText(std::string input, LogType colorIn)
 
     //Doing the requirements for printing the text to the Output widget
     QTextCharFormat textformat;
-    textformat = mMainWindow->ui->outputLog->currentCharFormat();
+    //textformat = mMainWindow->ui->outputLog->currentCharFormat();
     textformat.setForeground(QBrush((textColor)));
-    mMainWindow->ui->outputLog->setCurrentCharFormat(textformat);
-    mMainWindow->ui->outputLog->appendPlainText(input.c_str());
+    //mMainWindow->ui->outputLog->setCurrentCharFormat(textformat);
+    //mMainWindow->ui->outputLog->appendPlainText(input.c_str());
 }
