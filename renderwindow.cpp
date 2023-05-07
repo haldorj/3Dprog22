@@ -213,6 +213,7 @@ void RenderWindow::init()
     heightMap = new HeightMap((char*)("../3Dprog22/HeightMaps/hMap3.png"));
     heightMap->LoadHeightMap();
 
+    // 1. Create new texture
     brickTexture = new Texture((char*)("../3Dprog22/Textures/brick.png"));
     brickTexture->LoadTextureA();
     dirtTexture = new Texture((char*)("../3Dprog22/Textures/dirt.png"));
@@ -296,6 +297,8 @@ void RenderWindow::init()
     cat->mMatrix.rotate(90, 1.0 , 0.0, 0.0);
     cat->mMatrix.scale(0.5);
 
+    // 2. init with correct uniform model
+
     // objects using phong shading
     //triangulation->init(mUniformModel);
     mia->init(mUniformModel);
@@ -378,6 +381,8 @@ void RenderWindow::render()
     SetPointLights();
     //Update Camera
     mCamera.update();
+
+    // 3. use textures
 
     // mia
     crateTexture->UseTexture();
