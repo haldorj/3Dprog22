@@ -369,6 +369,8 @@ void RenderWindow::render()
 
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
         (*it)->draw();
+    if(catting==1)
+     cat->draw();
 
     // what shader to use (phong shader)
     glUseProgram(mPhongShaderProgram->getProgram());
@@ -381,6 +383,9 @@ void RenderWindow::render()
     SetPointLights();
     //Update Camera
     mCamera.update();
+
+    if(catting==0)
+    cat->draw();
 
     // 3. use textures
 
@@ -408,6 +413,7 @@ void RenderWindow::render()
     glUniform1i(mTextureUniform, 1);
     house->draw();
 
+
     plainTexture->UseTexture();
     shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     for (auto it = mModels.begin(); it != mModels.end(); it++)
@@ -416,7 +422,9 @@ void RenderWindow::render()
     cat->mMatrix.rotate(1.0, 0.0 , 1.0, 0.0);
     catTexture->UseTexture();
     dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
-    cat->draw();
+
+
+
 
     //mMap["disc"]->move(0.05f);
 
@@ -755,7 +763,18 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     {
         rotation = 2;
     }
+//vvvvvvvvvvvvvvvvvvvvvvvvvvvvCattingvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    if(event->key() == Qt::Key_0)
+    {
+        catting=0;
+    }
 
+
+    if(event->key() == Qt::Key_1)
+    {
+        catting=1;
+    }
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^Catting^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 //    std::cout << "WorldPos: \n";
 //    std::cout << "x: " << miaCollision->getPosition().x() << " y: " << mia->getPosition().y() << " z: " << mia->getPosition().z() << "\n";
 }

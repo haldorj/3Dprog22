@@ -27,6 +27,8 @@ private:
 
     bool bForward = true;
 
+    int shading=0;
+
     float mA = 0;
     float mB = 0;
     float mC = 0;

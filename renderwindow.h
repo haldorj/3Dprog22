@@ -76,7 +76,7 @@ private:
     Triangulation* triangulation;
 
     Camera mCamera{};
-
+    int catting=0;
     // NPCs
     VisualObject* BOT;
     VisualObject* BOT2;
