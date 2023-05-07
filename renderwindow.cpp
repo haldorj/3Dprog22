@@ -369,6 +369,14 @@ void RenderWindow::render()
 
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
         (*it)->draw();
+    if(catting==2)
+     cat->draw();
+
+    //what shader to use (unlit texture shader)
+    glUseProgram(mTexShaderProgram->getProgram());
+    glUniformMatrix4fv(mVmatrixUniform1, 1, GL_TRUE, mCamera.mVmatrix.constData());
+    glUniformMatrix4fv(mPmatrixUniform1, 1, GL_TRUE, mCamera.mPmatrix.constData());
+    mCamera.update();
     if(catting==1)
      cat->draw();
 
@@ -764,15 +772,20 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
         rotation = 2;
     }
 //vvvvvvvvvvvvvvvvvvvvvvvvvvvvCattingvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-    if(event->key() == Qt::Key_0)
+    if(event->key() == Qt::Key_1)
     {
         catting=0;
     }
 
 
-    if(event->key() == Qt::Key_1)
+    if(event->key() == Qt::Key_2)
     {
         catting=1;
+    }
+
+    if(event->key() == Qt::Key_3)
+    {
+        catting=2;
     }
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^Catting^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 //    std::cout << "WorldPos: \n";
