@@ -32,9 +32,23 @@
 
 /*
     23DPRO101 3D-programmering
-    - - - - - - - - - - - - - -
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     This project is a collaboration between candidates:
     1210, 1216, 1219.
+
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            P R O J E C T   C O N T R O L S
+    - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+            WASD - move the interactive object
+            L/R ARROW KEYS - Camera controls
+
+            Q - Toggle NPC path
+            C - Toggle Collision volumes
+            V - Toggle wireframe
+
+            1 - cat with phong shader
+            2 - cat with unlit texture shader
+            3 - cat with plain shader
 
 */
 
@@ -94,7 +108,9 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mObjects.push_back(new OctahedronBall(2,2, 3));
     mObjects.push_back(new OctahedronBall(3,2, 3));
     //Door
-    mObjects.push_back(new Plane());
+    door = new Plane();
+    door->mMatrix.translate(-4.99f, -0.5f, -0.4f);
+    mObjects.push_back(door);
 
     // Kollisjonsvolum               //(radius, x, y, recursions)
     mItems.push_back(new CollisionVolume(0.2, -3, -1, 1));
@@ -311,7 +327,7 @@ void RenderWindow::init()
     moveMiaX(0);
     moveMiaY(-3);
 
-    house->move(-8.0, 0.0, 1.0);
+    house->move(-7.0, 0.0, 1.0);
     house->mMatrix.rotate(90, 1, 0, 0);
 
     BOT2->bShouldRender = false;

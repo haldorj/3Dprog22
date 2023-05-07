@@ -46,7 +46,6 @@ void Camera::rotateAroundTarget(QVector3D target, float deltaX, float deltaY)
                      QVector3D{target.x(), target.y(), target.z() + 1.0f},
                      QVector3D{0,0,1});
      mEye = cameraPos;
-     std::cout << "camerapos x: " << cameraPosition.x << " y: "<< cameraPosition.y << " z: " << cameraPosition.z << "\n";
  }
 
 

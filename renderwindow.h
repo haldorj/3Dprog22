@@ -30,6 +30,7 @@
 #include "heightmap.h"
 #include "skybox.h"
 #include "objmesh.h"
+#include "plane.h"
 
 
 
@@ -67,6 +68,7 @@ private:
     InteractiveObject* mia;
     VisualObject* miaCollision;
     VisualObject* cat;
+    Plane* door;
 
     QVector3D followCamera;
     QVector3D playerPos;
