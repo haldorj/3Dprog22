@@ -15,8 +15,8 @@ public:
     Texture(char* fileLoc);
     ~Texture();
 
-    bool LoadTexture();
-    bool LoadTextureA();
+    bool LoadTexture(); // RGB
+    bool LoadTextureA(); // RGB-A (image has an alpha channel, transparency)
     void UseTexture();
     void ClearTexture();
     void makeDummyTexture();
