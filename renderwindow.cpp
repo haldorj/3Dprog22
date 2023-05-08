@@ -30,6 +30,9 @@
 #include "plane.h"
 #include "triangulation.h"
 
+#include <QApplication>
+#include <QProcess>
+
 /*
     23DPRO101 3D-programmering
     - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -590,6 +593,21 @@ void RenderWindow::CollisionHandling()
         else
         {
             bSceneOne = true;
+        }
+    }
+
+    if (BOT && !mPathOne)
+    {
+        //std::cout << "X: " << BOT->getPosition().x() << " Y: " << BOT->getPosition().y() << "\n";
+        QVector3D dist = miaCollision->getPosition() - (BOT->mWorldPosition);
+        float d = dist.length();
+        float r1 = miaCollision->getRadius();
+        float r2 = BOT->getRadius();
+
+        if (d < r1 + r2)
+        {
+            qApp->quit();
+            QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
         }
     }
 }
