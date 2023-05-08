@@ -51,6 +51,10 @@
             3 - cat with plain shader
 
 */
+/*
+    For this exam file is worked with by 1210.
+
+*/
 
 typedef std::pair<std::string, VisualObject*> MapPair;
 
@@ -364,9 +368,14 @@ void RenderWindow::render()
         mCamera.rotateAroundTarget(mia->mWorldPosition, 0.0, rotation);
         rotation = 0;
     }
-    else
+    else{
         // Scene 2
-        mCamera.lookAt( QVector3D{-7,-1,2}, QVector3D{-7,0,0}, QVector3D{0,1,0} );
+        //mCamera.lookAt( QVector3D{-7,-1,2}, QVector3D{-7,0,0}, QVector3D{0,1,0} );
+        //Task
+        mCamera.lookAt(QVector3D{-7,-1,2}, mia->mWorldPosition,QVector3D{0,1,0} );
+    }
+
+
 
     // Make sure to call glClear BEFORE the Skybox
     skybox->DrawSkybox(mCamera.mVmatrix, mCamera.mPmatrix);
@@ -493,6 +502,7 @@ void RenderWindow::CollisionHandling()
     for (auto i = 0; i < mItems.size(); i++)
     {
         // Finne avstand mellom posisjoner
+        // find distance between positions
         QVector3D dist = miaCollision->getPosition() - mItems[i]->getPosition();
         // [x1 – x2, y1 – y2, z1 – z2]
         float d = dist.length();
@@ -503,8 +513,16 @@ void RenderWindow::CollisionHandling()
         if (d < r1 + r2 && mItems[i]->bIsActive == true)
         {
             // slå av rendering / flytt ob
+            // turn of the rendering of the objects collided with and moving them off-screen
             mItems[i]->move(100,100,100);
             mItems[i]->bIsActive = false;
+
+            //Task 7 or Task7
+            //-----------------------
+            playerPoints++;
+            std::cout << "You picked up a point! Now playerPoints is : " << playerPoints << std::endl;
+            //-----------------------
+
             if (mObjects[i])
             {
                 mObjects[i]->bShouldRender = false;
@@ -841,6 +859,7 @@ void RenderWindow::ToggleCollision()
 {
     if (mCollision == false)
     {
+        // has been collided with
         for (int i = 0; i < mItems.size(); i++)
             mItems[i]->bShouldRender = false;
 
@@ -848,6 +867,7 @@ void RenderWindow::ToggleCollision()
     }
     else
     {
+        // has not been collided with
         for (int i = 0; i < mItems.size(); i++)
             mItems[i]->bShouldRender = true;
 

@@ -75,6 +75,8 @@ private:
 
     float rotation;
 
+    int playerPoints{0};
+
     Triangulation* triangulation;
 
     Camera mCamera{};
