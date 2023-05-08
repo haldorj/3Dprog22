@@ -46,6 +46,8 @@
             C - Toggle Collision volumes
             V - Toggle wireframe
 
+            SPACE - Toggle first person / third person mode
+
             1 - cat with phong shader
             2 - cat with unlit texture shader
             3 - cat with plain shader
@@ -110,7 +112,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //Door
     door = new Plane();
     door->mMatrix.translate(-4.99f, -0.5f, -0.4f);
-    mObjects.push_back(door);
+    mMap.insert(MapPair{"door", door});
+    //mObjects.push_back(door);
 
     // Kollisjonsvolum               //(radius, x, y, recursions)
     mItems.push_back(new CollisionVolume(0.2, -3, -1, 1));
@@ -122,7 +125,9 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mItems.push_back(new CollisionVolume(0.2, 2, 2, 1));
     mItems.push_back(new CollisionVolume(0.2, 3, 2, 1));
     // Door
-    mItems.push_back(new CollisionVolume(1.25, -5, 0, 2));
+    doorCollision = new CollisionVolume(1.25, -5, 0, 2);
+    mMap.insert(MapPair{"doorCollison", doorCollision});
+    //mItems.push_back(new CollisionVolume(1.25, -5, 0, 2));
 
     // Oppgave 2 OBLIG 2
     mMap.insert(std::pair<std::string, VisualObject*>{"P1", new Tetrahedron(-3,-3, 0, 0.5)});
@@ -332,7 +337,7 @@ void RenderWindow::init()
     moveMiaX(0);
     moveMiaY(-3);
 
-    house->move(-7.0, 0.0, 1.0);
+    house->move(-8.0, 0.0, 1.0);
     house->mMatrix.rotate(90, 1, 0, 0);
 
     BOT2->bShouldRender = false;
@@ -549,6 +554,25 @@ void RenderWindow::CollisionHandling()
             }
         }
     }
+
+    // door collision
+    if (door && doorCollision)
+    {
+        QVector3D dist = miaCollision->getPosition() - doorCollision->getPosition();
+        float d = dist.length();
+        float r1 = miaCollision->getRadius();
+        float r2 = doorCollision->getRadius();
+        if (d < r1 + r2 && doorCollision->bIsActive == true)
+        {
+            doorCollision->bIsActive = false;
+            doorCollision->move(100,100,100);
+
+            door->OpenDoor();
+            std::cout << "You opened the door! \n";
+        }
+    }
+
+
     if (mia && miaCollision)
     {
         mia->getPosition();

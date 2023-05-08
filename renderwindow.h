@@ -31,6 +31,7 @@
 #include "skybox.h"
 #include "objmesh.h"
 #include "plane.h"
+#include "collisionvolume.h"
 
 
 
@@ -70,6 +71,7 @@ private:
     VisualObject* cat;
 
     Plane* door;
+    CollisionVolume* doorCollision;
 
     Cube* cubeLight;
     Cube* cubeLightOff;
