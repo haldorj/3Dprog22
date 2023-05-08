@@ -342,7 +342,8 @@ void RenderWindow::init()
     moveMiaX(0);
     moveMiaY(-3);
 
-    house->move(-8.0, 0.0, 1.0);
+    house->mMatrix.translate(-7.0, 0.0, 1.0);
+    house->mWorldPosition = QVector3D{-7.0, 0.0, 1.0};
     house->mMatrix.rotate(90, 1, 0, 0);
 
     BOT2->bShouldRender = false;
@@ -550,6 +551,7 @@ void RenderWindow::CollisionHandling()
             mItems[i]->move(100,100,100);
             //When picking up trophies or pickups items, then count the score and print it.
             score++;
+            mMainWindow->updateScore(score);
             std::cout << "You have picked up " << score << " items! \n";
 
             mItems[i]->bIsActive = false;

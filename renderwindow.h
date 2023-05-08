@@ -59,6 +59,8 @@ public:
     bool mCollision{false};
     bool mWireframe{false};
 
+    int score = 0;
+
 private slots:
     void render();          //the actual render - function
 
@@ -210,8 +212,6 @@ private:
     void moveMiaY(float movespeed);
 
     glm::vec3 playerLight{0,0,0};
-
-    int score = 0;
 
     bool bSceneOne = true;
     bool bShouldMove = true;

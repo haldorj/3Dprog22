@@ -18,6 +18,19 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Score:</string>
+        </property>
+        <property name="scaledContents">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLCDNumber" name="lcdNumber"/>
+      </item>
+      <item>
        <widget class="QPushButton" name="wireframeButton">
         <property name="text">
          <string>Toggle Wireframe</string>

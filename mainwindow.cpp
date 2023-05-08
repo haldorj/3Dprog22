@@ -125,3 +125,8 @@ void MainWindow::on_fileExit_triggered()
     close();       //Shuts down the whole program
 }
 
+void MainWindow::updateScore(int score)
+{
+    ui->lcdNumber->display(score);
+}
+
