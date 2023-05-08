@@ -236,16 +236,16 @@ void RenderWindow::init()
     heightMap->LoadHeightMap();
 
     // 1. Create new texture
-    brickTexture = new Texture((char*)("../3Dprog22/Textures/brick.png"));
-    brickTexture->LoadTextureA();
+    brickTexture = new Texture((char*)("../3Dprog22/Textures/brick.png"));      // Task2 - Texture for the house
+    brickTexture->LoadTextureA();                                               // Task2 - Texture for the house
     dirtTexture = new Texture((char*)("../3Dprog22/Textures/dirt.png"));
     dirtTexture->LoadTextureA();
     plainTexture = new Texture((char*)("../3Dprog22/Textures/plain.png"));
     plainTexture->LoadTextureA();
     woodTexture = new Texture((char*)("../3Dprog22/Textures/wood.png"));
     woodTexture->LoadTexture();
-    crateTexture = new Texture((char*)("../3Dprog22/Textures/woodencrate.png"));
-    crateTexture->LoadTextureA();
+    crateTexture = new Texture((char*)("../3Dprog22/Textures/woodencrate.png"));    // Task2 - Texture for the player
+    crateTexture->LoadTextureA();                                                   // Task2 - Texture for the player
     catTexture = new Texture((char*)("../3Dprog22/Textures/cat.png"));
     catTexture->LoadTextureA();
 
@@ -842,6 +842,7 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
 
 void RenderWindow::moveMiaX(float movespeed)
 {
+    // Task 4 or Task4 : Here the players "height" is calculated and set while moving to a new position
     glm::vec3 playerpos = glm::vec3(mia->getPosition().x(), mia->getPosition().y(), mia->getPosition().z());
     float height = heightMap->GetSurfaceHeight(playerpos) - miaCollision->getPosition().z();
 
