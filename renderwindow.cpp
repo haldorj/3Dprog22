@@ -157,7 +157,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_3.obj"));
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Log/Log_5.obj"));
 
-    cat = new ObjMesh("../3Dprog22/Objects/cat.obj");
+    cat = new ObjMesh("../3Dprog22/Objects/cat.obj"); // Task 11 or task11
 
 
 }
@@ -239,8 +239,8 @@ void RenderWindow::init()
     setupTextureShader();
     setupPhongShader();
 
-    heightMap = new HeightMap((char*)("../3Dprog22/HeightMaps/hMap3.png")); // Task 3 - Heightmap implementation
-    heightMap->LoadHeightMap();                                             // Task 3 - Heightmap implementation
+    heightMap = new HeightMap((char*)("../3Dprog22/HeightMaps/hMap3.png")); // Task 3 or task3 - Heightmap implementation
+    heightMap->LoadHeightMap();                                             // Task 3 or task3 - Heightmap implementation
 
     // 1. Create new texture
     brickTexture = new Texture((char*)("../3Dprog22/Textures/brick.png"));      // Task2 - Texture for the house
@@ -347,7 +347,7 @@ void RenderWindow::init()
     Path2->bShouldRender = false;
 
     // Camera
-    mCamera.rotateAroundTarget(mia->mWorldPosition, 0.0, -90);
+    mCamera.rotateAroundTarget(mia->mWorldPosition, 0.0, -90); //Task 1
 
 
 
@@ -358,8 +358,8 @@ void RenderWindow::init()
 // Called each frame - doing the rendering!!!
 void RenderWindow::render()
 {
-    mCamera.init(mPmatrixUniform0, mVmatrixUniform0);
-    mCamera.perspective(70.0f, 16.0f/9.0f, 0.1f, 20.f);
+    mCamera.init(mPmatrixUniform0, mVmatrixUniform0);       //Task 1 or task1
+    mCamera.perspective(70.0f, 16.0f/9.0f, 0.1f, 20.f);     //Task 1 or task1
 
     mTimeStart.restart(); //restart FPS clock
     mContext->makeCurrent(this); //must be called every frame (every time mContext->swapBuffers is called)
@@ -379,7 +379,7 @@ void RenderWindow::render()
     if (bSceneOne)
     {
         // Scene 1
-        mCamera.rotateAroundTarget(mia->mWorldPosition, 0.0, rotation);
+        mCamera.rotateAroundTarget(mia->mWorldPosition, 0.0, rotation); // Task 1 or task1
         rotation = 0;
     }
     else{
@@ -523,6 +523,9 @@ void RenderWindow::render()
 
 void RenderWindow::CollisionHandling()
 {
+
+    // Task 5 or task5 -- Collision system / handling
+
     // "Kollisjon"
     for (auto i = 0; i < mItems.size(); i++)
     {
