@@ -151,6 +151,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Log/Log_5.obj"));
 
     cat = new ObjMesh("../3Dprog22/Objects/cat.obj");
+
+
 }
 
 RenderWindow::~RenderWindow()
@@ -339,6 +341,11 @@ void RenderWindow::init()
 
     // Camera
     mCamera.rotateAroundTarget(mia->mWorldPosition, 0.0, -90);
+
+
+
+
+
 }
 
 // Called each frame - doing the rendering!!!
@@ -482,6 +489,7 @@ void RenderWindow::render()
     ToggleCollision();
     TogglePath();
     ToggleWireframe();
+    SwitchLightOnOrOff();
 
     if (miaCollision->mWorldPosition.x() < -10)
         moveMiaX(0.03);
@@ -494,6 +502,10 @@ void RenderWindow::render()
 
     if (miaCollision->mWorldPosition.y() > 8)
         moveMiaY(-0.03);
+
+
+
+
 }
 
 void RenderWindow::CollisionHandling()
@@ -861,17 +873,22 @@ void RenderWindow::ToggleCollision()
     {
         // has been collided with
         for (int i = 0; i < mItems.size(); i++)
+        {
             mItems[i]->bShouldRender = false;
-
+        }
         miaCollision->bShouldRender = false;
+
+
     }
     else
     {
         // has not been collided with
         for (int i = 0; i < mItems.size(); i++)
+        {
             mItems[i]->bShouldRender = true;
-
+        }
         miaCollision->bShouldRender = true;
+
     }
 }
 
@@ -902,6 +919,31 @@ void RenderWindow::ToggleWireframe()
 }
 
 
+void RenderWindow::SwitchLightOnOrOff()
+{
 
+    //if(mia->mWorldPosition.x() > 3 )
+    //if the player is within the cat's distance, switch the lighting
+    // else the cats light is the same
+
+    // cat x = 3, cat y = 0
+
+
+    if(mia->mWorldPosition.distanceToPoint(cat->mWorldPosition) > 1.0f)
+        catting = 0;
+    else
+        catting = 1;
+
+
+    //if(mia->mWorldPosition.distanceToPoint(cat->mWorldPosition) < 3)
+   // if(mia->mWorldPosition.x() > -3 && mia->mWorldPosition.y() > -3)
+   // {
+   //     catting = 0;
+   // }
+   // else
+   //     catting = 1;
+
+
+}
 
 

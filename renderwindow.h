@@ -88,6 +88,10 @@ private:
     VisualObject* Path2;
     void CollisionHandling();
 
+    void SwitchLightOnOrOff();
+
+
+
     House* house;
     std::unordered_map<std::string, VisualObject*> mMap;    // alternativ container
 
