@@ -602,7 +602,7 @@ void RenderWindow::CollisionHandling()
         QVector3D dist = miaCollision->getPosition() - (BOT->mWorldPosition);
         float d = dist.length();
         float r1 = miaCollision->getRadius();
-        float r2 = BOT->getRadius();
+        float r2 = 0.25;
 
         if (d < r1 + r2)
         {
