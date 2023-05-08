@@ -108,7 +108,7 @@ void NPC::move(float x, float y, float z)
     my += y;
     mz += z;
     //std::cout << "WorldPos: X: " << mx <<" Y:"<< my << "\n";
-    mWorldPosition = {mx, my, mz};
+    mWorldPosition += {mx, my, mz};
     mMatrix.translate(mx, my, mz);
     mx =0;
     my =0;

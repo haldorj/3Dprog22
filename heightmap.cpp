@@ -142,6 +142,7 @@ void HeightMap::draw()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+// Task 10 or Task10
 void HeightMap::terrainCalcAvgNormalsSmooth()
 {
     for (unsigned i = 0; i < mIndices.size() - 2; i += 2)

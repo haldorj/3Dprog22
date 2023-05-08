@@ -88,7 +88,9 @@ private:
     VisualObject* Path2;
     void CollisionHandling();
 
-    void SwitchLightOnOrOff();
+    void NPCrestart();
+
+    void SwitchLightOnOrOff(); // for task 9 or task9
 
 
 

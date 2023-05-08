@@ -3,6 +3,7 @@
 
 #include <QSurfaceFormat>
 #include <QDebug>
+#include <qProcess>
 
 #include "renderwindow.h"
 #include "logger.h"
@@ -125,3 +126,9 @@ void MainWindow::on_fileExit_triggered()
     close();       //Shuts down the whole program
 }
 
+void MainWindow::on_restart_triggered()
+{
+    // Task 6 or Task6
+    qApp->quit();
+    QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
+}

@@ -45,6 +45,7 @@
             Q - Toggle NPC path
             C - Toggle Collision volumes
             V - Toggle wireframe
+            R - Trigger Restart Program
 
             1 - cat with phong shader
             2 - cat with unlit texture shader
@@ -53,6 +54,12 @@
 */
 /*
     For this exam file is worked with by 1210.
+
+    In the folder there is a pdf.file that simply helps the examiner or sensor to find and see these tasks.
+    I've put "//Task x" in this renderwindow.cpp. So in this case the examiner can press CTRL + F or F3 and
+    search for example "Task 2" or "Task2". Furthermore to these comments I've decided where I think the fit the best case.
+    If in doubt, there is also the possibility to CTRL + LMB (left mouse button) on the different classes or functions to see
+    where or how they have been used!
 
 */
 
@@ -145,7 +152,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //mMap.insert(MapPair{"mia", mia});
     mMap.insert(MapPair{"miaCollision", miaCollision});
 
-    mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_1.obj"));
+    mModels.push_back(new ObjMesh(" prog22/Objects/Tree/Tree_1.obj"));
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_2.obj"));
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_3.obj"));
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Log/Log_5.obj"));
@@ -212,8 +219,8 @@ void RenderWindow::init()
     glClearColor(0.2f, 0.0f, 0.4f, 1.0f);    //gray color used in glClear GL_COLOR_BUFFER_BIT
 
     // Calculate normals
-    mia->calcAverageNormalsSmooth();
-    house->calcAverageNormalsSmooth();
+    mia->calcAverageNormalsSmooth();    // Task 10 or Task10
+    house->calcAverageNormalsSmooth();  // Task 10 or Task10
 
     //Compile shaders:
     //NB: hardcoded path to files! You have to change this if you change directories for the project.
@@ -232,8 +239,8 @@ void RenderWindow::init()
     setupTextureShader();
     setupPhongShader();
 
-    heightMap = new HeightMap((char*)("../3Dprog22/HeightMaps/hMap3.png"));
-    heightMap->LoadHeightMap();
+    heightMap = new HeightMap((char*)("../3Dprog22/HeightMaps/hMap3.png")); // Task 3 - Heightmap implementation
+    heightMap->LoadHeightMap();                                             // Task 3 - Heightmap implementation
 
     // 1. Create new texture
     brickTexture = new Texture((char*)("../3Dprog22/Textures/brick.png"));      // Task2 - Texture for the house
@@ -412,6 +419,9 @@ void RenderWindow::render()
     if(catting==1)
      cat->draw();
 
+
+    // Task 8 or Task8 --- PhongShading
+
     // what shader to use (phong shader)
     glUseProgram(mPhongShaderProgram->getProgram());
     glUniformMatrix4fv(mUniformView, 1, GL_TRUE, mCamera.mVmatrix.constData());
@@ -492,6 +502,7 @@ void RenderWindow::render()
     TogglePath();
     ToggleWireframe();
     SwitchLightOnOrOff();
+    NPCrestart();
 
     if (miaCollision->mWorldPosition.x() < -10)
         moveMiaX(0.03);
@@ -583,6 +594,7 @@ void RenderWindow::setupTextureShader()
 
 void RenderWindow::setupPhongShader()
 {
+    // Task 8 or Task8 --- Phongshading
     mUniformProjection = glGetUniformLocation(mPhongShaderProgram->getProgram(), "projection");
     mUniformModel = glGetUniformLocation(mPhongShaderProgram->getProgram(), "model");
     mUniformView = glGetUniformLocation(mPhongShaderProgram->getProgram(), "view");
@@ -772,6 +784,13 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
         mMainWindow->close();       //Shuts down the whole program
     }
 
+    if(event->key() == Qt::Key_R)
+    {
+        //Task 6 or Task6
+        mMainWindow->on_restart_triggered();
+    }
+
+
     if(event->key() == Qt::Key_Q)
     {
         mPathOne = !mPathOne;
@@ -922,8 +941,47 @@ void RenderWindow::ToggleWireframe()
 }
 
 
+void RenderWindow::NPCrestart()
+{
+    // Task 6 or Task6
+
+   // if(BOT->mWorldPosition)
+    if(    (BOT->mWorldPosition.x() <= mia->mWorldPosition.x() &&
+            BOT->mWorldPosition.y() <= mia->mWorldPosition.y() &&
+            BOT->mWorldPosition.z() <= mia->mWorldPosition.z()
+            )
+            ||
+           (BOT2->mWorldPosition.x() <= mia->mWorldPosition.x() &&
+            BOT2->mWorldPosition.y() <= mia->mWorldPosition.y() &&
+            BOT2->mWorldPosition.z() <= mia->mWorldPosition.z()
+            )
+           ||
+
+
+           (BOT->getPosition().x()  <= mia->getPosition().x() &&
+            BOT->getPosition().y()  <= mia->getPosition().y() &&
+            BOT->getPosition().z()  <= mia->getPosition().z()
+            )
+
+          // ||
+
+          // (BOT2->getPosition().x()  <= mia->getPosition().x() &&
+          //  BOT2->getPosition().y()  <= mia->getPosition().y() &&
+          //  BOT2->getPosition().z()  <= mia->getPosition().z()
+          //  )
+
+
+           )
+    {
+        // mMainWindow->on_restart_triggered(); // some bugs happened
+    }
+}
+
+
 void RenderWindow::SwitchLightOnOrOff()
 {
+    // Task 9 or Task9
+
 
     //if(mia->mWorldPosition.x() > 3 )
     //if the player is within the cat's distance, switch the lighting
@@ -931,11 +989,25 @@ void RenderWindow::SwitchLightOnOrOff()
 
     // cat x = 3, cat y = 0
 
+   glm::vec3 catpos{cat->mWorldPosition.x(),cat->mWorldPosition.y(), cat->mWorldPosition.z()};
+   glm::vec3 playerpos{mia->mWorldPosition.x(),mia->mWorldPosition.y(),mia->mWorldPosition.z()};
 
-    if(mia->mWorldPosition.distanceToPoint(cat->mWorldPosition) > 1.0f)
-        catting = 0;
-    else
-        catting = 1;
+   glm::vec2 distance;
+   glm::distance(catpos,playerpos);
+
+   if(glm::distance(playerpos,catpos) > 3.0f)
+   {
+       catting = 0;}
+   else
+       catting = 1;
+
+
+    //glm::vec3 boi{cat->mWorldPosition.x(),cat->mWorldPosition.y(), cat->mWorldPosition.z()};
+
+   //if(mia->mWorldPosition.distanceToPoint(cat->mWorldPosition) > 1.0f)
+   //    catting = 0;
+   //else
+   //    catting = 1;
 
 
     //if(mia->mWorldPosition.distanceToPoint(cat->mWorldPosition) < 3)
