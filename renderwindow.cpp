@@ -36,7 +36,8 @@
 /*
     23DPRO101 3D-programmering
     - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    This project is a collaboration between candidates:
+    This project was a collaboration up until the day of the exam.
+    Between candidates:
     1210, 1216, 1219.
 
     - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -50,11 +51,11 @@
             V - Toggle wireframe
 
             SPACE - Toggle first person / third person mode
+            L - Toggle light source (cubeLight) on and off
 
             1 - cat with phong shader
             2 - cat with unlit texture shader
             3 - cat with plain shader
-
 */
 
 typedef std::pair<std::string, VisualObject*> MapPair;
@@ -149,6 +150,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //mMap.insert(MapPair{"mia", mia});
     mMap.insert(MapPair{"miaCollision", miaCollision});
 
+    // ObjMesh -> objects in the scene with a mesh reading from an obj file.
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_1.obj"));
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_2.obj"));
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_3.obj"));
@@ -369,8 +371,9 @@ void RenderWindow::render()
                   2};
     playerPos = {mia->getPosition().x(),
                mia->getPosition().y(),
-               1};
+               mia->getPosition().z() + 1};
 
+    // Trigger that turns light on and off
     if (!bCubeLight)
     {
         mPointLights[1]->setLightColor(0.0f,0.0f,0.0f,0.0f,0.0f);
@@ -385,6 +388,7 @@ void RenderWindow::render()
     }
 
 
+    // Switch between Third/First person camera
     if (bSceneOne)
     {
         // Scene 1
@@ -529,10 +533,10 @@ void RenderWindow::render()
 
 void RenderWindow::CollisionHandling()
 {
-    // "Kollisjon"
+    // "Collision between player and pickups"
     for (auto i = 0; i < mItems.size(); i++)
     {
-        // Finne avstand mellom posisjoner
+        // Distance check
         QVector3D dist = miaCollision->getPosition() - mItems[i]->getPosition();
         // [x1 – x2, y1 – y2, z1 – z2]
         float d = dist.length();
@@ -542,11 +546,10 @@ void RenderWindow::CollisionHandling()
 
         if (d < r1 + r2 && mItems[i]->bIsActive == true)
         {
-            // slå av rendering / flytt ob
+            // Move objects away
             mItems[i]->move(100,100,100);
-
+            //When picking up trophies or pickups items, then count the score and print it.
             score++;
-
             std::cout << "You have picked up " << score << " items! \n";
 
             mItems[i]->bIsActive = false;
@@ -595,6 +598,9 @@ void RenderWindow::CollisionHandling()
             bSceneOne = true;
         }
     }
+
+    // Hitting an enemy restarts the game.
+    // Switch to 2nd NPC path to turn this feature off.
 
     if (BOT && !mPathOne)
     {
@@ -896,6 +902,9 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
 //    std::cout << "WorldPos: \n";
 //    std::cout << "x: " << miaCollision->getPosition().x() << " y: " << mia->getPosition().y() << " z: " << mia->getPosition().z() << "\n";
 }
+
+// Player movement, with barycentric coordinates.
+// Height (z value) is retrieved from the heightmap.
 
 void RenderWindow::moveMiaX(float movespeed)
 {
