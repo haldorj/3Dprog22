@@ -147,6 +147,11 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Log/Log_5.obj"));
 
     cat = new ObjMesh("../3Dprog22/Objects/cat.obj");
+
+    cubeLight = new Cube(1, 0, 2, 0, 1, 0, 1);
+    mMap.insert(MapPair{"CubeLight", cubeLight});
+    cubeLightOff = new Cube(1, 0, 2, 0, 0.5, 0.5, 0.5);
+    mMap.insert(MapPair{"CubeLightOff", cubeLightOff});
 }
 
 RenderWindow::~RenderWindow()
@@ -358,14 +363,28 @@ void RenderWindow::render()
                mia->getPosition().y(),
                1};
 
+    if (!bCubeLight)
+    {
+        mPointLights[1]->setLightColor(0.0f,0.0f,0.0f,0.0f,0.0f);
+        cubeLight->bShouldRender = false;
+        cubeLightOff->bShouldRender = true;
+    }
+    else
+    {
+        mPointLights[1]->setLightColor(1.0f, 0.0f, 1.0f, 0.1f, 1.0f);
+        cubeLight->bShouldRender = true;
+        cubeLightOff->bShouldRender = false;
+    }
+
+
     if (bSceneOne)
     {
         // Scene 1
         if (!bFirstPerson)
-            // third person
+            // Third person
             mCamera.rotateAroundTarget(mia->mWorldPosition, 0.0, rotation);
         else
-            // first person
+            // First person
             mCamera.lookAt(playerPos, QVector3D{playerPos.x(), 1000, 0}, QVector3D{0,1,0} );
 
         rotation = 0;
@@ -374,10 +393,10 @@ void RenderWindow::render()
     {
         // Scene 2
         if (!bFirstPerson)
-            // third person
+            // Third person
             mCamera.lookAt( QVector3D{-7,-1,2}, QVector3D{-7,0,0}, QVector3D{0,1,0} );
         else
-            // first person
+            // First person
             mCamera.lookAt(playerPos, QVector3D{playerPos.x(), 1000, 0}, QVector3D{0,1,0} );
     }
 
@@ -517,6 +536,11 @@ void RenderWindow::CollisionHandling()
         {
             // slå av rendering / flytt ob
             mItems[i]->move(100,100,100);
+
+            score++;
+
+            std::cout << "You have picked up " << score << " items! \n";
+
             mItems[i]->bIsActive = false;
             if (mObjects[i])
             {
@@ -805,12 +829,17 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     {
         bFirstPerson = !bFirstPerson;
     }
+
+    if (event->key() == Qt::Key_L)
+    {
+        bCubeLight = !bCubeLight;
+    }
+
 //vvvvvvvvvvvvvvvvvvvvvvvvvvvvCattingvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     if(event->key() == Qt::Key_1)
     {
         catting=0;
     }
-
 
     if(event->key() == Qt::Key_2)
     {

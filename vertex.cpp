@@ -29,6 +29,13 @@ void Vertex::setXYZ(float x, float y, float z)
     m_xyz[2] = z;
 }
 
+void Vertex::setCol(float r, float g, float b)
+{
+    m_normal[0] = r;
+    m_normal[1] = g;
+    m_normal[2] = b;
+}
+
 void Vertex::setNorm(float nx, float ny, float nz)
 {
     m_normal[0] = nx;

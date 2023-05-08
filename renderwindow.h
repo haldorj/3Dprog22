@@ -68,7 +68,12 @@ private:
     InteractiveObject* mia;
     VisualObject* miaCollision;
     VisualObject* cat;
+
     Plane* door;
+
+    Cube* cubeLight;
+    Cube* cubeLightOff;
+    bool bCubeLight = true;
 
     QVector3D followCamera;
     QVector3D playerPos;
@@ -203,6 +208,8 @@ private:
     void moveMiaY(float movespeed);
 
     glm::vec3 playerLight{0,0,0};
+
+    int score = 0;
 
     bool bSceneOne = true;
     bool bShouldMove = true;
