@@ -447,11 +447,13 @@ void RenderWindow::render()
     glUniform1i(mTextureUniform, 1);
     heightMap->draw();
 
-    // house obj
+    // house obj // Task 2 or Task2
+    //------------------
     brickTexture->UseTexture();
     dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
     glUniform1i(mTextureUniform, 1);
     house->draw();
+    //------------------
 
 
     plainTexture->UseTexture();
