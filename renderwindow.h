@@ -206,6 +206,7 @@ private:
 
     bool bSceneOne = true;
     bool bShouldMove = true;
+    bool bFirstPerson = false;
 
     void ToggleCollision();
     void TogglePath();

@@ -361,12 +361,25 @@ void RenderWindow::render()
     if (bSceneOne)
     {
         // Scene 1
-        mCamera.rotateAroundTarget(mia->mWorldPosition, 0.0, rotation);
+        if (!bFirstPerson)
+            // third person
+            mCamera.rotateAroundTarget(mia->mWorldPosition, 0.0, rotation);
+        else
+            // first person
+            mCamera.lookAt(playerPos, QVector3D{playerPos.x(), 1000, 0}, QVector3D{0,1,0} );
+
         rotation = 0;
     }
     else
+    {
         // Scene 2
-        mCamera.lookAt( QVector3D{-7,-1,2}, QVector3D{-7,0,0}, QVector3D{0,1,0} );
+        if (!bFirstPerson)
+            // third person
+            mCamera.lookAt( QVector3D{-7,-1,2}, QVector3D{-7,0,0}, QVector3D{0,1,0} );
+        else
+            // first person
+            mCamera.lookAt(playerPos, QVector3D{playerPos.x(), 1000, 0}, QVector3D{0,1,0} );
+    }
 
     // Make sure to call glClear BEFORE the Skybox
     skybox->DrawSkybox(mCamera.mVmatrix, mCamera.mPmatrix);
@@ -786,6 +799,11 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     if(event->key() == Qt::Key_Right)
     {
         rotation = 2;
+    }
+
+    if (event->key() == Qt::Key_Space)
+    {
+        bFirstPerson = !bFirstPerson;
     }
 //vvvvvvvvvvvvvvvvvvvvvvvvvvvvCattingvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     if(event->key() == Qt::Key_1)

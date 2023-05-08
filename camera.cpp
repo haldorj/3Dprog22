@@ -48,7 +48,6 @@ void Camera::rotateAroundTarget(QVector3D target, float deltaX, float deltaY)
      mEye = cameraPos;
  }
 
-
 void Camera::update()
 {
     initializeOpenGLFunctions();
