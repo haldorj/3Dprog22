@@ -1,5 +1,6 @@
 # OpenGL / QT 6.x.x Project
 OpenGL project made with QT for the 3D programming course at Høgskolen i Innlandet.
+![Screenshot 2024-01-07 071137](https://github.com/haldorj/3Dprog22/assets/89477584/700a3a94-1999-46b6-906a-69178bd39780)
 
 # Features
     3D rendering with OpenGL.
