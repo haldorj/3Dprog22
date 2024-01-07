@@ -70,7 +70,7 @@ private:
     std::vector<VisualObject*> mItems; // kollisjonsvolum
     InteractiveObject* mia;
     VisualObject* miaCollision;
-    VisualObject* cat;
+    VisualObject* cats[3];
 
     Plane* door;
     CollisionVolume* doorCollision;

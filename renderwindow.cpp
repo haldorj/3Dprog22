@@ -156,7 +156,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_3.obj"));
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Log/Log_5.obj"));
 
-    cat = new ObjMesh("../3Dprog22/Objects/cat.obj");
+    for (int i = 0; i < 3; i++)
+        cats[i] = new ObjMesh("../3Dprog22/Objects/cat.obj");
 
     cubeLight = new Cube(1, 0, 2, 0, 1, 0, 1);
     mMap.insert(MapPair{"CubeLight", cubeLight});
@@ -324,9 +325,13 @@ void RenderWindow::init()
     mModels[3]->mMatrix.rotate(45, 0,1,0);
 
     // Cat
-    cat->mMatrix.translate(3,0,0);
-    cat->mMatrix.rotate(90, 1.0 , 0.0, 0.0);
-    cat->mMatrix.scale(0.5);
+    for (auto cat : cats)
+    {
+        cat->mMatrix.translate(3,0,0);
+        cat->mMatrix.rotate(90, 1.0 , 0.0, 0.0);
+        cat->mMatrix.scale(0.5);
+    }
+
 
     // 2. init with correct uniform model
 
@@ -335,7 +340,9 @@ void RenderWindow::init()
     mia->init(mUniformModel);
     heightMap->init(mUniformModel);
     house->init(mUniformModel);
-    cat->init(mUniformModel);
+    cats[2]->init(mMmatrixUniform0);
+    cats[1]->init(mMmatrixUniform1);
+    cats[0]->init(mUniformModel);
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 
     // Additional setup
@@ -430,21 +437,26 @@ void RenderWindow::render()
 
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
         (*it)->draw();
+
     if(catting==2)
-     cat->draw();
+        cats[2]->draw();
 
     //what shader to use (unlit texture shader)
     glUseProgram(mTexShaderProgram->getProgram());
-    glUniformMatrix4fv(mVmatrixUniform1, 1, GL_TRUE, mCamera.mVmatrix.constData());
-    glUniformMatrix4fv(mPmatrixUniform1, 1, GL_TRUE, mCamera.mPmatrix.constData());
+    glUniformMatrix4fv(mVmatrixUniform1, 1, GL_FALSE, mCamera.mVmatrix.constData());
+    glUniformMatrix4fv(mPmatrixUniform1, 1, GL_FALSE, mCamera.mPmatrix.constData());
     mCamera.update();
+
     if(catting==1)
-     cat->draw();
+    {
+        //glUniform1i(mTextureUniform1, 1);
+        cats[1]->draw();
+    }
 
     // what shader to use (phong shader)
     glUseProgram(mPhongShaderProgram->getProgram());
-    glUniformMatrix4fv(mUniformView, 1, GL_TRUE, mCamera.mVmatrix.constData());
-    glUniformMatrix4fv(mUniformProjection, 1, GL_TRUE, mCamera.mPmatrix.constData());
+    glUniformMatrix4fv(mUniformView, 1, GL_FALSE, mCamera.mVmatrix.constData());
+    glUniformMatrix4fv(mUniformProjection, 1, GL_FALSE, mCamera.mPmatrix.constData());
     glUniform3f(mUniformEyePosition, mCamera.getCameraPosition().x, mCamera.getCameraPosition().y, mCamera.getCameraPosition().z);
     //checkForGLerrors();
     //Additional parameters for light shader:
@@ -454,7 +466,7 @@ void RenderWindow::render()
     mCamera.update();
 
     if(catting==0)
-    cat->draw();
+        cats[0]->draw();
 
     // 3. use textures
 
@@ -488,12 +500,10 @@ void RenderWindow::render()
     for (auto it = mModels.begin(); it != mModels.end(); it++)
         (*it)->draw();
 
-    cat->mMatrix.rotate(1.0, 0.0 , 1.0, 0.0);
+    for (auto cat : cats)
+        cat->mMatrix.rotate(1.0, 0.0 , 1.0, 0.0);
     catTexture->UseTexture();
     dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
-
-
-
 
     //mMap["disc"]->move(0.05f);
 
