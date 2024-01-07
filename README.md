@@ -1,3 +1,34 @@
+# OpenGL / QT 6.x.x Project
+OpenGL project made with QT for the 3D programming course at Høgskolen i Innlandet.
+
+# Features
+    3D rendering with OpenGL.
+    Texturing.
+    Lighting using the phong shading model (ambient, diffuse and specular lighting).
+    Directional light.
+    Multiple pointlights.
+    Custom made obj. loader.
+    Terrain generation from heightmaps.
+    Setting player height with barycentric coordinates.
+    Skybox.
+    NPC movement (following a pre-calculated curve)
+    Simple collisions (pickups).
+
+# Controls
+    WASD - move the interactive object
+    L/R ARROW KEYS - Camera controls
+    
+    Q - Toggle NPC path
+    C - Toggle Collision volumes
+    V - Toggle wireframe
+    
+    SPACE - Toggle first person / third person mode
+    L - Toggle light source (cubeLight) on and off
+    
+    1 - cat with phong shader
+    2 - cat with unlit texture shader
+    3 - cat with plain shader
+
 # 3Dprog22
 Kode for kurset 3D-programmering, våren 2022.
 
