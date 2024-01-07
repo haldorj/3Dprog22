@@ -955,6 +955,7 @@ void RenderWindow::ToggleCollision()
             mItems[i]->bShouldRender = false;
 
         miaCollision->bShouldRender = false;
+        doorCollision->bShouldRender = false;
     }
     else
     {
@@ -962,6 +963,7 @@ void RenderWindow::ToggleCollision()
             mItems[i]->bShouldRender = true;
 
         miaCollision->bShouldRender = true;
+        doorCollision->bShouldRender = true;
     }
 }
 
