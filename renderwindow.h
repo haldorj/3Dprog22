@@ -31,6 +31,7 @@
 #include "skybox.h"
 #include "objmesh.h"
 #include "plane.h"
+#include "collisionvolume.h"
 
 
 
@@ -58,6 +59,8 @@ public:
     bool mCollision{false};
     bool mWireframe{false};
 
+    int score = 0;
+
 private slots:
     void render();          //the actual render - function
 
@@ -67,8 +70,14 @@ private:
     std::vector<VisualObject*> mItems; // kollisjonsvolum
     InteractiveObject* mia;
     VisualObject* miaCollision;
-    VisualObject* cat;
+    VisualObject* cats[3];
+
     Plane* door;
+    CollisionVolume* doorCollision;
+
+    Cube* cubeLight;
+    Cube* cubeLightOff;
+    bool bCubeLight = true;
 
     QVector3D followCamera;
     QVector3D playerPos;
@@ -206,6 +215,7 @@ private:
 
     bool bSceneOne = true;
     bool bShouldMove = true;
+    bool bFirstPerson = false;
 
     void ToggleCollision();
     void TogglePath();

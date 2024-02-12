@@ -50,6 +50,7 @@ NPC::NPC(std::string path)
         mA = 0; mB = 0.0728164f; mC = 0.547531f; mD = -0.125218f;
         // Set initial position.
         mMatrix.translate(-3.0,-1.112463,0.0);
+        mWorldPosition = QVector3D{-3.0, -1.112463, 0.0};
     }
     if(path == "curve2.txt")
     {
@@ -57,6 +58,7 @@ NPC::NPC(std::string path)
         mA = 0.4f; mB = 0.0f; mC = -2.6f; mD = 0.0f;
         // Set initial position.
         mMatrix.translate(-3.5,-3.5,0.0);
+        mWorldPosition = QVector3D{-3.5, -3.5, 0.0};
     }
 }
 
@@ -107,12 +109,12 @@ void NPC::move(float x, float y, float z)
     mx += x;
     my += y;
     mz += z;
-    //std::cout << "WorldPos: X: " << mx <<" Y:"<< my << "\n";
-    mWorldPosition = {mx, my, mz};
+    mWorldPosition += QVector3D{mx, my, mz};
+    //std::cout << "WorldPos: X: " << mWorldPosition.x() <<" Y:"<< mWorldPosition.y() << "\n";
     mMatrix.translate(mx, my, mz);
-    mx =0;
-    my =0;
-    mz =0;
+    mx = 0;
+    my = 0;
+    mz = 0;
 }
 
 void NPC::readFile(std::string filename)

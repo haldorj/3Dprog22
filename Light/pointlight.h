@@ -14,6 +14,9 @@ public:
         GLfloat con, GLfloat lin, GLfloat exp);
     ~PointLight(){ };
 
+    void setLightColor(GLfloat red, GLfloat green, GLfloat blue,
+                  GLfloat aIntensity, GLfloat dIntensity);
+
     void UseLight(GLuint ambientIntensityLocation, GLuint ambientColorLocation,
         GLuint diffuseIntensityLocation, GLuint positionLocation,
         GLuint constantLocation, GLuint linearLocation, GLuint exponentLocation);

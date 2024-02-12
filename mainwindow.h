@@ -18,6 +18,7 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void updateScore(int score);
 private slots:
     ///Slot called from the button in the mainwindow.ui file
     void on_collisionButton_toggled(bool checked);

@@ -29,6 +29,7 @@ public:
    };
 
    void setXYZ(float x, float y, float z);
+   void setCol(float r, float g, float b);
    void setNorm(float nx, float ny, float nz);
 
    float getX() {return m_xyz[0];}

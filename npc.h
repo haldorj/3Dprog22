@@ -15,7 +15,6 @@ public:
 
     // Getting path / movement of NPC
     void readFile(std::string filename);
-    void fixPath();
     void moveNPC();
     void moveNPCFromFile();
 private:

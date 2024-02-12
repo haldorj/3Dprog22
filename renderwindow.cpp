@@ -30,10 +30,14 @@
 #include "plane.h"
 #include "triangulation.h"
 
+#include <QApplication>
+#include <QProcess>
+
 /*
     23DPRO101 3D-programmering
     - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    This project is a collaboration between candidates:
+    This project was a collaboration up until the day of the exam.
+    Between candidates:
     1210, 1216, 1219.
 
     - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -46,10 +50,12 @@
             C - Toggle Collision volumes
             V - Toggle wireframe
 
+            SPACE - Toggle first person / third person mode
+            L - Toggle light source (cubeLight) on and off
+
             1 - cat with phong shader
             2 - cat with unlit texture shader
             3 - cat with plain shader
-
 */
 
 typedef std::pair<std::string, VisualObject*> MapPair;
@@ -110,7 +116,8 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //Door
     door = new Plane();
     door->mMatrix.translate(-4.99f, -0.5f, -0.4f);
-    mObjects.push_back(door);
+    mMap.insert(MapPair{"door", door});
+    //mObjects.push_back(door);
 
     // Kollisjonsvolum               //(radius, x, y, recursions)
     mItems.push_back(new CollisionVolume(0.2, -3, -1, 1));
@@ -122,7 +129,9 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mItems.push_back(new CollisionVolume(0.2, 2, 2, 1));
     mItems.push_back(new CollisionVolume(0.2, 3, 2, 1));
     // Door
-    mItems.push_back(new CollisionVolume(1.25, -5, 0, 2));
+    doorCollision = new CollisionVolume(1.25, -5, 0, 2);
+    mMap.insert(MapPair{"doorCollison", doorCollision});
+    //mItems.push_back(new CollisionVolume(1.25, -5, 0, 2));
 
     // Oppgave 2 OBLIG 2
     mMap.insert(std::pair<std::string, VisualObject*>{"P1", new Tetrahedron(-3,-3, 0, 0.5)});
@@ -141,12 +150,19 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //mMap.insert(MapPair{"mia", mia});
     mMap.insert(MapPair{"miaCollision", miaCollision});
 
+    // ObjMesh -> objects in the scene with a mesh reading from an obj file.
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_1.obj"));
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_2.obj"));
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_3.obj"));
     mModels.push_back(new ObjMesh("../3Dprog22/Objects/Log/Log_5.obj"));
 
-    cat = new ObjMesh("../3Dprog22/Objects/cat.obj");
+    for (int i = 0; i < 3; i++)
+        cats[i] = new ObjMesh("../3Dprog22/Objects/cat.obj");
+
+    cubeLight = new Cube(1, 0, 2, 0, 1, 0, 1);
+    mMap.insert(MapPair{"CubeLight", cubeLight});
+    cubeLightOff = new Cube(1, 0, 2, 0, 0.5, 0.5, 0.5);
+    mMap.insert(MapPair{"CubeLightOff", cubeLightOff});
 }
 
 RenderWindow::~RenderWindow()
@@ -309,9 +325,13 @@ void RenderWindow::init()
     mModels[3]->mMatrix.rotate(45, 0,1,0);
 
     // Cat
-    cat->mMatrix.translate(3,0,0);
-    cat->mMatrix.rotate(90, 1.0 , 0.0, 0.0);
-    cat->mMatrix.scale(0.5);
+    for (auto cat : cats)
+    {
+        cat->mMatrix.translate(3,0,0);
+        cat->mMatrix.rotate(90, 1.0 , 0.0, 0.0);
+        cat->mMatrix.scale(0.5);
+    }
+
 
     // 2. init with correct uniform model
 
@@ -320,14 +340,17 @@ void RenderWindow::init()
     mia->init(mUniformModel);
     heightMap->init(mUniformModel);
     house->init(mUniformModel);
-    cat->init(mUniformModel);
+    cats[2]->init(mMmatrixUniform0);
+    cats[1]->init(mMmatrixUniform1);
+    cats[0]->init(mUniformModel);
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 
     // Additional setup
     moveMiaX(0);
     moveMiaY(-3);
 
-    house->move(-7.0, 0.0, 1.0);
+    house->mMatrix.translate(-7.0, 0.0, 1.0);
+    house->mWorldPosition = QVector3D{-7.0, 0.0, 1.0};
     house->mMatrix.rotate(90, 1, 0, 0);
 
     BOT2->bShouldRender = false;
@@ -356,17 +379,46 @@ void RenderWindow::render()
                   2};
     playerPos = {mia->getPosition().x(),
                mia->getPosition().y(),
-               1};
+               mia->getPosition().z() + 1};
 
+    // Trigger that turns light on and off
+    if (!bCubeLight)
+    {
+        mPointLights[1]->setLightColor(0.0f,0.0f,0.0f,0.0f,0.0f);
+        cubeLight->bShouldRender = false;
+        cubeLightOff->bShouldRender = true;
+    }
+    else
+    {
+        mPointLights[1]->setLightColor(1.0f, 0.0f, 1.0f, 0.1f, 1.0f);
+        cubeLight->bShouldRender = true;
+        cubeLightOff->bShouldRender = false;
+    }
+
+
+    // Switch between Third/First person camera
     if (bSceneOne)
     {
         // Scene 1
-        mCamera.rotateAroundTarget(mia->mWorldPosition, 0.0, rotation);
+        if (!bFirstPerson)
+            // Third person
+            mCamera.rotateAroundTarget(mia->mWorldPosition, 0.0, rotation);
+        else
+            // First person
+            mCamera.lookAt(playerPos, QVector3D{playerPos.x(), 1000, 0}, QVector3D{0,1,0} );
+
         rotation = 0;
     }
     else
+    {
         // Scene 2
-        mCamera.lookAt( QVector3D{-7,-1,2}, QVector3D{-7,0,0}, QVector3D{0,1,0} );
+        if (!bFirstPerson)
+            // Third person
+            mCamera.lookAt( QVector3D{-7,-1,2}, QVector3D{-7,0,0}, QVector3D{0,1,0} );
+        else
+            // First person
+            mCamera.lookAt(playerPos, QVector3D{playerPos.x(), 1000, 0}, QVector3D{0,1,0} );
+    }
 
     // Make sure to call glClear BEFORE the Skybox
     skybox->DrawSkybox(mCamera.mVmatrix, mCamera.mPmatrix);
@@ -385,21 +437,26 @@ void RenderWindow::render()
 
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
         (*it)->draw();
+
     if(catting==2)
-     cat->draw();
+        cats[2]->draw();
 
     //what shader to use (unlit texture shader)
     glUseProgram(mTexShaderProgram->getProgram());
-    glUniformMatrix4fv(mVmatrixUniform1, 1, GL_TRUE, mCamera.mVmatrix.constData());
-    glUniformMatrix4fv(mPmatrixUniform1, 1, GL_TRUE, mCamera.mPmatrix.constData());
+    glUniformMatrix4fv(mVmatrixUniform1, 1, GL_FALSE, mCamera.mVmatrix.constData());
+    glUniformMatrix4fv(mPmatrixUniform1, 1, GL_FALSE, mCamera.mPmatrix.constData());
     mCamera.update();
+
     if(catting==1)
-     cat->draw();
+    {
+        //glUniform1i(mTextureUniform1, 1);
+        cats[1]->draw();
+    }
 
     // what shader to use (phong shader)
     glUseProgram(mPhongShaderProgram->getProgram());
-    glUniformMatrix4fv(mUniformView, 1, GL_TRUE, mCamera.mVmatrix.constData());
-    glUniformMatrix4fv(mUniformProjection, 1, GL_TRUE, mCamera.mPmatrix.constData());
+    glUniformMatrix4fv(mUniformView, 1, GL_FALSE, mCamera.mVmatrix.constData());
+    glUniformMatrix4fv(mUniformProjection, 1, GL_FALSE, mCamera.mPmatrix.constData());
     glUniform3f(mUniformEyePosition, mCamera.getCameraPosition().x, mCamera.getCameraPosition().y, mCamera.getCameraPosition().z);
     //checkForGLerrors();
     //Additional parameters for light shader:
@@ -409,7 +466,7 @@ void RenderWindow::render()
     mCamera.update();
 
     if(catting==0)
-    cat->draw();
+        cats[0]->draw();
 
     // 3. use textures
 
@@ -443,12 +500,10 @@ void RenderWindow::render()
     for (auto it = mModels.begin(); it != mModels.end(); it++)
         (*it)->draw();
 
-    cat->mMatrix.rotate(1.0, 0.0 , 1.0, 0.0);
+    for (auto cat : cats)
+        cat->mMatrix.rotate(1.0, 0.0 , 1.0, 0.0);
     catTexture->UseTexture();
     dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
-
-
-
 
     //mMap["disc"]->move(0.05f);
 
@@ -489,10 +544,10 @@ void RenderWindow::render()
 
 void RenderWindow::CollisionHandling()
 {
-    // "Kollisjon"
+    // "Collision between player and pickups"
     for (auto i = 0; i < mItems.size(); i++)
     {
-        // Finne avstand mellom posisjoner
+        // Distance check
         QVector3D dist = miaCollision->getPosition() - mItems[i]->getPosition();
         // [x1 – x2, y1 – y2, z1 – z2]
         float d = dist.length();
@@ -502,8 +557,13 @@ void RenderWindow::CollisionHandling()
 
         if (d < r1 + r2 && mItems[i]->bIsActive == true)
         {
-            // slå av rendering / flytt ob
+            // Move objects away
             mItems[i]->move(100,100,100);
+            //When picking up trophies or pickups items, then count the score and print it.
+            score++;
+            mMainWindow->updateScore(score);
+            std::cout << "You have picked up " << score << " items! \n";
+
             mItems[i]->bIsActive = false;
             if (mObjects[i])
             {
@@ -512,6 +572,25 @@ void RenderWindow::CollisionHandling()
             }
         }
     }
+
+    // door collision
+    if (door && doorCollision)
+    {
+        QVector3D dist = miaCollision->getPosition() - doorCollision->getPosition();
+        float d = dist.length();
+        float r1 = miaCollision->getRadius();
+        float r2 = doorCollision->getRadius();
+        if (d < r1 + r2 && doorCollision->bIsActive == true)
+        {
+            doorCollision->bIsActive = false;
+            doorCollision->move(100,100,100);
+
+            door->OpenDoor();
+            std::cout << "You opened the door! \n";
+        }
+    }
+
+
     if (mia && miaCollision)
     {
         mia->getPosition();
@@ -529,6 +608,24 @@ void RenderWindow::CollisionHandling()
         else
         {
             bSceneOne = true;
+        }
+    }
+
+    // Hitting an enemy restarts the game.
+    // Switch to 2nd NPC path to turn this feature off.
+
+    if (BOT && !mPathOne)
+    {
+        //std::cout << "X: " << BOT->getPosition().x() << " Y: " << BOT->getPosition().y() << "\n";
+        QVector3D dist = miaCollision->getPosition() - (BOT->mWorldPosition);
+        float d = dist.length();
+        float r1 = miaCollision->getRadius();
+        float r2 = 0.25;
+
+        if (d < r1 + r2)
+        {
+            qApp->quit();
+            QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
         }
     }
 }
@@ -787,12 +884,22 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
     {
         rotation = 2;
     }
+
+    if (event->key() == Qt::Key_Space)
+    {
+        bFirstPerson = !bFirstPerson;
+    }
+
+    if (event->key() == Qt::Key_L)
+    {
+        bCubeLight = !bCubeLight;
+    }
+
 //vvvvvvvvvvvvvvvvvvvvvvvvvvvvCattingvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     if(event->key() == Qt::Key_1)
     {
         catting=0;
     }
-
 
     if(event->key() == Qt::Key_2)
     {
@@ -807,6 +914,9 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
 //    std::cout << "WorldPos: \n";
 //    std::cout << "x: " << miaCollision->getPosition().x() << " y: " << mia->getPosition().y() << " z: " << mia->getPosition().z() << "\n";
 }
+
+// Player movement, with barycentric coordinates.
+// Height (z value) is retrieved from the heightmap.
 
 void RenderWindow::moveMiaX(float movespeed)
 {
@@ -845,6 +955,7 @@ void RenderWindow::ToggleCollision()
             mItems[i]->bShouldRender = false;
 
         miaCollision->bShouldRender = false;
+        doorCollision->bShouldRender = false;
     }
     else
     {
@@ -852,6 +963,7 @@ void RenderWindow::ToggleCollision()
             mItems[i]->bShouldRender = true;
 
         miaCollision->bShouldRender = true;
+        doorCollision->bShouldRender = true;
     }
 }
 
