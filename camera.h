@@ -21,6 +21,7 @@ public:
    void perspective(int fovy, double aspect, double nearplane, double farplane);
    void lookAt(const QVector3D& eye, const QVector3D& at, const QVector3D& up);
    void rotateAroundTarget(QVector3D target, float deltaX, float deltaY);
+   void rotateAroundTarget(QVector3D &target, float &deltaX, float &deltaY);
    void rotateAroundTargetFP(QVector3D target, float deltaX, float deltaY);
    void update();
 

@@ -48,6 +48,24 @@ void Camera::rotateAroundTarget(QVector3D target, float deltaX, float deltaY)
      mEye = cameraPos;
  }
 
+void Camera::rotateAroundTarget(QVector3D &target, float &deltaX, float &deltaY)
+{
+     // Calculate new camera position
+     m_yaw += deltaX;
+     m_pitch += deltaY;
+     //m_pitch = glm::clamp(m_pitch, -89.0f, 89.0f); // prevent flipping over
+     glm::vec3 cameraPosition;
+     cameraPosition.x = target.x() + m_distance * cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
+     cameraPosition.y = target.y() + m_distance * sin(glm::radians(m_pitch));
+     cameraPosition.z = target.z() + m_distance * sin(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
+     //m_position = cameraPosition;
+     QVector3D cameraPos{cameraPosition.x, cameraPosition.y, cameraPosition.z + 1.5f};
+     mVmatrix.lookAt(cameraPos,
+                     QVector3D{target.x(), target.y(), target.z() + 1.0f},
+                     QVector3D{0,0,1});
+     mEye = cameraPos;
+ }
+
 void Camera::update()
 {
     initializeOpenGLFunctions();
