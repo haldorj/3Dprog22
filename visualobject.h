@@ -20,7 +20,7 @@ public:
    virtual void move(float &x, float &y,float &z) {x = 0; y = 0;z = 0; } /*Just added this so we don't get an error message in Qt*/
    virtual void move(float x, float y,float z) {_mx += x; _my += y;_mz += z; mMatrix.translate(_mx, _my, _mz); _mx =0; _my =0; _mz =0; } /*Just added this so we don't get an error message in Qt*/
    // move for simulering (for eksempel NPC)
-   virtual void move(float dt) { }
+   virtual void move(float dt) {  }
 
    // TODO: check if these getters and setters are reduntant since they are virtual.
    virtual QVector3D getPosition() { return mWorldPosition; }
