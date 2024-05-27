@@ -422,12 +422,12 @@ void RenderWindow::render()
     }
 
     // Make sure to call glClear BEFORE the Skybox
-    skybox->DrawSkybox(mCamera.mVmatrix, mCamera.mPmatrix);
+    skybox->DrawSkybox(mCamera.GetViewMatrix(), mCamera.GetPerspectiveMatrix());
 
     //what shader to use (plain shader)
     glUseProgram(mPlainShaderProgram->getProgram());
-    glUniformMatrix4fv(mVmatrixUniform0, 1, GL_TRUE, mCamera.mVmatrix.constData());
-    glUniformMatrix4fv(mPmatrixUniform0, 1, GL_TRUE, mCamera.mPmatrix.constData());
+    glUniformMatrix4fv(mVmatrixUniform0, 1, GL_TRUE, mCamera.GetViewMatrixData());
+    glUniformMatrix4fv(mPmatrixUniform0, 1, GL_TRUE, mCamera.GetPerspectiveMatrixData());
     mCamera.update();
 
     for (auto it=mMap.begin(); it!=mMap.end(); it++)
@@ -444,8 +444,8 @@ void RenderWindow::render()
 
     //what shader to use (unlit texture shader)
     glUseProgram(mTexShaderProgram->getProgram());
-    glUniformMatrix4fv(TextureShader.mVmatrixUniform1, 1, GL_FALSE, mCamera.mVmatrix.constData());
-    glUniformMatrix4fv(TextureShader.mPmatrixUniform1, 1, GL_FALSE, mCamera.mPmatrix.constData());
+    glUniformMatrix4fv(TextureShader.mVmatrixUniform1, 1, GL_FALSE, mCamera.GetViewMatrixData());
+    glUniformMatrix4fv(TextureShader.mPmatrixUniform1, 1, GL_FALSE, mCamera.GetPerspectiveMatrixData());
     mCamera.update();
 
     if(catting==1)
@@ -456,8 +456,8 @@ void RenderWindow::render()
 
     // what shader to use (phong shader)
     glUseProgram(mPhongShaderProgram->getProgram());
-    glUniformMatrix4fv(PhongShader.mUniformView, 1, GL_FALSE, mCamera.mVmatrix.constData());
-    glUniformMatrix4fv(PhongShader.mUniformProjection, 1, GL_FALSE, mCamera.mPmatrix.constData());
+    glUniformMatrix4fv(PhongShader.mUniformView, 1, GL_FALSE, mCamera.GetViewMatrixData());
+    glUniformMatrix4fv(PhongShader.mUniformProjection, 1, GL_FALSE, mCamera.GetPerspectiveMatrixData());
     glUniform3f(PhongShader.mUniformEyePosition, mCamera.getCameraPosition().x, mCamera.getCameraPosition().y, mCamera.getCameraPosition().z);
     //checkForGLerrors();
     //Additional parameters for light shader:
