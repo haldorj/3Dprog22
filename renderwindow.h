@@ -87,7 +87,6 @@ private:
     Triangulation* triangulation;
 
     Camera mCamera{};
-    int catting=0;
 
     enum class CatShader {
         PhongShader,
