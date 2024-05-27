@@ -33,6 +33,43 @@
 #include <QApplication>
 #include <QProcess>
 
+// Shader Paths
+constexpr char PLAIN_SHADER_VERTEX_PATH[]   = "../3Dprog22/plainshader.vert";
+constexpr char PLAIN_SHADER_FRAGMENT_PATH[] = "../3Dprog22/plainshader.frag";
+constexpr char TEXTURE_SHADER_VERTEX_PATH[]   =  "../3Dprog22/texshader.vert";
+constexpr char TEXTURE_SHADER_FRAGMENT_PATH[] = "../3Dprog22/texshader.frag";
+constexpr char PHONG_SHADER_VERTEX_PATH[] =  "../3Dprog22/phongshader.vert";
+constexpr char PHONG_SHADER_FRAGMENT_PATH[] = "../3Dprog22/phongshader.frag";
+
+// Texture Paths
+constexpr char TEXTURE_BRICK_PATH[] =  "../3Dprog22/Textures/brick.png";
+constexpr char TEXTURE_DIRT_PATH[]  =  "../3Dprog22/Textures/dirt.png";
+constexpr char TEXTURE_PLAIN_PATH[] =  "../3Dprog22/Textures/plain.png";
+constexpr char TEXTURE_WOOD_PATH[]  =  "../3Dprog22/Textures/wood.png";
+constexpr char TEXTURE_CRATE_PATH[] =  "../3Dprog22/Textures/woodencrate.png";
+constexpr char TEXTURE_CAT_PATH[]   =  "../3Dprog22/Textures/cat.png";
+
+// Model paths
+constexpr char MODELS_TREE_1_PATH[] = "../3Dprog22/Objects/Tree/Tree_1.obj";
+constexpr char MODELS_TREE_2_PATH[] = "../3Dprog22/Objects/Tree/Tree_2.obj";
+constexpr char MODELS_TREE_3_PATH[] = "../3Dprog22/Objects/Tree/Tree_3.obj";
+constexpr char MODELS_LOG_PATH[] =    "../3Dprog22/Objects/Log/Log_5.obj";
+constexpr char MODELS_CAT_PATH[] =    "../3Dprog22/Objects/cat.obj";
+
+// Heightmap Path
+constexpr char HEIGHTMAP_PATH[] =    "../3Dprog22/HeightMaps/hMap3.png";
+
+// Skybox Path
+
+constexpr char SKYBOX_RT_PATH[] = "../3Dprog22/Textures/Skybox/cupertin-lake_rt.tga";
+constexpr char SKYBOX_LF_PATH[] = "../3Dprog22/Textures/Skybox/cupertin-lake_lf.tga";
+constexpr char SKYBOX_UP_PATH[] = "../3Dprog22/Textures/Skybox/cupertin-lake_up.tga";
+constexpr char SKYBOX_DN_PATH[] = "../3Dprog22/Textures/Skybox/cupertin-lake_dn.tga";
+constexpr char SKYBOX_BK_PATH[] = "../3Dprog22/Textures/Skybox/cupertin-lake_bk.tga";
+constexpr char SKYBOX_FT_PATH[] = "../3Dprog22/Textures/Skybox/cupertin-lake_ft.tga";
+
+
+
 /*
     23DPRO101 3D-programmering
     - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -151,13 +188,14 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mMap.insert(MapPair{"miaCollision", miaCollision});
 
     // ObjMesh -> objects in the scene with a mesh reading from an obj file.
-    mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_1.obj"));
-    mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_2.obj"));
-    mModels.push_back(new ObjMesh("../3Dprog22/Objects/Tree/Tree_3.obj"));
-    mModels.push_back(new ObjMesh("../3Dprog22/Objects/Log/Log_5.obj"));
+    mModels.push_back(new ObjMesh(MODELS_TREE_1_PATH));
+    mModels.push_back(new ObjMesh(MODELS_TREE_2_PATH));
+    mModels.push_back(new ObjMesh(MODELS_TREE_3_PATH));
+    mModels.push_back(new ObjMesh(MODELS_LOG_PATH));
 
+    // lol damn, we actually have 3 objects ontop of each other :oo?
     for (int i = 0; i < 3; i++)
-        cats[i] = new ObjMesh("../3Dprog22/Objects/cat.obj");
+        cats[i] = new ObjMesh(MODELS_CAT_PATH);
 
     cubeLight = new Cube(1, 0, 2, 0, 1, 0, 1);
     mMap.insert(MapPair{"CubeLight", cubeLight});
@@ -229,34 +267,35 @@ void RenderWindow::init()
     //NB: hardcoded path to files! You have to change this if you change directories for the project.
     //Qt makes a build-folder besides the project folder. That is why we go down one directory
     // (out of the build-folder) and then up into the project folder.
-    mPlainShaderProgram = new Shader( "../3Dprog22/plainshader.vert",
-                                    "../3Dprog22/plainshader.frag");
+    mPlainShaderProgram = new Shader( PLAIN_SHADER_VERTEX_PATH,
+                                      PLAIN_SHADER_FRAGMENT_PATH);
 
-    mTexShaderProgram = new Shader( "../3Dprog22/texshader.vert",
-                                    "../3Dprog22/texshader.frag");
+    mTexShaderProgram = new Shader( TEXTURE_SHADER_VERTEX_PATH,
+                                    TEXTURE_SHADER_FRAGMENT_PATH);
 
-    mPhongShaderProgram = new Shader( "../3Dprog22/phongshader.vert",
-                                    "../3Dprog22/phongshader.frag");
+    mPhongShaderProgram = new Shader(PHONG_SHADER_VERTEX_PATH,
+                                     PHONG_SHADER_FRAGMENT_PATH);
+
 
     setupPlainShader();
     setupTextureShader();
     setupPhongShader();
 
-    heightMap = new HeightMap((char*)("../3Dprog22/HeightMaps/hMap3.png"));
+    heightMap = new HeightMap((char*)(HEIGHTMAP_PATH));
     heightMap->LoadHeightMap();
 
     // 1. Create new texture
-    TextureStruct.brickTexture = new Texture((char*)("../3Dprog22/Textures/brick.png"));
+    TextureStruct.brickTexture = new Texture((char*)(TEXTURE_BRICK_PATH));
     TextureStruct.brickTexture->LoadTextureA();
-    TextureStruct.dirtTexture = new Texture((char*)("../3Dprog22/Textures/dirt.png"));
+    TextureStruct.dirtTexture = new Texture((char*)(TEXTURE_DIRT_PATH));
     TextureStruct.dirtTexture->LoadTextureA();
-    TextureStruct.plainTexture = new Texture((char*)("../3Dprog22/Textures/plain.png"));
+    TextureStruct.plainTexture = new Texture((char*)(TEXTURE_PLAIN_PATH));
     TextureStruct.plainTexture->LoadTextureA();
-    TextureStruct.woodTexture = new Texture((char*)("../3Dprog22/Textures/wood.png"));
+    TextureStruct.woodTexture = new Texture((char*)(TEXTURE_WOOD_PATH));
     TextureStruct.woodTexture->LoadTexture();
-    TextureStruct.crateTexture = new Texture((char*)("../3Dprog22/Textures/woodencrate.png"));
+    TextureStruct.crateTexture = new Texture((char*)(TEXTURE_CRATE_PATH));
     TextureStruct.crateTexture->LoadTextureA();
-    TextureStruct.catTexture = new Texture((char*)("../3Dprog22/Textures/cat.png"));
+    TextureStruct.catTexture = new Texture((char*)(TEXTURE_CAT_PATH));
     TextureStruct.catTexture->LoadTextureA();
 
 
@@ -286,12 +325,12 @@ void RenderWindow::init()
     // order: rt, lf, up, dn, bk, ft.
     std::vector<std::string> skyboxFaces;
 
-    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_rt.tga");
-    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_lf.tga");
-    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_up.tga");
-    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_dn.tga");
-    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_bk.tga");
-    skyboxFaces.push_back("../3Dprog22/Textures/Skybox/cupertin-lake_ft.tga");
+    skyboxFaces.push_back(SKYBOX_RT_PATH);
+    skyboxFaces.push_back(SKYBOX_LF_PATH);
+    skyboxFaces.push_back(SKYBOX_UP_PATH);
+    skyboxFaces.push_back(SKYBOX_DN_PATH);
+    skyboxFaces.push_back(SKYBOX_BK_PATH);
+    skyboxFaces.push_back(SKYBOX_FT_PATH);
 
     skybox = new Skybox(skyboxFaces);
 
