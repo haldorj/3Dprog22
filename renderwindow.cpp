@@ -312,7 +312,7 @@ void RenderWindow::init()
     // .obj modeller
     for (auto it=mModels.begin(); it!=mModels.end(); it++)
     {
-        (*it)->init(mUniformModel);
+        (*it)->init(PhongShader.mUniformModel);
         (*it)->GetMatrix().translate(0, 7, -0.5);
         (*it)->GetMatrix().rotate(90, 1, 0, 0);
     }
@@ -337,12 +337,12 @@ void RenderWindow::init()
 
     // objects using phong shading
     //triangulation->init(mUniformModel);
-    mia->init(mUniformModel);
-    heightMap->init(mUniformModel);
-    house->init(mUniformModel);
+    mia->init(PhongShader.mUniformModel);
+    heightMap->init(PhongShader.mUniformModel);
+    house->init(PhongShader.mUniformModel);
     cats[2]->init(mMmatrixUniform0);
     cats[1]->init(TextureShader.mMmatrixUniform1);
-    cats[0]->init(mUniformModel);
+    cats[0]->init(PhongShader.mUniformModel);
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 
     // Additional setup
@@ -456,9 +456,9 @@ void RenderWindow::render()
 
     // what shader to use (phong shader)
     glUseProgram(mPhongShaderProgram->getProgram());
-    glUniformMatrix4fv(mUniformView, 1, GL_FALSE, mCamera.mVmatrix.constData());
-    glUniformMatrix4fv(mUniformProjection, 1, GL_FALSE, mCamera.mPmatrix.constData());
-    glUniform3f(mUniformEyePosition, mCamera.getCameraPosition().x, mCamera.getCameraPosition().y, mCamera.getCameraPosition().z);
+    glUniformMatrix4fv(PhongShader.mUniformView, 1, GL_FALSE, mCamera.mVmatrix.constData());
+    glUniformMatrix4fv(PhongShader.mUniformProjection, 1, GL_FALSE, mCamera.mPmatrix.constData());
+    glUniform3f(PhongShader.mUniformEyePosition, mCamera.getCameraPosition().x, mCamera.getCameraPosition().y, mCamera.getCameraPosition().z);
     //checkForGLerrors();
     //Additional parameters for light shader:
     SetDirectionalLight(mainLight);
@@ -473,38 +473,38 @@ void RenderWindow::render()
 
     // mia
     crateTexture->UseTexture();
-    shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
-    glUniform1i(mTextureUniform, 1);
+    shinyMaterial->UseMaterial(PhongShader.mUniformSpecularIntensity, PhongShader.mUniformShininess);
+    glUniform1i(PhongShader.mTextureUniform, 1);
     mia->draw();
 
     // surface obj
     woodTexture->UseTexture();
-    dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
-    glUniform1i(mTextureUniform, 1);
+    dullMaterial->UseMaterial(PhongShader.mUniformSpecularIntensity, PhongShader.mUniformShininess);
+    glUniform1i(PhongShader.mTextureUniform, 1);
     //triangulation->draw();
 
     // hmap
     dirtTexture->UseTexture();
-    shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
-    glUniform1i(mTextureUniform, 1);
+    shinyMaterial->UseMaterial(PhongShader.mUniformSpecularIntensity, PhongShader.mUniformShininess);
+    glUniform1i(PhongShader.mTextureUniform, 1);
     heightMap->draw();
 
     // house obj
     brickTexture->UseTexture();
-    dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
-    glUniform1i(mTextureUniform, 1);
+    dullMaterial->UseMaterial(PhongShader.mUniformSpecularIntensity, PhongShader.mUniformShininess);
+    glUniform1i(PhongShader.mTextureUniform, 1);
     house->draw();
 
 
     plainTexture->UseTexture();
-    shinyMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
+    shinyMaterial->UseMaterial(PhongShader.mUniformSpecularIntensity, PhongShader.mUniformShininess);
     for (auto it = mModels.begin(); it != mModels.end(); it++)
         (*it)->draw();
 
     for (auto cat : cats)
         cat->GetMatrix().rotate(1.0, 0.0 , 1.0, 0.0);
     catTexture->UseTexture();
-    dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
+    dullMaterial->UseMaterial(PhongShader.mUniformSpecularIntensity, PhongShader.mUniformShininess);
 
     //mMap["disc"]->move(0.05f);
 
@@ -649,19 +649,19 @@ void RenderWindow::setupTextureShader()
 
 void RenderWindow::setupPhongShader()
 {
-    mUniformProjection = glGetUniformLocation(mPhongShaderProgram->getProgram(), "projection");
-    mUniformModel = glGetUniformLocation(mPhongShaderProgram->getProgram(), "model");
-    mUniformView = glGetUniformLocation(mPhongShaderProgram->getProgram(), "view");
-    mTextureUniform = glGetUniformLocation(mTexShaderProgram->getProgram(), "theTexture");
+    PhongShader.mUniformProjection = glGetUniformLocation(mPhongShaderProgram->getProgram(), "projection");
+    PhongShader.mUniformModel = glGetUniformLocation(mPhongShaderProgram->getProgram(), "model");
+    PhongShader.mUniformView = glGetUniformLocation(mPhongShaderProgram->getProgram(), "view");
+    PhongShader.mTextureUniform = glGetUniformLocation(mTexShaderProgram->getProgram(), "theTexture");
 
     uniformDirectionalLight.uniformAmbientIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.base.ambientIntensity");
     uniformDirectionalLight.uniformColor = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.base.color");
     uniformDirectionalLight.uniformDirection = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.direction");
     uniformDirectionalLight.uniformDiffuseIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.base.diffuseIntensity");
-    mUniformSpecularIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), "material.specularIntensity");
-    mUniformShininess = glGetUniformLocation(mPhongShaderProgram->getProgram(),"material.shininess");
+    PhongShader.mUniformSpecularIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), "material.specularIntensity");
+    PhongShader.mUniformShininess = glGetUniformLocation(mPhongShaderProgram->getProgram(),"material.shininess");
 
-    mUniformEyePosition = glGetUniformLocation(mPhongShaderProgram->getProgram(), "eyePosition");
+    PhongShader.mUniformEyePosition = glGetUniformLocation(mPhongShaderProgram->getProgram(), "eyePosition");
 
     uniformPointLightCount = glGetUniformLocation(mPhongShaderProgram->getProgram(), "pointLightCount");
 
