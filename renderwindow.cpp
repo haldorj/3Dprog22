@@ -299,15 +299,15 @@ void RenderWindow::init()
 
     // Pickups
     for (auto it=mObjects.begin(); it!=mObjects.end(); it++)
-        (*it)->init(mMmatrixUniform0);
+        (*it)->init(PlainShader.mMmatrixUniform0);
 
     // Kollisjonsvolum
     for (auto it=mItems.begin(); it!=mItems.end(); it++)
-        (*it)->init(mMmatrixUniform0);
+        (*it)->init(PlainShader.mMmatrixUniform0);
 
     // Alternativ: Erstatter std::vector<VisualObject*> med unordered map
     for (auto it=mMap.begin(); it!=mMap.end(); it++)
-        (*it).second->init(mMmatrixUniform0);
+        (*it).second->init(PlainShader.mMmatrixUniform0);
 
     // .obj modeller
     for (auto it=mModels.begin(); it!=mModels.end(); it++)
@@ -340,7 +340,7 @@ void RenderWindow::init()
     mia->init(PhongShader.mUniformModel);
     heightMap->init(PhongShader.mUniformModel);
     house->init(PhongShader.mUniformModel);
-    cats[2]->init(mMmatrixUniform0);
+    cats[2]->init(PlainShader.mMmatrixUniform0);
     cats[1]->init(TextureShader.mMmatrixUniform1);
     cats[0]->init(PhongShader.mUniformModel);
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
@@ -366,7 +366,7 @@ void RenderWindow::init()
 // Called each frame - doing the rendering!!!
 void RenderWindow::render()
 {
-    mCamera.init(mPmatrixUniform0, mVmatrixUniform0);
+    mCamera.init(PlainShader.mPmatrixUniform0, PlainShader.mVmatrixUniform0);
     mCamera.perspective(70.0f, 16.0f/9.0f, 0.1f, 20.f);
 
     mTimeStart.restart(); //restart FPS clock
@@ -428,8 +428,8 @@ void RenderWindow::render()
 
     //what shader to use (plain shader)
     glUseProgram(mPlainShaderProgram->getProgram());
-    glUniformMatrix4fv(mVmatrixUniform0, 1, GL_TRUE, mCamera.GetViewMatrixData());
-    glUniformMatrix4fv(mPmatrixUniform0, 1, GL_TRUE, mCamera.GetPerspectiveMatrixData());
+    glUniformMatrix4fv(PlainShader.mVmatrixUniform0, 1, GL_TRUE, mCamera.GetViewMatrixData());
+    glUniformMatrix4fv(PlainShader.mPmatrixUniform0, 1, GL_TRUE, mCamera.GetPerspectiveMatrixData());
     mCamera.update();
 
     for (auto it=mMap.begin(); it!=mMap.end(); it++)
@@ -637,9 +637,9 @@ void RenderWindow::CollisionHandling()
 
 void RenderWindow::setupPlainShader()
 {
-    mPmatrixUniform0 =  glGetUniformLocation( mPlainShaderProgram->getProgram(), "pmatrix" );
-    mVmatrixUniform0 =  glGetUniformLocation( mPlainShaderProgram->getProgram(), "vmatrix" );
-    mMmatrixUniform0 =  glGetUniformLocation( mPlainShaderProgram->getProgram(), "matrix" );
+    PlainShader.mPmatrixUniform0 =  glGetUniformLocation( mPlainShaderProgram->getProgram(), "pmatrix" );
+    PlainShader.mVmatrixUniform0 =  glGetUniformLocation( mPlainShaderProgram->getProgram(), "vmatrix" );
+    PlainShader.mMmatrixUniform0 =  glGetUniformLocation( mPlainShaderProgram->getProgram(), "matrix" );
 }
 
 void RenderWindow::setupTextureShader()
