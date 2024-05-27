@@ -246,18 +246,18 @@ void RenderWindow::init()
     heightMap->LoadHeightMap();
 
     // 1. Create new texture
-    brickTexture = new Texture((char*)("../3Dprog22/Textures/brick.png"));
-    brickTexture->LoadTextureA();
-    dirtTexture = new Texture((char*)("../3Dprog22/Textures/dirt.png"));
-    dirtTexture->LoadTextureA();
-    plainTexture = new Texture((char*)("../3Dprog22/Textures/plain.png"));
-    plainTexture->LoadTextureA();
-    woodTexture = new Texture((char*)("../3Dprog22/Textures/wood.png"));
-    woodTexture->LoadTexture();
-    crateTexture = new Texture((char*)("../3Dprog22/Textures/woodencrate.png"));
-    crateTexture->LoadTextureA();
-    catTexture = new Texture((char*)("../3Dprog22/Textures/cat.png"));
-    catTexture->LoadTextureA();
+    TextureStruct.brickTexture = new Texture((char*)("../3Dprog22/Textures/brick.png"));
+    TextureStruct.brickTexture->LoadTextureA();
+    TextureStruct.dirtTexture = new Texture((char*)("../3Dprog22/Textures/dirt.png"));
+    TextureStruct.dirtTexture->LoadTextureA();
+    TextureStruct.plainTexture = new Texture((char*)("../3Dprog22/Textures/plain.png"));
+    TextureStruct.plainTexture->LoadTextureA();
+    TextureStruct.woodTexture = new Texture((char*)("../3Dprog22/Textures/wood.png"));
+    TextureStruct.woodTexture->LoadTexture();
+    TextureStruct.crateTexture = new Texture((char*)("../3Dprog22/Textures/woodencrate.png"));
+    TextureStruct.crateTexture->LoadTextureA();
+    TextureStruct.catTexture = new Texture((char*)("../3Dprog22/Textures/cat.png"));
+    TextureStruct.catTexture->LoadTextureA();
 
 
     shinyMaterial = new Material(4.0f, 256);
@@ -472,38 +472,38 @@ void RenderWindow::render()
     // 3. use textures
 
     // mia
-    crateTexture->UseTexture();
+    TextureStruct.crateTexture->UseTexture();
     shinyMaterial->UseMaterial(PhongShader.mUniformSpecularIntensity, PhongShader.mUniformShininess);
     glUniform1i(PhongShader.mTextureUniform, 1);
     mia->draw();
 
     // surface obj
-    woodTexture->UseTexture();
+    TextureStruct.woodTexture->UseTexture();
     dullMaterial->UseMaterial(PhongShader.mUniformSpecularIntensity, PhongShader.mUniformShininess);
     glUniform1i(PhongShader.mTextureUniform, 1);
     //triangulation->draw();
 
     // hmap
-    dirtTexture->UseTexture();
+    TextureStruct.dirtTexture->UseTexture();
     shinyMaterial->UseMaterial(PhongShader.mUniformSpecularIntensity, PhongShader.mUniformShininess);
     glUniform1i(PhongShader.mTextureUniform, 1);
     heightMap->draw();
 
     // house obj
-    brickTexture->UseTexture();
+    TextureStruct.brickTexture->UseTexture();
     dullMaterial->UseMaterial(PhongShader.mUniformSpecularIntensity, PhongShader.mUniformShininess);
     glUniform1i(PhongShader.mTextureUniform, 1);
     house->draw();
 
 
-    plainTexture->UseTexture();
+    TextureStruct.plainTexture->UseTexture();
     shinyMaterial->UseMaterial(PhongShader.mUniformSpecularIntensity, PhongShader.mUniformShininess);
     for (auto it = mModels.begin(); it != mModels.end(); it++)
         (*it)->draw();
 
     for (auto cat : cats)
         cat->GetMatrix().rotate(1.0, 0.0 , 1.0, 0.0);
-    catTexture->UseTexture();
+    TextureStruct.catTexture->UseTexture();
     dullMaterial->UseMaterial(PhongShader.mUniformSpecularIntensity, PhongShader.mUniformShininess);
 
     //mMap["disc"]->move(0.05f);
