@@ -171,10 +171,10 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     //mItems.push_back(new CollisionVolume(1.25, -5, 0, 2));
 
     // Oppgave 2 OBLIG 2
-    mMap.insert(std::pair<std::string, VisualObject*>{"P1", new Tetrahedron(-3,-3, 0, 0.5)});
-    mMap.insert(std::pair<std::string, VisualObject*>{"P2", new Tetrahedron(-2, 2, 0, 0.5)});
-    mMap.insert(std::pair<std::string, VisualObject*>{"P3", new Tetrahedron( 2,-2, 0, 0.5)});
-    mMap.insert(std::pair<std::string, VisualObject*>{"P4", new Tetrahedron( 3, 3, 0, 0.5)});
+    mMap.insert(MapPair{"P1", new Tetrahedron(-3,-3, 0, 0.5)});
+    mMap.insert(MapPair{"P2", new Tetrahedron(-2, 2, 0, 0.5)});
+    mMap.insert(MapPair{"P3", new Tetrahedron( 2,-2, 0, 0.5)});
+    mMap.insert(MapPair{"P4", new Tetrahedron( 3, 3, 0, 0.5)});
 
     BOT = new NPC("curve.txt");
     BOT2 = new NPC("curve2.txt");
