@@ -88,6 +88,13 @@ private:
 
     Camera mCamera{};
     int catting=0;
+
+    enum class CatShader {
+        PhongShader,
+        UnlitTextureShader,
+        PlainShader
+    }catShader;
+
     // NPCs
     VisualObject* BOT;
     VisualObject* BOT2;
