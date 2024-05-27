@@ -24,12 +24,22 @@ public:
    void rotateAroundTargetFP(QVector3D target, float deltaX, float deltaY);
    void update();
 
+   /* returns mVmatrix.constData() */
+   const GLfloat *GetViewMatrixData() { return mVmatrix.constData(); }
+   /* return mPmatrix.constData() */
+   const GLfloat *GetPerspectiveMatrixData() { return mPmatrix.constData(); }
 
-   QMatrix4x4 mPmatrix{};
-   QMatrix4x4 mVmatrix{};
+   const QMatrix4x4& GetViewMatrix() const {return mVmatrix;}
+   const QMatrix4x4& GetPerspectiveMatrix() const {return mPmatrix;}
+
 
    glm::vec3 getCameraPosition();
    //void translate(float dx, float dy, float dz);
+
+protected:
+   QMatrix4x4 mPmatrix{};
+   QMatrix4x4 mVmatrix{};
+
 private:
     // Camera position and orientation
     glm::vec3 m_position;
