@@ -359,6 +359,8 @@ void RenderWindow::init()
 
     // Camera
     mCamera.rotateAroundTarget(mia->GetWorldPosition(), 0.0, -90);
+
+    catShader = CatShader::PhongShader;
 }
 
 // Called each frame - doing the rendering!!!
@@ -439,7 +441,7 @@ void RenderWindow::render()
     for (auto it = mObjects.begin(); it != mObjects.end(); it++)
         (*it)->draw();
 
-    if(catting==2)
+    if(catShader == CatShader::PlainShader)
         cats[2]->draw();
 
     //what shader to use (unlit texture shader)
@@ -448,7 +450,7 @@ void RenderWindow::render()
     glUniformMatrix4fv(TextureShader.mPmatrixUniform1, 1, GL_FALSE, mCamera.GetPerspectiveMatrixData());
     mCamera.update();
 
-    if(catting==1)
+    if(catShader == CatShader::UnlitTextureShader)
     {
         //glUniform1i(mTextureUniform1, 1);
         cats[1]->draw();
@@ -466,7 +468,7 @@ void RenderWindow::render()
     //Update Camera
     mCamera.update();
 
-    if(catting==0)
+    if(catShader == CatShader::PhongShader)
         cats[0]->draw();
 
     // 3. use textures
@@ -501,7 +503,7 @@ void RenderWindow::render()
     for (auto it = mModels.begin(); it != mModels.end(); it++)
         (*it)->draw();
 
-    for (auto cat : cats)
+    for (const auto &cat : cats)
         cat->GetMatrix().rotate(1.0, 0.0 , 1.0, 0.0);
     TextureStruct.catTexture->UseTexture();
     dullMaterial->UseMaterial(PhongShader.mUniformSpecularIntensity, PhongShader.mUniformShininess);
@@ -530,6 +532,8 @@ void RenderWindow::render()
     TogglePath();
     ToggleWireframe();
 
+
+    // TODO: LOOK FOR ANOTHER WAY TO HANDLE THIS, MAYBE PUT IT INTO A BOOLEAN FUNCTION THAT RETURNS SOMETHING IN A IF STATEMENT
     if (miaCollision->GetWorldPosition().x() < -10)
         moveMiaX(0.03);
 
@@ -899,17 +903,17 @@ void RenderWindow::keyPressEvent(QKeyEvent *event)
 //vvvvvvvvvvvvvvvvvvvvvvvvvvvvCattingvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
     if(event->key() == Qt::Key_1)
     {
-        catting=0;
+        catShader = CatShader::PhongShader;
     }
 
     if(event->key() == Qt::Key_2)
     {
-        catting=1;
+        catShader = CatShader::UnlitTextureShader;
     }
 
     if(event->key() == Qt::Key_3)
     {
-        catting=2;
+        catShader = CatShader::PlainShader;
     }
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^Catting^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 //    std::cout << "WorldPos: \n";
