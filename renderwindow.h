@@ -107,11 +107,12 @@ private:
     GLint  mMmatrixUniform0{};
 
     void setupTextureShader();
+    struct {
     GLint  mPmatrixUniform1{};
     GLint  mVmatrixUniform1{};
     GLint  mMmatrixUniform1{};
     GLint  mTextureUniform1{};
-
+    }TextureShader;
     void  setupPhongShader();
     void  SetDirectionalLight(DirectionalLight* dLight);
     void  SetPointLights();
