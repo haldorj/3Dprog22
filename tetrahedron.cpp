@@ -1,5 +1,7 @@
 #include "tetrahedron.h"
 
+// TODO: use at later stage typedef std::vector<Vertex> VertexVector;
+
 Tetrahedron::Tetrahedron()
 {
     constructTetrahedron();
@@ -12,6 +14,11 @@ Tetrahedron::Tetrahedron(float x, float y, float z, float s)
     translatePoint(x,y,z,s);
 }
 
+Tetrahedron::Tetrahedron(float &x, float &y, float&z)
+{
+    constructTetrahedron();
+}
+
 void Tetrahedron::translatePoint(float x, float y, float z, float s)
 {
     mMatrix.translate(x,y,z);
@@ -19,9 +26,29 @@ void Tetrahedron::translatePoint(float x, float y, float z, float s)
 }
 
 
+
 Tetrahedron::~Tetrahedron()
 {
 
+}
+
+void Tetrahedron::constructTetrahedron(const float &x, const float &y, const float&z)
+{
+    mVertices.push_back(Vertex{-x, -y,   0,          1,1,0});
+    mVertices.push_back(Vertex{x,  -y,   z,        1,1,0});
+    mVertices.push_back(Vertex{0,    y,    0,          1,1,0});
+
+    mVertices.push_back(Vertex{-x, -y,   0,          0,1,0});
+    mVertices.push_back(Vertex{x,  -y,   -z,       0,1,0});
+    mVertices.push_back(Vertex{0,    y,    0,          0,1,0});
+
+    mVertices.push_back(Vertex{x,  -y,   z,        0,0,1});
+    mVertices.push_back(Vertex{x,  -y,   -z,       0,0,1});
+    mVertices.push_back(Vertex{0,    y,    0,          0,0,1});
+
+    mVertices.push_back(Vertex{x,  -y,   z,        1,0,0});
+    mVertices.push_back(Vertex{-x, -y,   0.0,        1,0,0});
+    mVertices.push_back(Vertex{x,  -y,   -z,       1,0,0});
 }
 
 void Tetrahedron::constructTetrahedron()
