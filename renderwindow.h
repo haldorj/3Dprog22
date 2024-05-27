@@ -156,12 +156,14 @@ private:
 
     std::vector<PointLight*> mPointLights;
 
-    Texture *brickTexture;
-    Texture *dirtTexture;
-    Texture *plainTexture;
-    Texture *woodTexture;
-    Texture *crateTexture;
-    Texture *catTexture;
+    struct{
+        Texture *brickTexture = nullptr;
+        Texture *dirtTexture = nullptr;
+        Texture *plainTexture = nullptr;
+        Texture *woodTexture= nullptr;
+        Texture *crateTexture = nullptr;
+        Texture *catTexture = nullptr;
+    } TextureStruct;
 
     HeightMap *heightMap;
 
