@@ -113,19 +113,22 @@ private:
     GLint  mMmatrixUniform1{};
     GLint  mTextureUniform1{};
     }TextureShader;
+
     void  setupPhongShader();
     void  SetDirectionalLight(DirectionalLight* dLight);
     void  SetPointLights();
     std::string GetUniformLocationString(const std::string& uniformName, int index);
 
-    int   pointLightCount, PointLightCount = 0;
+    int pointLightCount, PointLightCount = 0;
 
-    GLint mUniformProjection{};
-    GLint mUniformModel{};
-    GLint mUniformView{};
-    GLint mTextureUniform{};
-    GLint mUniformEyePosition{};
-    GLuint mUniformSpecularIntensity{}, mUniformShininess{};
+    struct{
+        GLint mUniformProjection{};
+        GLint mUniformModel{};
+        GLint mUniformView{};
+        GLint mTextureUniform{};
+        GLint mUniformEyePosition{};
+        GLuint mUniformSpecularIntensity{}, mUniformShininess{};
+    } PhongShader;
 
     struct {
         GLuint uniformColor{};
