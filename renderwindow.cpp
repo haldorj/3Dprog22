@@ -115,7 +115,7 @@ RenderWindow::RenderWindow(const QSurfaceFormat &format, MainWindow *mainWindow)
     mObjects.push_back(new OctahedronBall(3,2, 3));
     //Door
     door = new Plane();
-    door->mMatrix.translate(-4.99f, -0.5f, -0.4f);
+    door->GetMatrix().translate(-4.99f, -0.5f, -0.4f);
     mMap.insert(MapPair{"door", door});
     //mObjects.push_back(door);
 
@@ -313,23 +313,23 @@ void RenderWindow::init()
     for (auto it=mModels.begin(); it!=mModels.end(); it++)
     {
         (*it)->init(mUniformModel);
-        (*it)->mMatrix.translate(0, 7, -0.5);
-        (*it)->mMatrix.rotate(90, 1, 0, 0);
+        (*it)->GetMatrix().translate(0, 7, -0.5);
+        (*it)->GetMatrix().rotate(90, 1, 0, 0);
     }
     // Trees
-    mModels[0]->mMatrix.translate(6,-0,-1);
-    mModels[1]->mMatrix.translate(-7,-0,-1);
+    mModels[0]->GetMatrix().translate(6,-0,-1);
+    mModels[1]->GetMatrix().translate(-7,-0,-1);
 
     // Log
-    mModels[3]->mMatrix.translate(-4, 0.6, 2);
-    mModels[3]->mMatrix.rotate(45, 0,1,0);
+    mModels[3]->GetMatrix().translate(-4, 0.6, 2);
+    mModels[3]->GetMatrix().rotate(45, 0,1,0);
 
     // Cat
-    for (auto cat : cats)
+    for (const auto &cat : cats)
     {
-        cat->mMatrix.translate(3,0,0);
-        cat->mMatrix.rotate(90, 1.0 , 0.0, 0.0);
-        cat->mMatrix.scale(0.5);
+        cat->GetMatrix().translate(3,0,0);
+        cat->GetMatrix().rotate(90, 1.0 , 0.0, 0.0);
+        cat->GetMatrix().scale(0.5);
     }
 
 
@@ -341,7 +341,7 @@ void RenderWindow::init()
     heightMap->init(mUniformModel);
     house->init(mUniformModel);
     cats[2]->init(mMmatrixUniform0);
-    cats[1]->init(mMmatrixUniform1);
+    cats[1]->init(TextureShader.mMmatrixUniform1);
     cats[0]->init(mUniformModel);
     glBindVertexArray(0);       //unbinds any VertexArray - good practice
 
@@ -349,15 +349,16 @@ void RenderWindow::init()
     moveMiaX(0);
     moveMiaY(-3);
 
-    house->mMatrix.translate(-7.0, 0.0, 1.0);
-    house->mWorldPosition = QVector3D{-7.0, 0.0, 1.0};
-    house->mMatrix.rotate(90, 1, 0, 0);
+    house->GetMatrix().translate(-7.0, 0.0, 1.0);
+    // house->GetWorldPosition() = QVector3D{-7.0, 0.0, 1.0};
+    house->SetWorldPosition(-7.0, 0.0, 1.0);
+    house->GetMatrix().rotate(90, 1, 0, 0);
 
     BOT2->bShouldRender = false;
     Path2->bShouldRender = false;
 
     // Camera
-    mCamera.rotateAroundTarget(mia->mWorldPosition, 0.0, -90);
+    mCamera.rotateAroundTarget(mia->GetWorldPosition(), 0.0, -90);
 }
 
 // Called each frame - doing the rendering!!!
@@ -402,7 +403,7 @@ void RenderWindow::render()
         // Scene 1
         if (!bFirstPerson)
             // Third person
-            mCamera.rotateAroundTarget(mia->mWorldPosition, 0.0, rotation);
+            mCamera.rotateAroundTarget(mia->GetWorldPosition(), 0.0, rotation);
         else
             // First person
             mCamera.lookAt(playerPos, QVector3D{playerPos.x(), 1000, 0}, QVector3D{0,1,0} );
@@ -443,8 +444,8 @@ void RenderWindow::render()
 
     //what shader to use (unlit texture shader)
     glUseProgram(mTexShaderProgram->getProgram());
-    glUniformMatrix4fv(mVmatrixUniform1, 1, GL_FALSE, mCamera.mVmatrix.constData());
-    glUniformMatrix4fv(mPmatrixUniform1, 1, GL_FALSE, mCamera.mPmatrix.constData());
+    glUniformMatrix4fv(TextureShader.mVmatrixUniform1, 1, GL_FALSE, mCamera.mVmatrix.constData());
+    glUniformMatrix4fv(TextureShader.mPmatrixUniform1, 1, GL_FALSE, mCamera.mPmatrix.constData());
     mCamera.update();
 
     if(catting==1)
@@ -501,7 +502,7 @@ void RenderWindow::render()
         (*it)->draw();
 
     for (auto cat : cats)
-        cat->mMatrix.rotate(1.0, 0.0 , 1.0, 0.0);
+        cat->GetMatrix().rotate(1.0, 0.0 , 1.0, 0.0);
     catTexture->UseTexture();
     dullMaterial->UseMaterial(mUniformSpecularIntensity, mUniformShininess);
 
@@ -529,16 +530,16 @@ void RenderWindow::render()
     TogglePath();
     ToggleWireframe();
 
-    if (miaCollision->mWorldPosition.x() < -10)
+    if (miaCollision->GetWorldPosition().x() < -10)
         moveMiaX(0.03);
 
-    if (miaCollision->mWorldPosition.x() > 10)
+    if (miaCollision->GetWorldPosition().x() > 10)
         moveMiaX(-0.03);
 
-    if ( miaCollision->mWorldPosition.y() < -8)
+    if ( miaCollision->GetWorldPosition().y() < -8)
         moveMiaY(0.03);
 
-    if (miaCollision->mWorldPosition.y() > 8)
+    if (miaCollision->GetWorldPosition().y() > 8)
         moveMiaY(-0.03);
 }
 
@@ -617,7 +618,7 @@ void RenderWindow::CollisionHandling()
     if (BOT && !mPathOne)
     {
         //std::cout << "X: " << BOT->getPosition().x() << " Y: " << BOT->getPosition().y() << "\n";
-        QVector3D dist = miaCollision->getPosition() - (BOT->mWorldPosition);
+        QVector3D dist = miaCollision->getPosition() - (BOT->GetWorldPosition());
         float d = dist.length();
         float r1 = miaCollision->getRadius();
         float r2 = 0.25;
@@ -639,11 +640,11 @@ void RenderWindow::setupPlainShader()
 
 void RenderWindow::setupTextureShader()
 {
-    mPmatrixUniform1 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "pmatrix" );
-    mVmatrixUniform1 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "vmatrix" );
-    mMmatrixUniform1 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "matrix" );
+    TextureShader.mPmatrixUniform1 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "pmatrix" );
+    TextureShader.mVmatrixUniform1 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "vmatrix" );
+    TextureShader.mMmatrixUniform1 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "matrix" );
     // Add sampler uniform to the shader
-    mTextureUniform1  =  glGetUniformLocation( mTexShaderProgram->getProgram(), "textureSampler");
+    TextureShader.mTextureUniform1  =  glGetUniformLocation( mTexShaderProgram->getProgram(), "textureSampler");
 }
 
 void RenderWindow::setupPhongShader()
@@ -928,10 +929,14 @@ void RenderWindow::moveMiaX(float movespeed)
     miaCollision->move(movespeed*(1/miaCollision->getRadius()), 0.0f, height*1/miaCollision->getRadius());
 
 
-    miaCollision->mWorldPosition += QVector3D{movespeed, 0.0f, height};
+    miaCollision->GetWorldPosition() += QVector3D{movespeed, 0.0f, height};
+    // QVector3D a = {movespeed, 0.0f, height};
+    // miaCollision->SetWorldPosition(a);
 
     mia->move(movespeed, 0.0f, height);
-    mia->mWorldPosition += QVector3D{movespeed, 0.0f, height};
+    mia->GetWorldPosition() += QVector3D{movespeed, 0.0f, height};
+    // QVector3D b = {movespeed, 0.0f, height}; // i mean we are doing the same thing twice lol
+    // mia->SetWorldPosition(b);
 }
 
 void RenderWindow::moveMiaY(float movespeed)
@@ -941,10 +946,13 @@ void RenderWindow::moveMiaY(float movespeed)
 
 
     miaCollision->move(0.0f, movespeed * (1/miaCollision->getRadius()), height*1/miaCollision->getRadius());
-    miaCollision->mWorldPosition += QVector3D{0.0f, movespeed, height};
+    miaCollision->GetWorldPosition() += QVector3D{0.0f, movespeed, height};
+    //QVector3D y = {0.0f, movespeed, height};
+    //miaCollision->SetWorldPosition(y);
 
     mia->move(0.0f,movespeed,height);
-    mia->mWorldPosition += QVector3D{0.0f, movespeed, height};
+    mia->GetWorldPosition() += QVector3D{0.0f, movespeed, height};
+    //mia->SetWorldPosition(y); // i think this set position is bugggedd
 }
 
 void RenderWindow::ToggleCollision()
