@@ -68,6 +68,31 @@ constexpr char SKYBOX_DN_PATH[] = "../3Dprog22/Textures/Skybox/cupertin-lake_dn.
 constexpr char SKYBOX_BK_PATH[] = "../3Dprog22/Textures/Skybox/cupertin-lake_bk.tga";
 constexpr char SKYBOX_FT_PATH[] = "../3Dprog22/Textures/Skybox/cupertin-lake_ft.tga";
 
+// Paths for Uniforms
+constexpr char UNIFORM_PROJECTION_MATRIX_PATH[] = "pmatrix";
+constexpr char UNIFORM_VIEW_MATRIX_PATH[] = "vmatrix";
+constexpr char UNIFORM_MATRIX_MODEL_PATH[] = "matrix";
+constexpr char UNIFORM_TEXTURE_PATH[] = "textureSampler";
+
+// paths for phong
+constexpr char PHONG_PROJECTION_PATH[] = "projection";
+constexpr char PHONG_MODEL_PATH[] = "model";
+constexpr char PHONG_VIEW_PATH[] = "view";
+constexpr char PHONG_TEXTURE_PATH[] = "theTexture";
+
+// Paths for directional light
+constexpr char DIRECTIONALLIGHT_AMBIENT_INTENSITY[] = "directionalLight.base.ambientIntensity";
+constexpr char DIRECTIONALLIGHT_BASE_COLOR[] = "directionalLight.base.color";
+constexpr char DIRECTIONALLIGHT_DIRECTION[] = "directionalLight.direction";
+constexpr char DIRECTIONALLIGHT_BASE_DIFFUSE_INTENSITY[] = "directionalLight.base.diffuseIntensity";
+
+constexpr char PHONG_MATERIAL_SPECULAR_INTENSITY[] = "material.specularIntensity";
+constexpr char PHONG_MATERIAL_SHININESS[] = "material.shininess";
+constexpr char PHONG_MATERIAL_EYE_POSITION[] = "eyePosition";
+
+// Path for point light
+constexpr char POINTLIGHT_COUNT[] = "pointLightCount";
+
 
 
 /*
@@ -676,37 +701,38 @@ void RenderWindow::CollisionHandling()
 
 void RenderWindow::setupPlainShader()
 {
-    PlainShader.mPmatrixUniform0 =  glGetUniformLocation( mPlainShaderProgram->getProgram(), "pmatrix" );
-    PlainShader.mVmatrixUniform0 =  glGetUniformLocation( mPlainShaderProgram->getProgram(), "vmatrix" );
-    PlainShader.mMmatrixUniform0 =  glGetUniformLocation( mPlainShaderProgram->getProgram(), "matrix" );
+    PlainShader.mPmatrixUniform0 =  glGetUniformLocation( mPlainShaderProgram->getProgram(), UNIFORM_PROJECTION_MATRIX_PATH );
+    PlainShader.mVmatrixUniform0 =  glGetUniformLocation( mPlainShaderProgram->getProgram(), UNIFORM_VIEW_MATRIX_PATH );
+    PlainShader.mMmatrixUniform0 =  glGetUniformLocation( mPlainShaderProgram->getProgram(), UNIFORM_MATRIX_MODEL_PATH );
 }
 
 void RenderWindow::setupTextureShader()
 {
-    TextureShader.mPmatrixUniform1 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "pmatrix" );
-    TextureShader.mVmatrixUniform1 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "vmatrix" );
-    TextureShader.mMmatrixUniform1 =  glGetUniformLocation( mTexShaderProgram->getProgram(), "matrix" );
+    TextureShader.mPmatrixUniform1 =  glGetUniformLocation( mTexShaderProgram->getProgram(), UNIFORM_PROJECTION_MATRIX_PATH );
+    TextureShader.mVmatrixUniform1 =  glGetUniformLocation( mTexShaderProgram->getProgram(), UNIFORM_VIEW_MATRIX_PATH );
+    TextureShader.mMmatrixUniform1 =  glGetUniformLocation( mTexShaderProgram->getProgram(), UNIFORM_MATRIX_MODEL_PATH );
     // Add sampler uniform to the shader
-    TextureShader.mTextureUniform1  =  glGetUniformLocation( mTexShaderProgram->getProgram(), "textureSampler");
+    TextureShader.mTextureUniform1  =  glGetUniformLocation( mTexShaderProgram->getProgram(), UNIFORM_TEXTURE_PATH);
 }
 
 void RenderWindow::setupPhongShader()
 {
-    PhongShader.mUniformProjection = glGetUniformLocation(mPhongShaderProgram->getProgram(), "projection");
-    PhongShader.mUniformModel = glGetUniformLocation(mPhongShaderProgram->getProgram(), "model");
-    PhongShader.mUniformView = glGetUniformLocation(mPhongShaderProgram->getProgram(), "view");
-    PhongShader.mTextureUniform = glGetUniformLocation(mTexShaderProgram->getProgram(), "theTexture");
 
-    uniformDirectionalLight.uniformAmbientIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.base.ambientIntensity");
-    uniformDirectionalLight.uniformColor = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.base.color");
-    uniformDirectionalLight.uniformDirection = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.direction");
-    uniformDirectionalLight.uniformDiffuseIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), "directionalLight.base.diffuseIntensity");
-    PhongShader.mUniformSpecularIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), "material.specularIntensity");
-    PhongShader.mUniformShininess = glGetUniformLocation(mPhongShaderProgram->getProgram(),"material.shininess");
+    PhongShader.mUniformProjection = glGetUniformLocation(mPhongShaderProgram->getProgram(), PHONG_PROJECTION_PATH);
+    PhongShader.mUniformModel = glGetUniformLocation(mPhongShaderProgram->getProgram(), PHONG_MODEL_PATH);
+    PhongShader.mUniformView = glGetUniformLocation(mPhongShaderProgram->getProgram(), PHONG_VIEW_PATH);
+    PhongShader.mTextureUniform = glGetUniformLocation(mTexShaderProgram->getProgram(), PHONG_TEXTURE_PATH);
 
-    PhongShader.mUniformEyePosition = glGetUniformLocation(mPhongShaderProgram->getProgram(), "eyePosition");
+    uniformDirectionalLight.uniformAmbientIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), DIRECTIONALLIGHT_AMBIENT_INTENSITY);
+    uniformDirectionalLight.uniformColor = glGetUniformLocation(mPhongShaderProgram->getProgram(), DIRECTIONALLIGHT_BASE_COLOR);
+    uniformDirectionalLight.uniformDirection = glGetUniformLocation(mPhongShaderProgram->getProgram(), DIRECTIONALLIGHT_DIRECTION);
+    uniformDirectionalLight.uniformDiffuseIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), DIRECTIONALLIGHT_BASE_DIFFUSE_INTENSITY);
+    PhongShader.mUniformSpecularIntensity = glGetUniformLocation(mPhongShaderProgram->getProgram(), PHONG_MATERIAL_SPECULAR_INTENSITY);
+    PhongShader.mUniformShininess = glGetUniformLocation(mPhongShaderProgram->getProgram(), PHONG_MATERIAL_SHININESS);
 
-    uniformPointLightCount = glGetUniformLocation(mPhongShaderProgram->getProgram(), "pointLightCount");
+    PhongShader.mUniformEyePosition = glGetUniformLocation(mPhongShaderProgram->getProgram(), PHONG_MATERIAL_EYE_POSITION);
+
+    uniformPointLightCount = glGetUniformLocation(mPhongShaderProgram->getProgram(), POINTLIGHT_COUNT);
 
     for (size_t i = 0; i < MAX_POINT_LIGHTS; i++)
     {
