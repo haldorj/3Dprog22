@@ -108,9 +108,11 @@ private:
     bool mInitialized{false};
 
     void setupPlainShader();
-    GLint  mPmatrixUniform0{};
-    GLint  mVmatrixUniform0{};
-    GLint  mMmatrixUniform0{};
+    struct{
+        GLint  mPmatrixUniform0{};
+        GLint  mVmatrixUniform0{};
+        GLint  mMmatrixUniform0{};
+    } PlainShader;
 
     void setupTextureShader();
     struct {
