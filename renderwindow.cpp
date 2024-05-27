@@ -34,12 +34,12 @@
 #include <QProcess>
 
 // Shader Paths
-constexpr char PLAIN_SHADER_VERTEX_PATH[]   = "../3Dprog22/plainshader.vert";
-constexpr char PLAIN_SHADER_FRAGMENT_PATH[] = "../3Dprog22/plainshader.frag";
+constexpr char PLAIN_SHADER_VERTEX_PATH[]     =  "../3Dprog22/plainshader.vert";
+constexpr char PLAIN_SHADER_FRAGMENT_PATH[]   =  "../3Dprog22/plainshader.frag";
 constexpr char TEXTURE_SHADER_VERTEX_PATH[]   =  "../3Dprog22/texshader.vert";
-constexpr char TEXTURE_SHADER_FRAGMENT_PATH[] = "../3Dprog22/texshader.frag";
-constexpr char PHONG_SHADER_VERTEX_PATH[] =  "../3Dprog22/phongshader.vert";
-constexpr char PHONG_SHADER_FRAGMENT_PATH[] = "../3Dprog22/phongshader.frag";
+constexpr char TEXTURE_SHADER_FRAGMENT_PATH[] =  "../3Dprog22/texshader.frag";
+constexpr char PHONG_SHADER_VERTEX_PATH[]     =  "../3Dprog22/phongshader.vert";
+constexpr char PHONG_SHADER_FRAGMENT_PATH[]   =  "../3Dprog22/phongshader.frag";
 
 // Texture Paths
 constexpr char TEXTURE_BRICK_PATH[] =  "../3Dprog22/Textures/brick.png";
@@ -69,26 +69,26 @@ constexpr char SKYBOX_BK_PATH[] = "../3Dprog22/Textures/Skybox/cupertin-lake_bk.
 constexpr char SKYBOX_FT_PATH[] = "../3Dprog22/Textures/Skybox/cupertin-lake_ft.tga";
 
 // Paths for Uniforms
-constexpr char UNIFORM_PROJECTION_MATRIX_PATH[] = "pmatrix";
-constexpr char UNIFORM_VIEW_MATRIX_PATH[] = "vmatrix";
-constexpr char UNIFORM_MATRIX_MODEL_PATH[] = "matrix";
-constexpr char UNIFORM_TEXTURE_PATH[] = "textureSampler";
+constexpr char UNIFORM_PROJECTION_MATRIX_PATH[] =  "pmatrix";
+constexpr char UNIFORM_VIEW_MATRIX_PATH[]       =  "vmatrix";
+constexpr char UNIFORM_MATRIX_MODEL_PATH[]      =  "matrix";
+constexpr char UNIFORM_TEXTURE_PATH[]           =  "textureSampler";
 
 // paths for phong
-constexpr char PHONG_PROJECTION_PATH[] = "projection";
-constexpr char PHONG_MODEL_PATH[] = "model";
-constexpr char PHONG_VIEW_PATH[] = "view";
-constexpr char PHONG_TEXTURE_PATH[] = "theTexture";
+constexpr char PHONG_PROJECTION_PATH[]  =  "projection";
+constexpr char PHONG_MODEL_PATH[]       =  "model";
+constexpr char PHONG_VIEW_PATH[]        =  "view";
+constexpr char PHONG_TEXTURE_PATH[]     =  "theTexture";
 
 // Paths for directional light
-constexpr char DIRECTIONALLIGHT_AMBIENT_INTENSITY[] = "directionalLight.base.ambientIntensity";
-constexpr char DIRECTIONALLIGHT_BASE_COLOR[] = "directionalLight.base.color";
-constexpr char DIRECTIONALLIGHT_DIRECTION[] = "directionalLight.direction";
-constexpr char DIRECTIONALLIGHT_BASE_DIFFUSE_INTENSITY[] = "directionalLight.base.diffuseIntensity";
+constexpr char DIRECTIONALLIGHT_AMBIENT_INTENSITY[]      =  "directionalLight.base.ambientIntensity";
+constexpr char DIRECTIONALLIGHT_BASE_COLOR[]             =  "directionalLight.base.color";
+constexpr char DIRECTIONALLIGHT_DIRECTION[]              =  "directionalLight.direction";
+constexpr char DIRECTIONALLIGHT_BASE_DIFFUSE_INTENSITY[] =  "directionalLight.base.diffuseIntensity";
 
-constexpr char PHONG_MATERIAL_SPECULAR_INTENSITY[] = "material.specularIntensity";
-constexpr char PHONG_MATERIAL_SHININESS[] = "material.shininess";
-constexpr char PHONG_MATERIAL_EYE_POSITION[] = "eyePosition";
+constexpr char PHONG_MATERIAL_SPECULAR_INTENSITY[]       =  "material.specularIntensity";
+constexpr char PHONG_MATERIAL_SHININESS[]                =  "material.shininess";
+constexpr char PHONG_MATERIAL_EYE_POSITION[]             =  "eyePosition";
 
 // Path for point light
 constexpr char POINTLIGHT_COUNT[] = "pointLightCount";
